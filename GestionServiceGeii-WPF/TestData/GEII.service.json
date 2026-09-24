@@ -1,0 +1,89 @@
+{
+  "ProfileName": "GEII",
+  "AcademicYear": "2025-2026",
+  "Groups": {
+    "IsConfigured": true,
+    "FormationName": "GEII 1",
+    "StudentCount": 60,
+    "TdGroupCount": 3,
+    "TpGroupCount": 5,
+    "MaxStudentsPerTpGroup": 0,
+    "TdGroupNames": [
+      "G11",
+      "G12",
+      "G13",
+      null
+    ],
+    "TpGroupNames": [
+      "G11A",
+      "G11B",
+      "G12A",
+      "G12B",
+      "G13A",
+      "G13B",
+      null,
+      null
+    ]
+  },
+  "Files": {
+    "ServiceWorkbookPath": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii_refactor_2_v1.1\\GestionServiceGeii\\TestData\\Données 2026-2027.xlsx",
+    "ListsWorkbookPath": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii_refactor_2_v1.1\\GestionServiceGeii\\TestData\\GEII_selection_reference.xlsx",
+    "BackupDirectory": "",
+    "ExportDirectory": "",
+    "ExportPdfDirectory": ""
+  },
+  "Excel": {
+    "ServiceSheetName": "Services",
+    "TeachersSheetName": "Enseignants",
+    "ModulesSheetName": "Modules",
+    "GroupsSheetName": "Groupes"
+  },
+  "Rules": {
+    "DefaultServiceHours": 192.0,
+    "CmCoefficient": 1.5,
+    "TdCoefficient": 1.0,
+    "TpCoefficient": 0.6667
+  },
+  "Display": {
+    "RememberLastFiles": true,
+    "AutoResizeColumns": true,
+    "LastSelectedTeacher": ""
+  },
+  "Safety": {
+    "CreateBackupBeforeSave": true,
+    "BackupRetentionCount": 20,
+    "ReadOnlyIfExcelFileLocked": true
+  },
+  "Product": {
+    "ProductName": "Gestion Service GEII",
+    "ProductId": "GestionServiceGEII",
+    "Manufacturer": "PB BZH Concept",
+    "Version": "1.4.0",
+    "Description": "Gestion du service des intervenants pour les étudiants du GEII",
+    "UpgradeCode": "",
+    "IconPath": "",
+    "DownloadPageUrl": "https://www.pb-bzh-concept.fr",
+    "PrivacyPageUrl": "https://www.pb-bzh-concept.fr/privacy.php",
+    "Copyright": "© Copyright PB BZH Concept 2026",
+    "EmailContact": "admin@pb-bzh-concept.fr",
+    "PoductId": "GestionServiceGEII"
+  },
+  "UpdateManifest": {
+    "ProductName": "",
+    "Version": "",
+    "Publisher": "",
+    "DownloadPage": "https://www.pb-bzh-concept.fr",
+    "PrivacyPage": "https://www.pb-bzh-concept.fr/privacy.php",
+    "MsiUrl": "",
+    "WebSetupUrl": "",
+    "UpdateManifestUrl": "",
+    "ReleaseDate": "",
+    "ApplicationId": ""
+  },
+  "SaveState": {
+    "CurrentSemester": "S1",
+    "CurrentFormation": "FI",
+    "CurrentModule": "ENER1-1",
+    "CurrentCourse": "CM"
+  }
+}

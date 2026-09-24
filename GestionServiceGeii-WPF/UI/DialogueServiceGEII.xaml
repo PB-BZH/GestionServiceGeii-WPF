@@ -1,0 +1,971 @@
+<!--
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║                    ───────────────────────────────────                         ║
+║                      © Copyright PB-BZH Concept 2026                           ║
+║                    ───────────────────────────────────                         ║
+║                                                                                ║
+║                 contact : mailto:admin@pb-bzh-concept.fr                       ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
+║  Le 24/9/2026 - 00:11
+╟────────────────────────────────────────────────────────────────────────────────║
+║     Projet Visual Studio Professional 2026 : GestionServiceGeii
+╟────────────────────────────────────────────────────────────────────────────────║
+║     Version : 1.0.0
+╟────────────────────────────────────────────────────────────────────────────────║
+║                Visual Studio Professional 2026 - Insiders                      ║
+║                ──────────────────────────────────────────                      ║
+║  Langage     : XAML 1.0; HTML5                                                 ║                                                
+║  Technologie : .NET 10 / WPF                                                   ║
+║  Plateforme  : Windows 10 / Windows 11                                         ║
+║  Encodage    : UTF-8                                                           ║
+╟────────────────────────────────────────────────────────────────────────────────║
+║  Nom de fichier : DialogueServiceGEII.xaml
+╚════════════════════════════════════════════════════════════════════════════════╝
+-->
+<Window x:Class="GestionServiceGeii.UI.DialogueServiceGEII"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GestionServiceGeii.UI"
+        mc:Ignorable="d"
+        Title="Gestion Service GEII"
+        MinHeight="500"
+        MinWidth="1300">
+
+    <Window.Resources>
+
+        <!-- Texte des cellules centré -->
+        <Style x:Key="CellTextCentered"
+               TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="TextAlignment"
+                    Value="Center" />
+        </Style>
+
+    </Window.Resources>
+
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="_Fichier">
+                <MenuItem x:Name="menuOuvrirFichier"
+                          Header="_Ouvrir"
+                          Click="MenuOuvrirFichier_Click">
+                </MenuItem>
+                <Separator />
+                <MenuItem x:Name="menuFichierEnregistrer"
+                          Header="_Enregistrer"
+                          Click="MenuFichierEnregistrer_Click">
+                </MenuItem>
+                <MenuItem x:Name="menuFichierEnregistrerSous"
+                          Header="_Enregistrer sous ..."
+                          Click="MenuFichierEnregistrerSous_Click">
+                </MenuItem>
+                <Separator />
+                <MenuItem x:Name="menuFichierImprimer"
+                          Header="_Imprimer"
+                          Click="MenuImprimerFicheService_Click">
+                </MenuItem>
+                <MenuItem x:Name="menuFichierAperçuAvantImpression"
+                          Header="_Aperçu avant impression"
+                          Click="MenuApercuFicheService_Click">
+                </MenuItem>
+                <Separator />
+                <MenuItem x:Name="MenuFichierRéinitialiserEnvironnement"
+                          Header="_Réinitialiser environnement"
+                          Click="MenuFichierRéinitialiserEnvironnement_Click">
+                </MenuItem>
+                <Separator />
+                <MenuItem x:Name="mnuQuitter"
+                          Header="_Quitter"
+                          Click="mnuQuitter_Click">
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Edition">
+                <MenuItem Header="_Annuler"
+                          x:Name="MenuAnnuler"
+                          Click="MenuAnnuler_Click" />
+                <MenuItem Header="_Retablir"
+                          x:Name="MenuRetablir"
+                          Click="MenuRetablir_Click" />
+                <Separator />
+                <MenuItem Header="Couper"
+                          x:Name="MenuCouper"
+                          Click="MenuCouper_Click" />
+                <MenuItem Header="Copier"
+                          x:Name="MenuCopier"
+                          Click="MenuCopier_Click" />
+                <MenuItem Header="Coller"
+                          x:Name="MenuColler"
+                          Click="MenuColler_Click" />
+                <Separator />
+                <MenuItem Header="Sélectionner tout"
+                          x:Name="MenuSelectionnerTout"
+                          Click="MenuSelectionnerTout_Click" />
+            </MenuItem>
+            <MenuItem Header="_Configuration">
+                <MenuItem Header="Afficher les critères de sélection"
+                          x:Name="AfficherLesCritèresDeSélection"
+                          Click="AfficherLesCritèresDeSélection_Click" />
+                <MenuItem Header="Afficher les critères de sélection"
+                          x:Name="élémentMenuEffectifPrévu">
+                    <MenuItem Header="Geii_1"
+                              x:Name="élémentMenuGEII1"
+                              Click="élémentMenuGEII1_Click" />
+                    <MenuItem Header="Geii_2"
+                              x:Name="élémentMenuGEII2"
+                              Click="élémentMenuGEII2_Click" />
+                </MenuItem>
+                <MenuItem Header="Gestion des intervenants"
+                          x:Name="mnuGestionDesIntervenants"
+                          Click="mnuGestionDesIntervenants_Click" />
+                <MenuItem Header="Chemin d'accès"
+                          x:Name="mnuCheminsAcces"
+                          Click="mnuCheminsAcces_Click" />
+            </MenuItem>
+            <MenuItem Header="_Outils">
+                <MenuItem x:Name="optionsToolStripMenuItem"
+                          Header="Options"
+                          Click="optionsToolStripMenuItem_Click" />
+                <MenuItem x:Name="gestionDesCoursToolStripMenuItem"
+                          Header="Gestion des cours"
+                          Click="gestionDesCoursToolStripMenuItem_Click" />
+                <MenuItem x:Name="mnuVueGestionServices"
+                          Header="Gestion des services"
+                          IsCheckable="True"
+                          Click="mnuVueGestionServices_Click" />
+                <MenuItem x:Name="mnuVueFichesService"
+                          Header="Fiches de service"
+                          IsCheckable="True"
+                          Click="mnuVueFichesService_Click" />
+                <MenuItem x:Name="mnuGenererStatutsIntervenants"
+                          Header="Générer status des intervenants"
+                          Click="mnuGenererStatutsIntervenants_Click" />
+                <MenuItem x:Name="mnuCleanCache"
+                          Header="Effacer le cache"
+                          Click="mnuCleanCache_Click" />
+                <MenuItem x:Name="mnuMettreAJourSource"
+                          Header="Mettre à jour souce"
+                          Click="mnuMettreAJourSource_Click" />
+                <MenuItem x:Name="mnuTest"
+                          Header="Test"
+                          Click="mnuTest_Click" />
+            </MenuItem>
+            <MenuItem Header="_Profils">
+                <MenuItem x:Name="mnuOpenProfile"
+                          Header="Ouvrir profil"
+                          Click="mnuOpenProfile_Click" />
+                <MenuItem x:Name="mnuSaveProfile"
+                          Header="Enregistrer profil"
+                          Click="mnuSaveProfile_Click" />
+                <MenuItem x:Name="mnuSaveProfileAs"
+                          Header="Enregistrer profil sous..."
+                          Click="mnuSaveProfileAs_Click" />
+                <MenuItem x:Name="mnuProfileStatus"
+                          Header="Etat du profil"
+                          Click="mnuProfileStatus_Click" />
+                <MenuItem x:Name="mnuOpenLastProfile"
+                          Header="Ouvrir le dernier profil"
+                          Click="mnuOpenLastProfile_Click" />
+                <MenuItem x:Name="mnuAutoOpenLastProfileOnStartup"
+                          Header="Ouvrir le dernier profil au démarrage"
+                          IsCheckable="True"
+                          Click="mnuAutoOpenLastProfileOnStartup_Click" />
+                <MenuItem x:Name="mnuloadProfil"
+                          Header="Charger profil"
+                          Click="mnuloadProfil_Click" />
+            </MenuItem>
+            <MenuItem Header="_Aide">
+                <MenuItem x:Name="mnuAbout"
+                          Header="A propos de Gestion de Service GEII"
+                          Click="mnuAbout_Click" />
+                <MenuItem x:Name="mnuCheckForUpdates"
+                          Header="Recherche de mise à jour"
+                          Click="mnuCheckForUpdates_Click" />
+            </MenuItem>
+        </Menu>
+        <ToolBar Grid.Row="1">
+            <!--Barre d'outils-->
+        </ToolBar>
+        <Grid x:Name="pnlViewHost"
+              Grid.Row="2"
+              Margin="10">
+            <Grid x:Name="pnlGestionServices"
+                  Visibility="Visible"
+                  d:Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="64" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="500" />
+                    </Grid.ColumnDefinitions>
+                    <!-- Partie gauche -->
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="64" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0"
+                              Margin="10,0,10,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="32" />
+                                <RowDefinition Height="32" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Sélection feuille"
+                                       Grid.Row="0"
+                                       Grid.Column="0"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                            <ComboBox x:Name="FeuilleClasseur"
+                                      Grid.Column="0"
+                                      Grid.Row="1"
+                                      Height="25" />
+
+                            <TextBlock Text="Choix intervenant"
+                                       Grid.Row="0"
+                                       Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                            <ComboBox x:Name="Intervenants"
+                                      Grid.Row="1"
+                                      Height="25"
+                                      Grid.Column="2" />
+
+                            <TextBlock Text="Titulaires"
+                                       Grid.Row="0"
+                                       Grid.Column="4"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                            <ComboBox x:Name="Titulaires"
+                                      Grid.Row="1"
+                                      Height="25"
+                                      Grid.Column="4" />
+
+                            <TextBlock Text="Vacataires"
+                                       Grid.Row="0"
+                                       Grid.Column="6"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                            <ComboBox x:Name="Vacataires"
+                                      Grid.Row="1"
+                                      Height="25"
+                                      Grid.Column="6" />
+
+                            <TextBlock Text="Informations"
+                                       Grid.Row="0"
+                                       Grid.Column="8"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                            <ComboBox x:Name="INFOS"
+                                      SelectionChanged="INFOS_SelectionChanged"
+                                      Grid.Row="1"
+                                      Height="25"
+                                      Grid.Column="8" />
+
+                            <TextBlock Text="OSE"
+                                       Grid.Row="0"
+                                       Grid.Column="10"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                            <ComboBox x:Name="OSE"
+                                      Grid.Row="1"
+                                      Grid.Column="10"
+                                      Height="25" />
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <DataGrid x:Name="VisualisationDonnées"
+                                      SelectionChanged="VisualisationDonnées_SelectionChanged"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      ColumnWidth="*">
+
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="U.E."
+                                                        Binding="{Binding UE}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Formation"
+                                                        Binding="{Binding Formation}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Module"
+                                                        Binding="{Binding Module}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Cours"
+                                                        Binding="{Binding Cours}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Noms"
+                                                        Binding="{Binding Noms}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Durée"
+                                                        Binding="{Binding Durée}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Nombre"
+                                                        Binding="{Binding Nombre}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Groupe"
+                                                        Binding="{Binding Groupe}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+
+                                    <DataGridTextColumn Header="Total type"
+                                                        Binding="{Binding Total_type}"
+                                                        ElementStyle="{StaticResource CellTextCentered}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Grid>
+                    <!--Partie droite-->
+                    <Grid x:Name="boutonsDeModification"
+                          Grid.Column="1"
+                          Margin="10,0,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0"
+                                  Header="Fiche matière"
+                                  FontWeight="Bold">
+                            <Grid Margin="10"
+                                  HorizontalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="32" />
+                                    <RowDefinition Height="32" />
+                                    <RowDefinition Height="32" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="15" />
+                                    <RowDefinition Height="32" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="40" />
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Matière :"
+                                       Grid.Row="0"
+                                       Grid.Column="0"
+                                       VerticalAlignment="Center" />
+
+                                <Label x:Name="texteMatière"
+                                       Content="texteMatière"
+                                       Grid.Row="0"
+                                       Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                                <Label Content="CM : "
+                                       Grid.Row="0"
+                                       Grid.Column="4"
+                                       VerticalAlignment="Center" />
+
+                                <Label x:Name="valeur_CM"
+                                       Content="0"
+                                       Grid.Row="0"
+                                       Grid.Column="6"
+                                       VerticalAlignment="Center" />
+
+                                <Label Content="OSE :"
+                                       Grid.Row="1"
+                                       Grid.Column="0"
+                                       VerticalAlignment="Center" />
+
+                                <Label x:Name="txtCodeOSE"
+                                       Content="Code OSE"
+                                       Grid.Row="1"
+                                       Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold" />
+
+                                <Label Content="TD : "
+                                       Grid.Row="1"
+                                       Grid.Column="4"
+                                       VerticalAlignment="Center" />
+
+                                <Label x:Name="valeur_TD"
+                                       Content="0"
+                                       Grid.Row="1"
+                                       Grid.Column="6"
+                                       VerticalAlignment="Center" />
+
+                                <Label Content="Module :"
+                                       Grid.Row="3"
+                                       Grid.Column="0"
+                                       VerticalAlignment="TOP" />
+
+                                <TextBox x:Name="texteLibelléModule"
+                                         Text="Libellé module"
+                                         Grid.Row="3"
+                                         Grid.Column="2"
+                                         Grid.ColumnSpan="5"
+                                         TextWrapping="Wrap"
+                                         Height="50"
+                                         VerticalContentAlignment="Top"
+                                         FontWeight="Bold" />
+
+                                <Label Content="TP : "
+                                       Grid.Row="2"
+                                       Grid.Column="4"
+                                       VerticalAlignment="Center" />
+
+                                <Label x:Name="valeur_TP"
+                                       Content="0"
+                                       Grid.Row="2"
+                                       Grid.Column="6"
+                                       VerticalAlignment="Center" />
+
+                                <Button x:Name="modifierFicheMatière"
+                                        Content="Modifier la fiche matière"
+                                        Grid.Row="5"
+                                        Grid.ColumnSpan="7"
+                                        HorizontalAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Height="25"
+                                        Width="180"
+                                        Click="ModifierFicheMatière_Click" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Grid.Row="2"
+                                  Header="CM"
+                                  FontWeight="Bold"
+                                  Width="400"
+                                  HorizontalAlignment="Center">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+                                <Label x:Name="nbEtudiants"
+                                       Content="0"
+                                       Grid.Column="0"
+                                       HorizontalContentAlignment="Center"
+                                       FontWeight="Bold" />
+
+                                <TextBlock Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="étudiants" />
+
+                                <Button x:Name="boutonAjouterCM"
+                                        Content="Ajouter"
+                                        Click="boutonAjouterCM_Click"
+                                        Grid.Column="4"
+                                        Height="25" />
+
+                                <Button x:Name="boutonSupprimerCM"
+                                        Content="Supprimer"
+                                        Click="boutonSupprimerCM_Click"
+                                        Grid.Column="6"
+                                        Height="25" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="TD"
+                                  Grid.Row="4"
+                                  FontWeight="Bold"
+                                  Width="400"
+                                  HorizontalAlignment="Center">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+                                <Label x:Name="nbGroupeTd"
+                                       Content="0"
+                                       Grid.Column="0"
+                                       HorizontalContentAlignment="Center"
+                                       FontWeight="Bold" />
+
+                                <Label Grid.Column="1"
+                                       Content=" / " />
+
+                                <Label x:Name="nbGroupeTdTotal"
+                                       Grid.Column="2"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       Content="0" />
+
+                                <Button x:Name="boutonAjouterTD"
+                                        Content="Ajouter"
+                                        Click="boutonAjouterCM_Click"
+                                        Grid.Column="4"
+                                        Height="25" />
+
+                                <Button x:Name="boutonSupprimerTD"
+                                        Content="Supprimer"
+                                        Click="boutonSupprimerTD_Click"
+                                        Grid.Column="6"
+                                        Height="25" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="TP"
+                                  Grid.Row="6"
+                                  FontWeight="Bold"
+                                  Width="400"
+                                  HorizontalAlignment="Center">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+                                <Label x:Name="nbGroupeTp"
+                                       Content="0"
+                                       Grid.Column="0"
+                                       HorizontalContentAlignment="Center"
+                                       FontWeight="Bold" />
+
+                                <Label Grid.Column="1"
+                                       Content=" / " />
+
+                                <Label x:Name="nbGroupeTpTotal"
+                                       Grid.Column="2"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       Content="0" />
+
+                                <Button x:Name="boutonAjouterTP"
+                                        Content="Ajouter"
+                                        Click="boutonAjouterTP_Click"
+                                        Grid.Column="4"
+                                        Height="25" />
+
+                                <Button x:Name="boutonSupprimerTP"
+                                        Content="Supprimer"
+                                        Click="boutonSupprimerTP_Click"
+                                        Grid.Column="6"
+                                        Height="25" />
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <!--coté gauche-->
+                        <ColumnDefinition Width="*" />
+                        <!--coté droit-->
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0"
+                          Margin="10,0,10,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Semestre"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold" />
+
+                        <ComboBox x:Name="Semestre"
+                                  SelectionChanged="Semestre_SelectionChanged"
+                                  Grid.Column="0"
+                                  Grid.Row="1"
+                                  Height="25" />
+
+                        <TextBlock Text="U.E."
+                                   Grid.Row="0"
+                                   Grid.Column="2"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold" />
+
+                        <ComboBox x:Name="UE"
+                                  Grid.Row="1"
+                                  Grid.Column="2"
+                                  SelectionChanged="UE_SelectionChanged"
+                                  Height="25" />
+
+                        <TextBlock Text="Formation"
+                                   Grid.Row="0"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold" />
+
+                        <ComboBox x:Name="Formation"
+                                  SelectionChanged="Formation_SelectionChanged"
+                                  Grid.Row="1"
+                                  Grid.Column="4"
+                                  Height="25" />
+
+                        <TextBlock Text="Module"
+                                   Grid.Row="0"
+                                   Grid.Column="6"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold" />
+
+                        <ComboBox x:Name="Module"
+                                  SelectionChanged="Module_SelectionChanged"
+                                  Grid.Row="1"
+                                  Grid.Column="6"
+                                  Height="25" />
+
+                        <TextBlock Text="Cours"
+                                   Grid.Row="0"
+                                   Grid.Column="8"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold" />
+
+                        <ComboBox x:Name="Cours"
+                                  SelectionChanged="Cours_SelectionChanged"
+                                  Grid.Row="1"
+                                  Grid.Column="8"
+                                  Height="25" />
+                    </Grid>
+
+                    <Grid Grid.Column="1"
+                          Margin="10,0,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="AfficheModuleComplet"
+                                Grid.Column="0"
+                                Grid.Row="0"
+                                Content="Module complet"
+                                Click="AfficheModuleComplet_Click"
+                                FontWeight="Bold" />
+
+                        <Button x:Name="MiseAJourTableau"
+                                Grid.Column="0"
+                                Grid.Row="1"
+                                Content="Mise à jour tableau"
+                                Click="MiseAJourTableau_Click"
+                                FontWeight="Bold"
+                                Height="25" />
+
+                        <Button x:Name="boutonModifier"
+                                Grid.Column="2"
+                                Grid.Row="0"
+                                Content="Modifier"
+                                Click="BoutonModifier_Click"
+                                FontWeight="Bold"
+                                Height="25" />
+
+                        <Button x:Name="boutonAnnuler"
+                                Grid.Column="2"
+                                Grid.Row="1"
+                                Content="Annuler"
+                                Click="BoutonAnnuler_Click"
+                                FontWeight="Bold"
+                                Height="25" />
+
+                        <Button x:Name="btnFicheDeService"
+                                Grid.Column="4"
+                                Grid.Row="0"
+                                Content="Fiche de Service"
+                                Click="btnVueFichesService_Click"
+                                FontWeight="Bold"
+                                Height="25" />
+
+                        <Button x:Name="btnInitEnviroment"
+                                Grid.Column="4"
+                                Grid.Row="1"
+                                Content="Réinitialisation"
+                                Click="MenuFichierRéinitialiserEnvironnement_Click"
+                                FontWeight="Bold"
+                                Height="25" />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid x:Name="pnlFichesService"
+                  Visibility="Collapsed"
+                  d:Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="37*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--En-tête et sélections-->
+                <Grid Grid.Row="0"
+                      Grid.ColumnSpan="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label x:Name="lblFichesTitre"
+                               Content="Fiches de service prévisionnelles"
+                               Grid.Row="0"
+                               Grid.ColumnSpan="11"
+                               FontWeight="Bold"
+                               FontSize="12"
+                               FontFamily="Segoe UI" />
+
+                        <Label x:Name="lblFichesIntervenant"
+                               Content="Intervenant :"
+                               Grid.Row="1"
+                               Grid.Column="0" />
+
+                        <ComboBox x:Name="cmbIntervenantFicheService"
+                                  Grid.Row="1"
+                                  Grid.Column="2"
+                                  Height="25" />
+
+                        <Label x:Name="lblFichesStatut"
+                               Content="Status :"
+                               Grid.Row="1"
+                               Grid.Column="4" />
+
+                        <ComboBox x:Name="cmbStatutFicheService"
+                                  Grid.Row="1"
+                                  Grid.Column="6"
+                                  Height="25" />
+
+                        <Label x:Name="lblAcademicYear"
+                               Content="Année universitaire :"
+                               Grid.Row="1"
+                               Grid.Column="8" />
+
+                        <TextBox x:Name="txtAcademicYear"
+                                 Grid.Row="1"
+                                 Grid.Column="10"
+                                 Height="25"
+                                 VerticalContentAlignment="Center" />
+
+                    </Grid>
+                </Grid>
+
+                <!--Fiche de service-->
+                <RichTextBox x:Name="rtbFicheService"
+                             Grid.Row="1"
+                             Margin="5,5,5,5"
+                             IsReadOnly="True"
+                             VerticalContentAlignment="Top"
+                             HorizontalContentAlignment="Stretch"
+                             Grid.ColumnSpan="2">
+
+                    <FlowDocument ColumnWidth="1000">
+                        <Paragraph Margin="0">
+                            <Run Text="Sélectionnez un intervenant et un statut pour afficher la fiche de service prévisionnelle." />
+                        </Paragraph>
+                    </FlowDocument>
+
+                </RichTextBox>
+
+                <!--Boutons-->
+                <Grid Grid.Row="2"
+                      Grid.ColumnSpan="2">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left">
+
+                        <Button x:Name="btnGestionService"
+                                Content="Gestion des services"
+                                Width="Auto"
+                                Height="25"
+                                Padding="5,0"
+                                VerticalAlignment="Center"
+                                Margin="5"
+                                Click="btnGestionService_Click" />
+
+                        <Button x:Name="btnGestionDesIntervenants"
+                                Content="Gestion des intervenants"
+                                Width="Auto"
+                                Height="25"
+                                Padding="5,0"
+                                VerticalAlignment="Center"
+                                Margin="5"
+                                Click="btnGestionDesIntervenants_Click" />
+
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+
+                        <Button x:Name="btnCreateServiceFiche"
+                                Content="Créer les fiches de service"
+                                Height="25"
+                                Width="Auto"
+                                Padding="5,0"
+                                VerticalAlignment="Center"
+                                Click="btnCreateServiceFiche_Click"
+                                Margin="5" />
+
+                        <Button x:Name="btnImprimerFicheService"
+                                Content="Imprimer"
+                                Width="Auto"
+                                Height="25"
+                                Padding="5,0"
+                                VerticalAlignment="Center"
+                                Margin="5"
+                                Click="btnImprimerFicheService_Click" />
+
+                        <Button x:Name="btnExporterFicheService"
+                                Height="25"
+                                Content="Exporter"
+                                Width="Auto"
+                                Padding="5,0"
+                                VerticalAlignment="Center"
+                                Margin="5"
+                                Click="btnExporterFicheService_Click" />
+
+                        <Button x:Name="btnActualiserFicheService"
+                                Content="Actualiser"
+                                Width="Auto"
+                                Height="25"
+                                Padding="5,0"
+                                VerticalContentAlignment="Center"
+                                Margin="5,0"
+                                Click="btnActualiserFicheService_Click" />
+
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+        <StatusBar Grid.Row="4">
+
+            <StatusBarItem>
+                <Border Background="DarkOrange"
+                        Padding="6,2">
+                    <TextBlock x:Name="étatTitreEffectifGeii1"
+                               Text="Effectif GEII1 :"
+                               FontWeight="Bold" />
+                </Border>
+            </StatusBarItem>
+
+            <Separator />
+
+            <StatusBarItem>
+                <TextBlock x:Name="étatEffectifGeii1"
+                           Text="0"
+                           ToolTip="Effectif GEII1" />
+            </StatusBarItem>
+
+            <Separator />
+
+            <StatusBarItem>
+                <TextBlock x:Name="étatNbGroupeTD"
+                           Text="TD : 0"
+                           ToolTip="Nombre de groupes TD" />
+            </StatusBarItem>
+
+            <Separator />
+
+            <StatusBarItem>
+                <TextBlock x:Name="étatNbGroupeTP"
+                           Text="TP : 0"
+                           ToolTip="Nombre de groupes TP" />
+            </StatusBarItem>
+
+        </StatusBar>
+    </Grid>
+</Window>
+

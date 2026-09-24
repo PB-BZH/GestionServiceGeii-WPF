@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <RootNamespace>GestionServiceGeii</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Core\Services\UpdateChecker.cs" />
+    <Compile Remove="Shared\Librairie_Registre\FichierRegistre.cs" />
+    <Compile Remove="Shared\Librairie_Registre\FichierRegistre.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Shared\Librairie_Registre\FichierRegistre.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="UI\App.xaml" />
+    <EmbeddedResource Include="UI\App.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PB.BZH.Help.Core">
+      <HintPath>..\..\PB.BZH.Help.Core\PB.BZH.Help.Core\bin\Release\net10.0-windows\PB.BZH.Help.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="PB.BZH.Help.Wpf">
+      <HintPath>..\..\PB.BZH.Help.Wpf\PB.BZH.Help.Wpf\bin\Release\net10.0-windows\PB.BZH.Help.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="PB.BZH.Licensing.Core">
+      <HintPath>..\..\PB.BZH.Licensing.Core\PB.BZH.Licensing.Core\bin\Release\net10.0-windows\PB.BZH.Licensing.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="PB.BZH.Licensing.Wpf">
+      <HintPath>..\..\PB.BZH.Licensing.Wpf\PB.BZH.Licensing.Wpf\bin\Release\net10.0-windows\PB.BZH.Licensing.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="PB.BZH.Theme">
+      <HintPath>..\..\PB.BZH.Theming\PB.BZH.Theme\bin\Release\net10.0-windows\PB.BZH.Theme.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="8.7.1" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="QuestPDF" Version="2026.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
