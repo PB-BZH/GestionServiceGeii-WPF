@@ -76,8 +76,6 @@ namespace GestionServiceGeii.Core.Profiles {
     private static void EnsureDefaults(ServiceManagerProfile profile) {
       profile.Files ??= new ServiceFilesOptions();
       profile.Excel ??= new ServiceExcelOptions();
-
-      profile.Rules ??= new ServiceRulesOptions();
       profile.Display ??= new ServiceDisplayOptions();
       profile.Safety ??= new ServiceSafetyOptions();
     }

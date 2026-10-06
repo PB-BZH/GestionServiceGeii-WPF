@@ -32,10 +32,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GestionServiceGeii.UI"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
         Title="Gestion Service GEII"
         MinHeight="500"
-        MinWidth="1300">
+        MinWidth="1300"
+        Closing="DialogueServiceGEII_Closing"
+        Height="674">
 
     <Window.Resources>
 
@@ -58,8 +61,7 @@
             <RowDefinition Height="32" />
             <RowDefinition Height="32" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="10" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="32" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="_Fichier">
@@ -122,14 +124,14 @@
                 <MenuItem Header="Afficher les critères de sélection"
                           x:Name="AfficherLesCritèresDeSélection"
                           Click="AfficherLesCritèresDeSélection_Click" />
-                <MenuItem Header="Afficher les critères de sélection"
+                <MenuItem Header="EFfectif prévu"
                           x:Name="élémentMenuEffectifPrévu">
                     <MenuItem Header="Geii_1"
-                              x:Name="élémentMenuGEII1"
-                              Click="élémentMenuGEII1_Click" />
+                              x:Name="élémentMenuGEII_1"
+                              Click="MenuEffectifGeii_1_Click" />
                     <MenuItem Header="Geii_2"
                               x:Name="élémentMenuGEII2"
-                              Click="élémentMenuGEII2_Click" />
+                              Click="MenuEffectifGeii_2_Click" />
                 </MenuItem>
                 <MenuItem Header="Gestion des intervenants"
                           x:Name="mnuGestionDesIntervenants"
@@ -139,12 +141,6 @@
                           Click="mnuCheminsAcces_Click" />
             </MenuItem>
             <MenuItem Header="_Outils">
-                <MenuItem x:Name="optionsToolStripMenuItem"
-                          Header="Options"
-                          Click="optionsToolStripMenuItem_Click" />
-                <MenuItem x:Name="gestionDesCoursToolStripMenuItem"
-                          Header="Gestion des cours"
-                          Click="gestionDesCoursToolStripMenuItem_Click" />
                 <MenuItem x:Name="mnuVueGestionServices"
                           Header="Gestion des services"
                           IsCheckable="True"
@@ -202,8 +198,7 @@
         <ToolBar Grid.Row="1">
             <!--Barre d'outils-->
         </ToolBar>
-        <Grid x:Name="pnlViewHost"
-              Grid.Row="2"
+        <Grid Grid.Row="2" x:Name="pnlViewHost"
               Margin="10">
             <Grid x:Name="pnlGestionServices"
                   Visibility="Visible"
@@ -319,17 +314,18 @@
                         <Grid Grid.Row="1">
                             <DataGrid x:Name="VisualisationDonnées"
                                       SelectionChanged="VisualisationDonnées_SelectionChanged"
+                                      MouseLeftButtonUp="VisualisationDonnées_MouseLeftButtonUp"
+                                      PreviewMouseLeftButtonDown="VisualisationDonnées_PreviewMouseLeftButtonDown"
+                                      MouseDoubleClick="VisualisationDonnées_MouseDoubleClick"
                                       AutoGenerateColumns="False"
-                                      IsReadOnly="True"
+                                      IsReadOnly="true"
                                       CanUserAddRows="False"
                                       CanUserDeleteRows="False"
-                                      ColumnWidth="*">
-
+                                      ColumnWidth="*"
+                                      ColumnHeaderHeight="28"
+                                      RowHeight="28">
+                                
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="U.E."
-                                                        Binding="{Binding UE}"
-                                                        ElementStyle="{StaticResource CellTextCentered}" />
-
                                     <DataGridTextColumn Header="Formation"
                                                         Binding="{Binding Formation}"
                                                         ElementStyle="{StaticResource CellTextCentered}" />
@@ -400,7 +396,8 @@
                                     <ColumnDefinition Width="10" />
                                     <ColumnDefinition Width="40" />
                                 </Grid.ColumnDefinitions>
-                                <Label Content="Matière :"
+                                <Label x:Name="Matière"
+                                    Content="Matière :"
                                        Grid.Row="0"
                                        Grid.Column="0"
                                        VerticalAlignment="Center" />
@@ -555,7 +552,7 @@
 
                                 <Button x:Name="boutonAjouterTD"
                                         Content="Ajouter"
-                                        Click="boutonAjouterCM_Click"
+                                        Click="boutonAjouterTD_Click"
                                         Grid.Column="4"
                                         Height="25" />
 
@@ -761,7 +758,7 @@
                                 Grid.Column="4"
                                 Grid.Row="1"
                                 Content="Réinitialisation"
-                                Click="MenuFichierRéinitialiserEnvironnement_Click"
+                                Click="btnFichierRéinitialiserEnvironnement_Click"
                                 FontWeight="Bold"
                                 Height="25" />
                     </Grid>
@@ -819,6 +816,7 @@
                         <ComboBox x:Name="cmbIntervenantFicheService"
                                   Grid.Row="1"
                                   Grid.Column="2"
+                                  SelectionChanged="cmbIntervenantFicheService_SelectionChanged"
                                   Height="25" />
 
                         <Label x:Name="lblFichesStatut"
@@ -829,7 +827,13 @@
                         <ComboBox x:Name="cmbStatutFicheService"
                                   Grid.Row="1"
                                   Grid.Column="6"
-                                  Height="25" />
+                                  Height="25" >
+                            <sys:String>PR</sys:String>
+                            <sys:String>MCF</sys:String>
+                            <sys:String>PRAG</sys:String>
+                            <sys:String>PRCE</sys:String>
+                            <sys:String>Vacataire</sys:String>
+                        </ComboBox>
 
                         <Label x:Name="lblAcademicYear"
                                Content="Année universitaire :"
@@ -855,7 +859,7 @@
                              Grid.ColumnSpan="2">
 
                     <FlowDocument ColumnWidth="1000">
-                        <Paragraph Margin="0">
+                        <Paragraph Margin="0">                            
                             <Run Text="Sélectionnez un intervenant et un statut pour afficher la fiche de service prévisionnelle." />
                         </Paragraph>
                     </FlowDocument>
@@ -930,13 +934,13 @@
                 </Grid>
             </Grid>
         </Grid>
-        <StatusBar Grid.Row="4">
+        <StatusBar Grid.Row="3">
 
             <StatusBarItem>
                 <Border Background="DarkOrange"
                         Padding="6,2">
-                    <TextBlock x:Name="étatTitreEffectifGeii1"
-                               Text="Effectif GEII1 :"
+                    <TextBlock x:Name="étatTitreEffectif_Geii1"
+                               Text="Effectif Geii1 :"
                                FontWeight="Bold" />
                 </Border>
             </StatusBarItem>
@@ -944,25 +948,59 @@
             <Separator />
 
             <StatusBarItem>
-                <TextBlock x:Name="étatEffectifGeii1"
+                <TextBlock x:Name="étatEffectif_Geii1"
                            Text="0"
-                           ToolTip="Effectif GEII1" />
+                           ToolTip="Effectif Geii1" />
             </StatusBarItem>
 
             <Separator />
 
             <StatusBarItem>
-                <TextBlock x:Name="étatNbGroupeTD"
+                <TextBlock x:Name="étatNbGroupeTD_Geii1"
                            Text="TD : 0"
-                           ToolTip="Nombre de groupes TD" />
+                           ToolTip="Nombre de groupes TD_Geii1" />
             </StatusBarItem>
 
             <Separator />
 
             <StatusBarItem>
-                <TextBlock x:Name="étatNbGroupeTP"
+                <TextBlock x:Name="étatNbGroupeTP_Geii1"
                            Text="TP : 0"
-                           ToolTip="Nombre de groupes TP" />
+                           ToolTip="Nombre de groupes TP_Geii1" />
+            </StatusBarItem>
+            <Separator />
+            <Separator />
+            <StatusBarItem>
+                <Border Background="DarkOrchid"
+                        Padding="6,2">
+                    <TextBlock x:Name="étatTitreEffectif_Geii2_FI"
+                               Text="Effectif Geii2_FI :"
+                               FontWeight="Bold" />
+                </Border>
+            </StatusBarItem>
+
+            <Separator />
+
+            <StatusBarItem>
+                <TextBlock x:Name="étatEffectif_Geii2_FI"
+                           Text="0"
+                           ToolTip="Effectif Geii2_FI" />
+            </StatusBarItem>
+
+            <Separator />
+
+            <StatusBarItem>
+                <TextBlock x:Name="étatNbGroupeTD_Geii2_FI"
+                           Text="TD : 0"
+                           ToolTip="Nombre de groupes TD_Geii2_FI" />
+            </StatusBarItem>
+
+            <Separator />
+
+            <StatusBarItem>
+                <TextBlock x:Name="étatNbGroupeTP_Geii2_FI"
+                           Text="TP : 0"
+                           ToolTip="Nombre de groupes TP_Geii2_FI" />
             </StatusBarItem>
 
         </StatusBar>

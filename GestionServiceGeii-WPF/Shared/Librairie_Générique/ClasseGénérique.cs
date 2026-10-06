@@ -106,7 +106,8 @@ public class ClasseGénérique {
     if (string.IsNullOrWhiteSpace(colonneCritère))
       return RempliComboBox(liste,dataSet,nomListe);
 
-    string valeurCritère = critèreDeSelection.Text.Trim();
+    // Valeur réellement sélectionnée dans le ComboBox Semestre
+    string valeurCritère = critèreDeSelection.SelectedValue?.ToString()?.Trim() ?? "";
 
     if (string.IsNullOrWhiteSpace(valeurCritère))
       return liste;

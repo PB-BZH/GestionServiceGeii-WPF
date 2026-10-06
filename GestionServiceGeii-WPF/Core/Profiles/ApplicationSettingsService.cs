@@ -37,14 +37,8 @@ namespace GestionServiceGeii.Core.Profiles {
     private static readonly Encoding Utf8NoBom = new UTF8Encoding(false);
 
     internal static string GetSettingsDirectory() {
-      string appData =
-          Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
-      return Path.Combine(
-          appData,
-          "PB-BZH Concept",
-          "GestionServiceGeii",
-          GetProductVersionFolderName());
+      string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      return Path.Combine(appData,"PB-BZH Concept","GestionServiceGeii",GetProductVersionFolderName());
     }
 
     internal static string GetSettingsPath() {
@@ -55,9 +49,7 @@ namespace GestionServiceGeii.Core.Profiles {
     }
 
     internal static ApplicationSettings Load() {
-      string path =
-          GetSettingsPath();
-
+      string path = GetSettingsPath();
       if (!File.Exists(path)) {
         TryMigrateLegacySettingsFile(path);
 
@@ -65,11 +57,8 @@ namespace GestionServiceGeii.Core.Profiles {
           return new ApplicationSettings();
       }
 
-      string json =
-          File.ReadAllText(path);
-
-      ApplicationSettings settings =
-          JsonConvert.DeserializeObject<ApplicationSettings>(json)!;
+      string json = File.ReadAllText(path);
+      ApplicationSettings settings = JsonConvert.DeserializeObject<ApplicationSettings>(json)!;
 
       if (settings == null)
         return new ApplicationSettings();
@@ -85,14 +74,9 @@ namespace GestionServiceGeii.Core.Profiles {
 
       Directory.CreateDirectory(directory);
 
-      string json =
-          JsonConvert.SerializeObject(settings,Formatting.Indented);
+      string json = JsonConvert.SerializeObject(settings,Formatting.Indented);
 
-      File.WriteAllText(
-          GetSettingsPath(),
-          json,
-          Utf8NoBom
-      );
+      File.WriteAllText(GetSettingsPath(),json,Utf8NoBom);
     }
 
     private static string GetProductVersionFolderName() {

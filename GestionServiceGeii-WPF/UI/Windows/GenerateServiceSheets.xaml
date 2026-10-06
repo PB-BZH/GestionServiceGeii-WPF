@@ -1,0 +1,103 @@
+<Window x:Class="GestionServiceGeii.UI.Windows.GenerateServiceSheets"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GestionServiceGeii.UI.Windows"
+        mc:Ignorable="d"
+        Title="Genérer les feuilles de service"
+        Height="240"
+        Width="520"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="32" />
+            <RowDefinition Height="32" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0"
+               x:Name="lblInfo"
+               Content="Generation des fiches de service PDF"
+               FontWeight="Bold"
+               FontSize="16"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="200" />
+            </Grid.ColumnDefinitions>
+            <Label Content="Mise à jour des statuts des intervants :"
+                   Grid.Column="0"
+                   VerticalAlignment="Center" />
+
+            <Button x:Name="btnStartUpdate"
+                    Content="Lancer la mise à jour"
+                    Grid.Column="2"
+                    Width="200"
+                    Height="25"
+                    Click="btnStartUpdate_Click" />
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="32" />
+            </Grid.ColumnDefinitions>
+            <Label Content="Dossier de destination :"
+                   Grid.Column="0"
+                   VerticalAlignment="Center" />
+            <TextBox x:Name="txtTargetDirectory"
+                     Grid.Column="2"
+                     Height="25"
+                     VerticalAlignment="Center"
+                     VerticalContentAlignment="Center" />
+
+            <Button x:Name="btnBrowseTargetDirectory"
+                    Content="..."
+                    Grid.Column="4"
+                    Height="25"
+                    Click="btnBrowseTargetDirectory_Click" />
+        </Grid>
+        <StackPanel Grid.Row="3"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center">
+            <Button x:Name="btnGenerateServiceSheets"
+                    Content="Générer les fiches de service"
+                    Width="Auto"
+                    Margin="0,0,10,0"
+                    Padding="5,0"
+                    Height="25"
+                    HorizontalAlignment="Center"
+                    Click="btnGenerateServiceSheets_Click" />
+
+            <Button x:Name="btnOpenTargetDirectory"
+                    Content="Ouvir le dossier de destination"
+                    Width="Auto"
+                    Margin="10,0,10,0"
+                    Padding="5,0"
+                    Height="25"
+                    HorizontalAlignment="Center"
+                    Click="btnOpenTargetDirectory_Click" />
+
+            <Button x:Name="btnOK"
+                    Content="OK"
+                    Width="Auto"
+                    Margin="10,0,0,0"
+                    Padding="5,0"
+                    Height="25"
+                    HorizontalAlignment="Center"
+                    Click="btnOk_Click" />
+        </StackPanel>
+        <Label x:Name="txtMessage"
+               Content="message"
+               Grid.Row="4"
+               VerticalAlignment="Center" />
+    </Grid>
+</Window>

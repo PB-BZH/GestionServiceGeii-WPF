@@ -26,7 +26,7 @@
 ║  Nom de fichier : ServiceWorkbookSheetCatalog.cs
 ╚════════════════════════════════════════════════════════════════════════════════╝
 */
-namespace GestionServiceGeii.Core.Service;
+namespace GestionServiceGeii.Core.Services;
 
 internal sealed class ServiceWorkbookSheetInfo {
   internal string SheetName { get; set; } = string.Empty;

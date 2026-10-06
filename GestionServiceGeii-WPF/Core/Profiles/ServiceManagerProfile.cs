@@ -27,21 +27,22 @@
 ╚════════════════════════════════════════════════════════════════════════════════╝
 */
 using System.Drawing;
-using System.Text.Json.Serialization;
+using GestionServiceGeii.Core.Enums;
+using Newtonsoft.Json;
 
 namespace GestionServiceGeii.Core.Profiles {
   public sealed class ServiceManagerProfile {
     public string ProfileName { get; set; } = "GEII";
-    public string AcademicYear { get; set; } = "2025-2026";
+    public string AcademicYear { get; set; } = "2026-2027";
     public ServiceGroupsOptions Groups { get; set; } = new ServiceGroupsOptions();
     public ServiceFilesOptions Files { get; set; } = new ServiceFilesOptions();
     public ServiceExcelOptions Excel { get; set; } = new ServiceExcelOptions();
-    public ServiceRulesOptions Rules { get; set; } = new ServiceRulesOptions();
     public ServiceDisplayOptions Display { get; set; } = new ServiceDisplayOptions();
     public ServiceSafetyOptions Safety { get; set; } = new ServiceSafetyOptions();
     public ProductOptions Product { get; set; } = new();
     public UpdateManifest UpdateManifest { get; set; } = new();
     public SaveState SaveState { get; set; } = new();
+    public SaveWindowState Window { get; set; } = new();
   }
 
   public sealed class SaveState {
@@ -79,17 +80,23 @@ namespace GestionServiceGeii.Core.Profiles {
     public string Copyright { get; set; } = "© Copyright PB BZH Concept 2026";
     public string EmailContact { get; set; } = "admin@pb-bzh-concept.fr";
     public string PoductId { get; set; } = "GestionServiceGEII";
+    public string DownloadCategory { get; set; } = "msi-software-packager";
   }
 
   public sealed class ServiceGroupsOptions {
     public bool IsConfigured { get; set; }
     public string FormationName { get; set; } = "GEII 1";
-    public int StudentCount { get; set; }
-    public int TdGroupCount { get; set; }
-    public int TpGroupCount { get; set; }
+    public int Geii1_StudentCount { get; set; }
+    public int Geii1_TdGroupCount { get; set; }
+    public int Geii1_TpGroupCount { get; set; }
     public int MaxStudentsPerTpGroup { get; set; }
-    public string[] TdGroupNames { get; set; } = [];
-    public string[] TpGroupNames { get; set; } = [];
+    public string[] Geii1_TdGroupNames { get; set; } = [];
+    public string[] Geii1_TpGroupNames { get; set; } = [];
+    public int Geii2_StudentCount { get; set; }
+    public int Geii2_TdGroupCount { get; set; }
+    public int Geii2_TpGroupCount { get; set; }
+    public string[] Geii2_TdGroupNames { get; set; } = [];
+    public string[] Geii2_TpGroupNames { get; set; } = [];
   }
 
   public sealed class ServiceFilesOptions {
@@ -105,13 +112,6 @@ namespace GestionServiceGeii.Core.Profiles {
     public string TeachersSheetName { get; set; } = "Enseignants";
     public string ModulesSheetName { get; set; } = "Modules";
     public string GroupsSheetName { get; set; } = "Groupes";
-  }
-
-  public sealed class ServiceRulesOptions {
-    public decimal DefaultServiceHours { get; set; } = 192m;
-    public decimal CmCoefficient { get; set; } = 1.5m;
-    public decimal TdCoefficient { get; set; } = 1.0m;
-    public decimal TpCoefficient { get; set; } = 0.6667m;
   }
 
   public sealed class ServiceDisplayOptions {

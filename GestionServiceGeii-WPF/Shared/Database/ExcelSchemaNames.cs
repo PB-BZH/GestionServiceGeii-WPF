@@ -87,6 +87,7 @@ namespace GestionServiceGeii.Shared.Database {
       internal const string SourceRow = "SourceRow";
       internal const string SourceSheet = "SourceSheet";
       internal const string PN = "PN";
+      internal const string SourceReferences = "SourceReferences";
     }
   }
 }

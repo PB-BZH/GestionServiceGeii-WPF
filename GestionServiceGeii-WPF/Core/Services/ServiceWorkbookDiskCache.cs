@@ -46,31 +46,17 @@ internal static class ServiceWorkbookDiskCache {
     tableGlobal = null;
 
     try {
-      string cachePath =
-          BuildGlobalCachePath(serviceWorkbookPath);
-
+      string cachePath = BuildGlobalCachePath(serviceWorkbookPath);
       if (string.IsNullOrWhiteSpace(cachePath))
         return false;
-
       if (!File.Exists(cachePath))
         return false;
-
-      DataSet dataSet =
-          new DataSet();
-
-      dataSet.ReadXml(
-          cachePath,
-          XmlReadMode.ReadSchema);
-
+      DataSet dataSet = new DataSet();
+      dataSet.ReadXml(cachePath,XmlReadMode.ReadSchema);
       if (!dataSet.Tables.Contains(ExcelSchemaNames.Tables.NomTableGlobal))
         return false;
-
-      tableGlobal =
-          dataSet.Tables[ExcelSchemaNames.Tables.NomTableGlobal]!.Copy();
-
-      tableGlobal.TableName =
-          ExcelSchemaNames.Tables.NomTableGlobal;
-
+      tableGlobal = dataSet.Tables[ExcelSchemaNames.Tables.NomTableGlobal]!.Copy();
+      tableGlobal.TableName = ExcelSchemaNames.Tables.NomTableGlobal;
       return true;
     }
     catch {
@@ -83,31 +69,22 @@ internal static class ServiceWorkbookDiskCache {
     serviceDataSet = null;
 
     try {
-      string cachePath =
-          BuildServiceDataSetCachePath(serviceWorkbookPath);
-
-      if (string.IsNullOrWhiteSpace(cachePath))
+      string cachePath = BuildServiceDataSetCachePath(serviceWorkbookPath);
+      if (string.IsNullOrWhiteSpace(cachePath)) {
         return false;
-
-      if (!File.Exists(cachePath))
+      }
+      if (!File.Exists(cachePath)) {
         return false;
-
-      DataSet dataSet =
-          new DataSet();
-
-      dataSet.ReadXml(
-          cachePath,
-          XmlReadMode.ReadSchema);
-
-      if (!dataSet.Tables.Contains(ExcelSchemaNames.Tables.NomTableGlobal))
+      }
+      DataSet dataSet = new();
+      dataSet.ReadXml(cachePath,XmlReadMode.ReadSchema);
+      if (!dataSet.Tables.Contains(ExcelSchemaNames.Tables.NomTableGlobal)) {
         return false;
-
-      serviceDataSet =
-          dataSet;
-
+      }
+      serviceDataSet = dataSet;
       return true;
     }
-    catch {
+    catch (Exception ex) {
       serviceDataSet = null;
       return false;
     }
@@ -124,47 +101,28 @@ internal static class ServiceWorkbookDiskCache {
       return;
 
     try {
-      string cachePath =
-          BuildServiceDataSetCachePath(serviceWorkbookPath);
-
+      string cachePath = BuildServiceDataSetCachePath(serviceWorkbookPath);
       if (string.IsNullOrWhiteSpace(cachePath))
         return;
-
-      string? cacheDirectory =
-          Path.GetDirectoryName(cachePath);
-
+      string? cacheDirectory = Path.GetDirectoryName(cachePath);
       if (string.IsNullOrWhiteSpace(cacheDirectory))
         return;
-
       Directory.CreateDirectory(cacheDirectory);
-
-      DataSet copy =
-          serviceDataSet.Copy();
-
-      copy.DataSetName =
-          "GestionServiceGeii_ServiceWorkbookCache";
-
-      copy.WriteXml(
-          cachePath,
-          XmlWriteMode.WriteSchema);
+      DataSet copy = serviceDataSet.Copy();
+      copy.DataSetName = "GestionServiceGeii_ServiceWorkbookCache";
+      copy.WriteXml(cachePath,XmlWriteMode.WriteSchema);
     }
     catch {
       // Le cache ne doit jamais empêcher le chargement normal.
     }
   }
 
-  private static string BuildServiceDataSetCachePath(
-    string serviceWorkbookPath
-) {
+  private static string BuildServiceDataSetCachePath(string serviceWorkbookPath) {
     if (string.IsNullOrWhiteSpace(serviceWorkbookPath))
       return string.Empty;
-
-    FileInfo fileInfo =
-        new FileInfo(serviceWorkbookPath);
-
+    FileInfo fileInfo = new FileInfo(serviceWorkbookPath);
     if (!fileInfo.Exists)
       return string.Empty;
-
     string identity =
         "ServiceWorkbookDataSetCache-v1" +
         "|" +
@@ -173,76 +131,44 @@ internal static class ServiceWorkbookDiskCache {
         fileInfo.LastWriteTimeUtc.Ticks +
         "|" +
         fileInfo.Length;
-
-    string hash =
-        Convert.ToHexString(
-            SHA256.HashData(
-                Encoding.UTF8.GetBytes(identity)));
-
+    string hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));
     string cacheDirectory =
-        Path.Combine(
+      Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "GestionServiceGeii",
             "Cache",
             "ServiceWorkbook");
 
-    return Path.Combine(
-        cacheDirectory,
-        "ServiceDataSet_" + hash + ".xml");
+    return Path.Combine(cacheDirectory,"ServiceDataSet_" + hash + ".xml");
   }
 
-  internal static void SaveGlobalTable(
-      string serviceWorkbookPath,
-      DataTable tableGlobal
-  ) {
+  internal static void SaveGlobalTable(string serviceWorkbookPath,DataTable tableGlobal) {
     if (string.IsNullOrWhiteSpace(serviceWorkbookPath))
       return;
-
     if (tableGlobal == null)
       return;
-
     try {
-      string cachePath =
-          BuildGlobalCachePath(serviceWorkbookPath);
-
+      string cachePath = BuildGlobalCachePath(serviceWorkbookPath);
       if (string.IsNullOrWhiteSpace(cachePath))
         return;
-
-      string? cacheDirectory =
-          Path.GetDirectoryName(cachePath);
-
+      string? cacheDirectory = Path.GetDirectoryName(cachePath);
       if (string.IsNullOrWhiteSpace(cacheDirectory))
         return;
-
       Directory.CreateDirectory(cacheDirectory);
-
-      DataSet dataSet =
-          new DataSet("GestionServiceGeii_ServiceCache");
-
-      DataTable copy =
-          tableGlobal.Copy();
-
-      copy.TableName =
-          ExcelSchemaNames.Tables.NomTableGlobal;
-
+      DataSet dataSet = new DataSet("GestionServiceGeii_ServiceCache");
+      DataTable copy = tableGlobal.Copy();
+      copy.TableName = ExcelSchemaNames.Tables.NomTableGlobal;
       dataSet.Tables.Add(copy);
-
-      dataSet.WriteXml(
-          cachePath,
-          XmlWriteMode.WriteSchema);
+      dataSet.WriteXml(cachePath,XmlWriteMode.WriteSchema);
     }
     catch {
       // Le cache ne doit jamais empêcher le chargement normal.
     }
   }
 
-  internal static void DeleteGlobalCache(
-      string serviceWorkbookPath
-  ) {
+  internal static void DeleteGlobalCache(string serviceWorkbookPath) {
     try {
-      string cachePath =
-          BuildGlobalCachePath(serviceWorkbookPath);
-
+      string cachePath = BuildGlobalCachePath(serviceWorkbookPath);
       if (!string.IsNullOrWhiteSpace(cachePath) && File.Exists(cachePath))
         File.Delete(cachePath);
     }
@@ -251,18 +177,12 @@ internal static class ServiceWorkbookDiskCache {
     }
   }
 
-  private static string BuildGlobalCachePath(
-      string serviceWorkbookPath
-  ) {
+  private static string BuildGlobalCachePath(string serviceWorkbookPath) {
     if (string.IsNullOrWhiteSpace(serviceWorkbookPath))
       return string.Empty;
-
-    FileInfo fileInfo =
-        new FileInfo(serviceWorkbookPath);
-
+    FileInfo fileInfo = new FileInfo(serviceWorkbookPath);
     if (!fileInfo.Exists)
       return string.Empty;
-
     string identity =
         CacheVersion +
         "|" +
@@ -273,33 +193,23 @@ internal static class ServiceWorkbookDiskCache {
         fileInfo.Length +
         "|" +
         ExcelSchemaNames.Tables.NomTableGlobal;
-
-    string hash =
-        Convert.ToHexString(
-            SHA256.HashData(
-                Encoding.UTF8.GetBytes(identity)));
-
+    string hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(identity)));
     string cacheDirectory =
         Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "GestionServiceGeii",
             "Cache",
             "ServiceWorkbook");
-
-    return Path.Combine(
-        cacheDirectory,
-        "Global_" + hash + ".xml");
+    return Path.Combine(cacheDirectory,"Global_" + hash + ".xml");
   }
 
 
 
   internal static int ClearServiceWorkbookCache() {
-    int deletedFiles =
-        0;
+    int deletedFiles = 0;
 
     try {
-      string cacheDirectory =
-          GetServiceWorkbookCacheDirectory();
+      string cacheDirectory = GetServiceWorkbookCacheDirectory();
 
       if (string.IsNullOrWhiteSpace(cacheDirectory))
         return deletedFiles;
@@ -307,11 +217,7 @@ internal static class ServiceWorkbookDiskCache {
       if (!Directory.Exists(cacheDirectory))
         return deletedFiles;
 
-      string[] cacheFiles =
-          Directory.GetFiles(
-              cacheDirectory,
-              "*.xml",
-              SearchOption.TopDirectoryOnly);
+      string[] cacheFiles = Directory.GetFiles(cacheDirectory,"*.xml",SearchOption.TopDirectoryOnly);
 
       foreach (string cacheFile in cacheFiles) {
         try {
@@ -337,6 +243,10 @@ internal static class ServiceWorkbookDiskCache {
         "GestionServiceGeii",
         "Cache",
         "ServiceWorkbook");
+  }
+
+  internal static int InvalidateServiceWorkbookCache() {
+    return ClearServiceWorkbookCache();
   }
 }
 

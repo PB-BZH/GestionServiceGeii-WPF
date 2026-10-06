@@ -1,48 +1,58 @@
 {
   "ProfileName": "GEII",
-  "AcademicYear": "2025-2026",
+  "AcademicYear": "2026-2027",
   "Groups": {
     "IsConfigured": true,
-    "FormationName": "GEII 1",
-    "StudentCount": 60,
-    "TdGroupCount": 3,
-    "TpGroupCount": 5,
-    "MaxStudentsPerTpGroup": 0,
-    "TdGroupNames": [
-      "G11",
-      "G12",
-      "G13",
+    "FormationName": "GEII 2 FI",
+    "Geii1_StudentCount": 70,
+    "Geii1_TdGroupCount": 3,
+    "Geii1_TpGroupCount": 6,
+    "MaxStudentsPerTpGroup": 12,
+    "Geii1_TdGroupNames": [
+      "11",
+      "12",
+      "13",
       null
     ],
-    "TpGroupNames": [
-      "G11A",
-      "G11B",
-      "G12A",
-      "G12B",
-      "G13A",
-      "G13B",
+    "Geii1_TpGroupNames": [
+      "11A",
+      "11B",
+      "12A",
+      "12B",
+      "13A",
+      "13B",
       null,
+      null
+    ],
+    "Geii2_StudentCount": 43,
+    "Geii2_TdGroupCount": 3,
+    "Geii2_TpGroupCount": 5,
+    "Geii2_TdGroupNames": [
+      "ESE__FI",
+      "EME__FI",
+      "AII__FI"
+    ],
+    "Geii2_TpGroupNames": [
+      "ESE21_FI",
+      "ESE22_FI",
+      "EME21_FI",
+      "EME22_FI",
+      "AII21_FI",
       null
     ]
   },
   "Files": {
-    "ServiceWorkbookPath": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii_refactor_2_v1.1\\GestionServiceGeii\\TestData\\Données 2026-2027.xlsx",
-    "ListsWorkbookPath": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii_refactor_2_v1.1\\GestionServiceGeii\\TestData\\GEII_selection_reference.xlsx",
+    "ServiceWorkbookPath": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii-WPF\\GestionServiceGeii-WPF\\TestData\\Données 2026-2027.xlsx",
+    "ListsWorkbookPath": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii-WPF\\GestionServiceGeii-WPF\\TestData\\GEII_selection_reference.xlsx",
     "BackupDirectory": "",
     "ExportDirectory": "",
-    "ExportPdfDirectory": ""
+    "ExportPdfDirectory": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii-WPF\\GestionServiceGeii-WPF\\TestData\\Fiches de service"
   },
   "Excel": {
     "ServiceSheetName": "Services",
     "TeachersSheetName": "Enseignants",
     "ModulesSheetName": "Modules",
     "GroupsSheetName": "Groupes"
-  },
-  "Rules": {
-    "DefaultServiceHours": 192.0,
-    "CmCoefficient": 1.5,
-    "TdCoefficient": 1.0,
-    "TpCoefficient": 0.6667
   },
   "Display": {
     "RememberLastFiles": true,
@@ -66,7 +76,8 @@
     "PrivacyPageUrl": "https://www.pb-bzh-concept.fr/privacy.php",
     "Copyright": "© Copyright PB BZH Concept 2026",
     "EmailContact": "admin@pb-bzh-concept.fr",
-    "PoductId": "GestionServiceGEII"
+    "PoductId": "GestionServiceGEII",
+    "DownloadCategory": "msi-software-packager"
   },
   "UpdateManifest": {
     "ProductName": "",
@@ -81,9 +92,16 @@
     "ApplicationId": ""
   },
   "SaveState": {
-    "CurrentSemester": "S1",
+    "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "ENER1-1",
+    "CurrentModule": "AN3",
     "CurrentCourse": "CM"
+  },
+  "Window": {
+    "Left": 217.0,
+    "Top": 167.0,
+    "Width": 1311.0,
+    "Height": 759.0,
+    "State": 0
   }
 }

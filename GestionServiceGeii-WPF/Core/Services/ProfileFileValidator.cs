@@ -49,26 +49,13 @@ namespace GestionServiceGeii.Core.Services {
       if (profile == null || profile.Files == null)
         return "Aucun profil valide n'est chargé.";
 
-      string servicePath =
-          profile.Files.ServiceWorkbookPath;
-
-      string listsPath =
-          profile.Files.ListsWorkbookPath;
-
-      bool serviceConfigured =
-          !string.IsNullOrWhiteSpace(servicePath);
-
-      bool listsConfigured =
-          !string.IsNullOrWhiteSpace(listsPath);
-
-      bool serviceExists =
-          serviceConfigured && File.Exists(servicePath);
-
-      bool listsExists =
-          listsConfigured && File.Exists(listsPath);
-
-      string profilePath =
-          string.IsNullOrWhiteSpace(currentProfilePath)
+      string servicePath = profile.Files.ServiceWorkbookPath;
+      string listsPath = profile.Files.ListsWorkbookPath;
+      bool serviceConfigured = !string.IsNullOrWhiteSpace(servicePath);
+      bool listsConfigured = !string.IsNullOrWhiteSpace(listsPath);
+      bool serviceExists = serviceConfigured && File.Exists(servicePath);
+      bool listsExists = listsConfigured && File.Exists(listsPath);
+      string profilePath = string.IsNullOrWhiteSpace(currentProfilePath)
               ? "(aucun profil chargé)"
               : currentProfilePath;
 

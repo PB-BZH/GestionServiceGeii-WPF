@@ -44,9 +44,28 @@ internal static class FicheServiceHelper {
         .AsEnumerable()
         .Select(row => LireValeur(row,ExcelSchemaNames.Columns.Noms))
         .SelectMany(ExtraireIntervenants)
+        .Where(EstIntervenantValide)
         .Distinct(StringComparer.CurrentCultureIgnoreCase)
         .OrderBy(nom => nom)
         .ToList();
+  }
+
+  private static bool EstIntervenantValide(string? nom) {
+    if (string.IsNullOrWhiteSpace(nom))
+      return false;
+
+    nom = nom.Trim();
+
+    if (nom == "0")
+      return false;
+
+    if (
+      nom.StartsWith("BUT",StringComparison.OrdinalIgnoreCase) ||
+      nom.StartsWith("#",StringComparison.OrdinalIgnoreCase) ||
+      nom.StartsWith("?",StringComparison.OrdinalIgnoreCase))
+      return false;
+
+    return true;
   }
 
   internal static List<string> GetIntervenantsDepuisTableComplete(DataTable tableComplete) {

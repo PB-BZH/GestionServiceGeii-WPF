@@ -53,43 +53,9 @@ namespace GestionServiceGeii.Shared.Librairie_GEII {
   }
 
   public class FormationGEII {
-    private static Promotion fi_geii_1 = new();
-    private static Promotion fi_geii_2 = new();
-    private static Promotion apprentis_geii_1 = new();
-    private static Promotion apprentis_geii_2 = new();
-    private static Promotion alternance = new();
-    private static Promotion sagema_geii_1 = new();
-    private static Promotion sagema_geii_2 = new();
-
-    internal static Promotion FI_Geii_1 {
-      get => fi_geii_1;
-      set => fi_geii_1 = value ?? fi_geii_1;
-    }
-
-    internal static Promotion FI_Geii_2 {
-      get => fi_geii_2;
-      set => fi_geii_2 = value ?? fi_geii_2;
-    }
-
-    internal static Promotion Apprentis_Geii_1 {
-      get => apprentis_geii_1;
-      set => apprentis_geii_1 = value ?? apprentis_geii_1;
-    }
-    internal static Promotion Apprentis_Geii_2 {
-      get => apprentis_geii_2;
-      set => apprentis_geii_2 = value ?? apprentis_geii_2;
-    }
-    internal static Promotion Aternance {
-      get => alternance;
-      set => alternance = value ?? alternance;
-    }
-    internal static Promotion Sagema_Geii_1 {
-      get => sagema_geii_1;
-      set => sagema_geii_1 = value ?? sagema_geii_1;
-    }
-    internal static Promotion Sagema_Geii_2 {
-      get => sagema_geii_2;
-      set => sagema_geii_2 = value ?? sagema_geii_2;
-    }
+    internal static Promotion Geii_1_FI { get; set; } = new();
+    internal static Promotion Geii_2_FI { get; set; } = new();
+    internal static Promotion Geii_1_FA { get; set; } = new();
+    internal static Promotion Geii_2_FA { get; set; } = new();
   }
 }

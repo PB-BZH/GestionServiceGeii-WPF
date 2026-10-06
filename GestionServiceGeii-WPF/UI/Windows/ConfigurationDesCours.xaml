@@ -1,12 +1,427 @@
-﻿<Window x:Class="GestionServiceGeii.UI.Windows.ConfigurationDesCours"
+<Window x:Class="GestionServiceGeii.UI.Windows.ConfigurationDesCours"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GestionServiceGeii.UI.Windows"
         mc:Ignorable="d"
-        Title="ConfigurationDesCours" Height="450" Width="800">
-    <Grid>
-        
+        Title="Configuration des modules"
+        Height="500"
+        Width="482">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0"
+              Margin="50,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Fiche Module :"
+                   Grid.Column="0"
+                   FontFamily="Cambria"
+                   FontSize="14.25pt"
+                   FontStyle="Italic"
+                   FontWeight="Bold"
+                   VerticalAlignment="Center" />
+
+            <TextBox x:Name="texteLibelléModule"
+                     Text="Libellé module"
+                     FontFamily="Cambria"
+                     FontSize="14.25pt"
+                     FontStyle="Italic"
+                     FontWeight="Bold"
+                     Grid.Column="2"
+                     VerticalAlignment="Center" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0"
+                      Height="Auto"
+                      VerticalAlignment="Top">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="Matière"
+                           Content="Matière :"
+                           Grid.Column="0" />
+
+                    <Label Grid.Column="2"
+                           Grid.Row="0"
+                           x:Name="texteMatière"
+                           Content="texteMatière"
+                           FontFamily="Cambria"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="1"
+                           x:Name="lblLibelleCourt"
+                           Content="Libellé   :"
+                           VerticalAlignment="Center" />
+
+                    <Label Grid.Column="2"
+                           Grid.Row="1"
+                           x:Name="txtLibelleCourt"
+                           Content="Libellé court"
+                           FontFamily="Cambria"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="2"
+                           x:Name="codeOSE"
+                           Content="OSE        :"
+                           VerticalAlignment="Center" />
+
+                    <Label Grid.Column="2"
+                           Grid.Row="2"
+                           x:Name="txtCodeOSE"
+                           Content="Code OSE"
+                           FontFamily="Cambria"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center" />
+                </Grid>
+            </GroupBox>
+
+            <GroupBox x:Name="gpbIut"
+                      Grid.Column="2"
+                      Height="Auto"
+                      VerticalAlignment="Top">
+
+                <Grid Margin="10"
+                      HorizontalAlignment="Center">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Grid.Row="0"
+                           Content="IUT"
+                           FontFamily="Cambria"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="1"
+                           x:Name="CM_IUT"
+                           Content="CM :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="1"
+                             x:Name="ValeurCM"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="2"
+                           x:Name="TD_IUT"
+                           Content="TD :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="2"
+                             x:Name="ValeurTD"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="3"
+                           x:Name="TP_IUT"
+                           Content="TP :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="3"
+                             x:Name="ValeurTP"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+                </Grid>
+            </GroupBox>
+
+            <GroupBox x:Name="FenêtreCorrectionIUT"
+                      Grid.Column="4"
+                      Height="Auto"
+                      VerticalAlignment="Top">
+
+                <Grid Margin="10">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Grid.Row="0"
+                           Content="Adaptation IUT"
+                           FontFamily="Cambria"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="1"
+                           Content="CM :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="1"
+                             x:Name="NouvelleValeurCM"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="2"
+                           Content="TD :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="2"
+                             x:Name="NouvelleValeurTD"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="3"
+                           Content="TP :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="3"
+                             x:Name="NouvelleValeurTP"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.33*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="0.33*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="0.33*" />
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0"
+                      Height="Auto"
+                      VerticalAlignment="Top">
+
+                <Grid Margin="10">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Grid.Row="0"
+                           Content="Répartion étudiants"
+                           FontFamily="Cambria"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="0"
+                             Grid.Row="1"
+                             x:Name="NombreEtudiantsGeii1"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="2"
+                           Grid.Row="1"
+                           Content="Etudiants"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="0"
+                             Grid.Row="2"
+                             x:Name="NbGroupeTD_Geii1"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="2"
+                           Grid.Row="2"
+                           Content="Groupe de TD"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="0"
+                             Grid.Row="3"
+                             x:Name="NbGroupeTP_Geii1"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="2"
+                           Grid.Row="3"
+                           Content="Groupe de TP"
+                           VerticalAlignment="Center" />
+
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Grid.Column="2"
+                      Height="Auto"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Center"
+                      Width="Auto">
+
+                <Grid Margin="10">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Grid.Row="0"
+                           Content="Adaptation IUT"
+                           FontFamily="Cambria"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="1"
+                           Content="CM :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="1"
+                             x:Name="Valeur_CM_Module"
+                             Text="0"
+                             Width="32"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="2"
+                           Content="TD :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="2"
+                             x:Name="Valeur_TD_Module"
+                             Text="0"
+                             Width="32"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+
+                    <Label Grid.Column="0"
+                           Grid.Row="3"
+                           Content="TP :"
+                           VerticalAlignment="Center" />
+
+                    <TextBox Grid.Column="2"
+                             Grid.Row="3"
+                             x:Name="Valeur_TP_Module"
+                             Width="32"
+                             Text="0"
+                             FontFamily="Cambria"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" />
+                </Grid>
+            </GroupBox>
+            <StackPanel Orientation="Vertical"
+                        Grid.Row="3"
+                        Grid.Column="4"
+                        VerticalAlignment="TOP">
+                <Button x:Name="ModificationIUT"
+                        Content="Modification IUT"
+                        Width="130"
+                        Margin="0,0,0,10"
+                        Click="ModificationIUT_Click" />
+                <Button x:Name="MiseAJourIUT"
+                        Content="Mise à jour IUT"
+                        Width="130"
+                        Margin="0,10,0,10"
+                        Click="MiseAJourIUT_Click" />
+                <Button x:Name="ValiderficheMatière"
+                        Content="Valider fiche Matière"
+                        Width="130"
+                        Click="ValiderficheMatière_Click"
+                        Margin="0,10,0,10" />
+            </StackPanel>
+
+        </Grid>
     </Grid>
 </Window>

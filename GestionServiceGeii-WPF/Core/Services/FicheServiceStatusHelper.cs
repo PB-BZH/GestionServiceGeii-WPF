@@ -31,6 +31,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Windows;
 
 namespace GestionServiceGeii.Core.Services;
 
@@ -62,21 +63,10 @@ internal static class FicheServiceStatusHelper {
         "teacher-statuses.json");
   }
 
-  internal static TeacherStatusesFile BuildFromSelectionDataSet(
-      DataSet dataSetSelection,
-      string sourceFile) {
-
-    Dictionary<string,TeacherStatusEntry> entries =
-        new(StringComparer.OrdinalIgnoreCase);
-
-    AjouterTitulaires(
-        dataSetSelection,
-        entries);
-
-    AjouterVacataires(
-        dataSetSelection,
-        entries);
-
+  internal static TeacherStatusesFile BuildFromSelectionDataSet(DataSet dataSetSelection,string sourceFile) {
+    Dictionary<string,TeacherStatusEntry> entries = new(StringComparer.OrdinalIgnoreCase);
+    AjouterTitulaires(dataSetSelection,entries);
+    AjouterVacataires(dataSetSelection,entries);
     return new TeacherStatusesFile {
       GeneratedAt = DateTime.Now,
       SourceFile = sourceFile,
@@ -88,88 +78,53 @@ internal static class FicheServiceStatusHelper {
     };
   }
 
-  internal static void Save(
-      string jsonPath,
-      TeacherStatusesFile statusFile) {
-
-    string? directory =
-        Path.GetDirectoryName(jsonPath);
-
+  internal static void Save(string jsonPath,TeacherStatusesFile statusFile) {
+    string? directory = Path.GetDirectoryName(jsonPath);
     if (!string.IsNullOrWhiteSpace(directory)) {
       Directory.CreateDirectory(directory);
     }
-
-    string json =
-        JsonSerializer.Serialize(
-            statusFile,
-            JsonOptions);
-
-    File.WriteAllText(
-        jsonPath,
-        json,
-        Encoding.UTF8);
+    string json = JsonSerializer.Serialize(statusFile,JsonOptions);
+    File.WriteAllText(jsonPath,json,Encoding.UTF8);
   }
 
   internal static TeacherStatusesFile Load(string jsonPath) {
     if (!File.Exists(jsonPath))
       return new TeacherStatusesFile();
-
-    string json =
-        File.ReadAllText(
-            jsonPath,
-            Encoding.UTF8);
-
-    return JsonSerializer.Deserialize<TeacherStatusesFile>(
-               json,
-               JsonOptions)
-           ?? new TeacherStatusesFile();
+    string json = File.ReadAllText(jsonPath,Encoding.UTF8);
+    return JsonSerializer.Deserialize<TeacherStatusesFile>(json,JsonOptions) ?? new TeacherStatusesFile();
   }
 
-  internal static bool TryGetStatus(
-      TeacherStatusesFile statusFile,
-      string teacherName,
-      out string status) {
-
+  internal static bool TryGetStatus(TeacherStatusesFile statusFile,string teacherName,out string status) {
     status = string.Empty;
-
-    string searchedKey =
-        NormalizeNameKey(teacherName);
-
+    string searchedKey = NormalizeNameKey(teacherName);
     if (string.IsNullOrWhiteSpace(searchedKey))
       return false;
-
-    TeacherStatusEntry? entry =
-        statusFile
-            .Teachers
-            .FirstOrDefault(item =>
-                NormalizeNameKey(item.Name) == searchedKey);
-
-    if (entry == null ||
-        string.IsNullOrWhiteSpace(entry.Status)) {
+    TeacherStatusEntry? entry = statusFile
+      .Teachers
+      .FirstOrDefault(item => NormalizeNameKey(item.Name) == searchedKey);
+    if (entry == null || string.IsNullOrWhiteSpace(entry.Status)) {
       return false;
     }
-
-    status =
-        entry.Status.Trim();
-
+    status = entry.Status.Trim();
     return true;
   }
 
-  private static void AjouterTitulaires(
-      DataSet dataSetSelection,
-      Dictionary<string,TeacherStatusEntry> entries) {
-
-    if (!dataSetSelection.Tables.Contains(TableTitulaires))
+  private static void AjouterTitulaires(DataSet dataSetSelection,Dictionary<string,TeacherStatusEntry> entries) {
+    if (!dataSetSelection.Tables.Contains(TableTitulaires)) {
+      MessageBox.Show($"Table '{TableTitulaires}' absente.");
       return;
+    }
 
-    DataTable? table =
-        dataSetSelection.Tables[TableTitulaires];
+    DataTable? table = dataSetSelection.Tables[TableTitulaires];
 
     if (table == null)
       return;
 
-    if (!table.Columns.Contains(ColonneTitulaires) ||
-        !table.Columns.Contains(ColonneStatut)) {
+    string colonnes = string.Join(Environment.NewLine,table.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
+    MessageBox.Show($"Table : {table.TableName}\nLignes : {table.Rows.Count}\n\nColonnes :\n{colonnes}");
+
+    if (!table.Columns.Contains(ColonneTitulaires) || !table.Columns.Contains(ColonneStatut)) {
+      MessageBox.Show($"Colonne recherchée : '{ColonneTitulaires}' = {table.Columns.Contains(ColonneTitulaires)}\nColonne recherchée : '{ColonneStatut}' = {table.Columns.Contains(ColonneStatut)}");
       return;
     }
 
@@ -177,115 +132,52 @@ internal static class FicheServiceStatusHelper {
       string name = ReadValue(row,ColonneTitulaires);
       string firstName = ReadValue(row,ColonnePrenom);
       string status = NormalizeStatus(ReadValue(row,ColonneStatut));
-
-      AddEntry(
-          entries,
-          name,
-          firstName,
-          status,
-          TableTitulaires,
-          overwriteExisting: true);
+      AddEntry(entries,name,firstName,status,TableTitulaires,overwriteExisting: true);
     }
   }
 
-  private static void AjouterVacataires(
-      DataSet dataSetSelection,
-      Dictionary<string,TeacherStatusEntry> entries) {
-
+  private static void AjouterVacataires(DataSet dataSetSelection,Dictionary<string,TeacherStatusEntry> entries) {
     if (!dataSetSelection.Tables.Contains(TableVacataires))
       return;
-
-    DataTable? table =
-        dataSetSelection.Tables[TableVacataires];
-
+    DataTable? table = dataSetSelection.Tables[TableVacataires];
     if (table == null)
       return;
-
     if (!table.Columns.Contains(ColonneVacataires))
       return;
-
     foreach (DataRow row in table.Rows) {
       string name = ReadValue(row,ColonneVacataires);
       string firstName = ReadValue(row,ColonnePrenom);
-
-      AddEntry(
-          entries,
-          name,
-          firstName,
-          "Vacataire",
-          TableVacataires,
-          overwriteExisting: false);
+      AddEntry(entries,name,firstName,"Vacataire",TableVacataires,overwriteExisting: false);
     }
   }
 
-  private static void AddEntry(
-      Dictionary<string,TeacherStatusEntry> entries,
-      string name,
-      string firstName,
-      string status,
-      string source,
-      bool overwriteExisting) {
-
-    name =
-        NormalizeDisplayName(name);
-
-    firstName =
-        NormalizeFirstName(firstName);
-
-    status =
-        NormalizeStatus(status);
-
-    if (string.IsNullOrWhiteSpace(name) ||
-        string.IsNullOrWhiteSpace(status)) {
+  private static void AddEntry(Dictionary<string,TeacherStatusEntry> entries,string name,string firstName,string status,string source,bool overwriteExisting) {
+    name = NormalizeDisplayName(name);
+    firstName = NormalizeFirstName(firstName);
+    status = NormalizeStatus(status);
+    if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(status)) {
       return;
     }
-
-    string key =
-        NormalizeNameKey(name);
-
+    string key = NormalizeNameKey(name);
     if (string.IsNullOrWhiteSpace(key))
       return;
-
-    if (!overwriteExisting &&
-        entries.ContainsKey(key)) {
+    if (!overwriteExisting && entries.ContainsKey(key)) {
       return;
     }
-
-    entries[key] =
-        new TeacherStatusEntry {
-          Name = name,
-          FirstName = firstName,
-          DisplayName = BuildDisplayName(firstName,name),
-          Status = status,
-          Source = source
-        };
+    entries[key] = new TeacherStatusEntry { Name = name,FirstName = firstName,DisplayName = BuildDisplayName(firstName,name),Status = status,Source = source };
   }
 
-  internal static string GetDisplayName(
-    TeacherStatusesFile statusFile,
-    string teacherName) {
-
-    string searchedKey =
-        NormalizeNameKey(teacherName);
-
+  internal static string GetDisplayName(TeacherStatusesFile statusFile,string teacherName) {
+    string searchedKey = NormalizeNameKey(teacherName);
     if (string.IsNullOrWhiteSpace(searchedKey))
       return teacherName;
-
-    TeacherStatusEntry? entry =
-        statusFile
-            .Teachers
-            .FirstOrDefault(item =>
-                NormalizeNameKey(item.Name) == searchedKey);
-
+    TeacherStatusEntry? entry = statusFile.Teachers.FirstOrDefault(item => NormalizeNameKey(item.Name) == searchedKey);
     if (entry == null)
       return teacherName;
-
     if (!string.IsNullOrWhiteSpace(entry.DisplayName))
       return entry.DisplayName;
-
     if (!string.IsNullOrWhiteSpace(entry.FirstName))
       return $"{entry.FirstName.Trim()} {entry.Name.Trim()}";
-
     return entry.Name;
   }
 
@@ -314,16 +206,11 @@ internal static class FicheServiceStatusHelper {
   }
 
   private static string NormalizeDisplayName(string value) {
-    return (value ?? string.Empty)
-        .Trim()
-        .ToUpperInvariant();
+    return (value ?? string.Empty).Trim().ToUpperInvariant();
   }
 
   private static string NormalizeStatus(string value) {
-    string status =
-        (value ?? string.Empty)
-            .Trim();
-
+    string status = (value ?? string.Empty).Trim();
     return status switch {
       "PR" => "PR",
       "MCF" => "MCF",
@@ -331,36 +218,22 @@ internal static class FicheServiceStatusHelper {
       "PRCE" => "PRCE",
       "Vacataire" => "Vacataire",
       "VACATAIRE" => "Vacataire",
-
       "PR / MCF" => "PR",
       "PRAG / PRCE" => "PRAG",
-
       _ => status
     };
   }
 
   private static string NormalizeNameKey(string value) {
-    string normalized =
-        (value ?? string.Empty)
-            .Trim()
-            .ToUpperInvariant()
-            .Normalize(NormalizationForm.FormD);
-
-    StringBuilder builder =
-        new();
-
+    string normalized = (value ?? string.Empty).Trim().ToUpperInvariant().Normalize(NormalizationForm.FormD);
+    StringBuilder builder = new();
     foreach (char character in normalized) {
-      UnicodeCategory category =
-          CharUnicodeInfo.GetUnicodeCategory(character);
-
+      UnicodeCategory category = CharUnicodeInfo.GetUnicodeCategory(character);
       if (category != UnicodeCategory.NonSpacingMark) {
         builder.Append(character);
       }
     }
-
-    return builder
-        .ToString()
-        .Normalize(NormalizationForm.FormC);
+    return builder.ToString().Normalize(NormalizationForm.FormC);
   }
 }
 

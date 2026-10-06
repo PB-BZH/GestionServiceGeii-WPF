@@ -1,7 +1,10 @@
 using System.IO;
+using System.IO.Packaging;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Xps;
+using System.Windows.Xps.Packaging;
 
 namespace GestionServiceGeii.UI.Printing;
 
@@ -15,20 +18,10 @@ internal sealed class RichTextBoxPrintHelper {
   internal void ShowPreview(Window owner,string documentName) {
     FlowDocument document = CloneDocument(_richTextBox.Document);
 
-    DocumentViewer viewer = new() {
-      Document = document
-    };
+    PrintDialog printDialog = new();
+    ConfigureDocument(document,printDialog);
 
-    Window previewWindow = new() {
-      Owner = owner,
-      Title = $"Aperçu avant impression - {documentName}",
-      Content = viewer,
-      Width = 1100,
-      Height = 800,
-      WindowStartupLocation = WindowStartupLocation.CenterOwner
-    };
-
-    previewWindow.ShowDialog();
+    AfficherApercu(owner,document,documentName);
   }
 
   internal void Print(Window owner,string documentName) {
@@ -53,8 +46,25 @@ internal sealed class RichTextBoxPrintHelper {
     FlowDocument document = CloneDocument(_richTextBox.Document);
     ConfigureDocument(document,printDialog);
 
+    AfficherApercu(owner,document,documentName);
+  }
+
+  private static void AfficherApercu(Window owner,FlowDocument document,string documentName) {
+    MemoryStream xpsStream = new();
+    Package package = Package.Open(xpsStream,FileMode.Create,FileAccess.ReadWrite);
+
+    string packageUriString = $"memorystream://{Guid.NewGuid():N}.xps";
+    Uri packageUri = new(packageUriString);
+    PackageStore.AddPackage(packageUri,package);
+
+    XpsDocument xpsDocument = new(package,CompressionOption.Fast,packageUriString);
+
+    IDocumentPaginatorSource paginatorSource = document;
+    XpsDocumentWriter writer = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+    writer.Write(paginatorSource.DocumentPaginator);
+
     DocumentViewer viewer = new() {
-      Document = document
+      Document = xpsDocument.GetFixedDocumentSequence()
     };
 
     Window previewWindow = new() {
@@ -64,6 +74,14 @@ internal sealed class RichTextBoxPrintHelper {
       Width = 1100,
       Height = 800,
       WindowStartupLocation = WindowStartupLocation.CenterOwner
+    };
+
+    previewWindow.Closed += (_,_) => {
+      viewer.Document = null;
+      xpsDocument.Close();
+      PackageStore.RemovePackage(packageUri);
+      package.Close();
+      xpsStream.Dispose();
     };
 
     previewWindow.ShowDialog();

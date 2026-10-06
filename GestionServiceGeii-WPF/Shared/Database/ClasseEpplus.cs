@@ -221,12 +221,7 @@ namespace GestionServiceGeii.Shared.Database {
     /// <param name="condition">Condition évaluée pour chaque ligne.</param>
     /// <param name="actionMiseAJour">Action exécutée sur chaque ligne correspondante.</param>
     /// <returns>Nombre de lignes modifiées.</returns>
-    internal static int MiseAJourCelluleExcel_Epplus(
-        string cheminFichier,
-        string nomFeuille,
-        Func<ExcelWorksheet,int,bool> condition,
-        Action<ExcelWorksheet,int> actionMiseAJour
-    ) {
+    internal static int MiseAJourCelluleExcel_Epplus(string cheminFichier,string nomFeuille,Func<ExcelWorksheet,int,bool> condition,Action<ExcelWorksheet,int> actionMiseAJour,bool premierResultatSeulement = false) {
       int lignesModifiees = 0;
 
       ConfigureEpplusLicense();
@@ -242,6 +237,8 @@ namespace GestionServiceGeii.Shared.Database {
           if (condition(feuille,ligne)) {
             actionMiseAJour(feuille,ligne);
             lignesModifiees++;
+            if (premierResultatSeulement)
+              break;
           }
         }
         if (lignesModifiees > 0)
@@ -558,10 +555,7 @@ namespace GestionServiceGeii.Shared.Database {
       return result;
     }
 
-    internal static void CreerClasseurDepuisDataSet_Epplus(
-    string cheminFichier,
-    DataSet dataSet
-) {
+    internal static void CreerClasseurDepuisDataSet_Epplus(string cheminFichier,DataSet dataSet) {
       ConfigureEpplusLicense();
 
       if (string.IsNullOrWhiteSpace(cheminFichier))
