@@ -38,7 +38,7 @@
         MinHeight="500"
         MinWidth="1300"
         Closing="DialogueServiceGEII_Closing"
-        Height="674">
+        Height="680">
 
     <Window.Resources>
 
@@ -61,7 +61,7 @@
             <RowDefinition Height="32" />
             <RowDefinition Height="32" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="32" />
+            <RowDefinition Height="64" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="_Fichier">
@@ -198,7 +198,8 @@
         <ToolBar Grid.Row="1">
             <!--Barre d'outils-->
         </ToolBar>
-        <Grid Grid.Row="2" x:Name="pnlViewHost"
+        <Grid Grid.Row="2"
+              x:Name="pnlViewHost"
               Margin="10">
             <Grid x:Name="pnlGestionServices"
                   Visibility="Visible"
@@ -324,7 +325,7 @@
                                       ColumnWidth="*"
                                       ColumnHeaderHeight="28"
                                       RowHeight="28">
-                                
+
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Formation"
                                                         Binding="{Binding Formation}"
@@ -397,7 +398,7 @@
                                     <ColumnDefinition Width="40" />
                                 </Grid.ColumnDefinitions>
                                 <Label x:Name="Matière"
-                                    Content="Matière :"
+                                       Content="Matière :"
                                        Grid.Row="0"
                                        Grid.Column="0"
                                        VerticalAlignment="Center" />
@@ -480,133 +481,420 @@
                                         Click="ModifierFicheMatière_Click" />
                             </Grid>
                         </GroupBox>
-                        <GroupBox Grid.Row="2"
-                                  Header="CM"
-                                  FontWeight="Bold"
-                                  Width="400"
-                                  HorizontalAlignment="Center">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="60" />
-                                    <ColumnDefinition Width="20" />
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="100" />
-                                </Grid.ColumnDefinitions>
-                                <Label x:Name="nbEtudiants"
-                                       Content="0"
-                                       Grid.Column="0"
-                                       HorizontalContentAlignment="Center"
-                                       FontWeight="Bold" />
+                        <StackPanel x:Name="splCoursGeii1"
+                                    Grid.Row="2"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Collapsed"
+                                    Orientation="Vertical">
+                            <Label Content="GEII 1 - Formation initiale"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                            <GroupBox Header="CM"
+                                      FontWeight="Bold"
+                                      Margin="0,0,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbEtudiants_Geii1"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
 
-                                <TextBlock Grid.Column="2"
+                                    <TextBlock Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="étudiants" />
+
+                                    <Button x:Name="boutonAjouterCM"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterCM_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerCM"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerCM_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="TD"
+                                      FontWeight="Bold"
+                                      Margin="0,2.5,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeTd_Geii1"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeTdTotal_Geii1"
+                                           Grid.Column="2"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Text="étudiants" />
+                                           FontWeight="Bold"
+                                           Content="0" />
 
-                                <Button x:Name="boutonAjouterCM"
-                                        Content="Ajouter"
-                                        Click="boutonAjouterCM_Click"
-                                        Grid.Column="4"
-                                        Height="25" />
+                                    <Button x:Name="boutonAjouterTD"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterTD_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
 
-                                <Button x:Name="boutonSupprimerCM"
-                                        Content="Supprimer"
-                                        Click="boutonSupprimerCM_Click"
-                                        Grid.Column="6"
-                                        Height="25" />
-                            </Grid>
-                        </GroupBox>
-                        <GroupBox Header="TD"
-                                  Grid.Row="4"
-                                  FontWeight="Bold"
-                                  Width="400"
-                                  HorizontalAlignment="Center">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="20" />
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="20" />
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="100" />
-                                </Grid.ColumnDefinitions>
-                                <Label x:Name="nbGroupeTd"
-                                       Content="0"
-                                       Grid.Column="0"
-                                       HorizontalContentAlignment="Center"
-                                       FontWeight="Bold" />
+                                    <Button x:Name="boutonSupprimerTD"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerTD_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="TP"
+                                      Margin="0,2.5,0,0"
+                                      FontWeight="Bold"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeTp_Geii1"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
 
-                                <Label Grid.Column="1"
-                                       Content=" / " />
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
 
-                                <Label x:Name="nbGroupeTdTotal"
-                                       Grid.Column="2"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       FontWeight="Bold"
-                                       Content="0" />
+                                    <Label x:Name="nbGroupeTpTotal_Geii1"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
 
-                                <Button x:Name="boutonAjouterTD"
-                                        Content="Ajouter"
-                                        Click="boutonAjouterTD_Click"
-                                        Grid.Column="4"
-                                        Height="25" />
+                                    <Button x:Name="boutonAjouterTP"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterTP_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
 
-                                <Button x:Name="boutonSupprimerTD"
-                                        Content="Supprimer"
-                                        Click="boutonSupprimerTD_Click"
-                                        Grid.Column="6"
-                                        Height="25" />
-                            </Grid>
-                        </GroupBox>
-                        <GroupBox Header="TP"
-                                  Grid.Row="6"
-                                  FontWeight="Bold"
-                                  Width="400"
-                                  HorizontalAlignment="Center">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="20" />
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="20" />
-                                    <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="100" />
-                                </Grid.ColumnDefinitions>
-                                <Label x:Name="nbGroupeTp"
-                                       Content="0"
-                                       Grid.Column="0"
-                                       HorizontalContentAlignment="Center"
-                                       FontWeight="Bold" />
+                                    <Button x:Name="boutonSupprimerTP"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerTP_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                        </StackPanel>
+                        <StackPanel x:Name="splCoursGeii2_FI"
+                                    Grid.Row="2"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Collapsed"
+                                    Orientation="Vertical">
+                            <Label Content="GEII 2 - Formation initiale"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                            <GroupBox Header="CM"
+                                      FontWeight="Bold"
+                                      Margin="0,0,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbEtudiants_Geii2_FI"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
 
-                                <Label Grid.Column="1"
-                                       Content=" / " />
+                                    <TextBlock Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="étudiants" />
 
-                                <Label x:Name="nbGroupeTpTotal"
-                                       Grid.Column="2"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       FontWeight="Bold"
-                                       Content="0" />
+                                    <Button x:Name="boutonAjouterCM_Geii2_FI"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterCM_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
 
-                                <Button x:Name="boutonAjouterTP"
-                                        Content="Ajouter"
-                                        Click="boutonAjouterTP_Click"
-                                        Grid.Column="4"
-                                        Height="25" />
+                                    <Button x:Name="boutonSupprimerCM_Geii2_FI"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerCM_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="TD"
+                                      FontWeight="Bold"
+                                      Margin="0,2.5,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeTd_Geii2_FI"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
 
-                                <Button x:Name="boutonSupprimerTP"
-                                        Content="Supprimer"
-                                        Click="boutonSupprimerTP_Click"
-                                        Grid.Column="6"
-                                        Height="25" />
-                            </Grid>
-                        </GroupBox>
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeTdTotal_Geii2_FI"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterTD_Geii2_FI"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterTD_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerTD_Geii2_FI"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerTD_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="TP"
+                                      Margin="0,2.5,0,0"
+                                      FontWeight="Bold"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeTp_Geii2_FI"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeTpTotal_Geii2_FI"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterTP_Geii2_FI"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterTP_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerTP_Geii2_FI"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerTP_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                        </StackPanel>
+                        <StackPanel x:Name="splCoursGeii2_FA"
+                                    Grid.Row="2"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible"
+                                    Orientation="Vertical">
+                            <Label Content="GEII 2 - Formation en alternance"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                            <GroupBox Header="CM"
+                                      FontWeight="Bold"
+                                      Margin="0,0,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbEtudiants_Geii2_FA"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <TextBlock Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="étudiants" />
+
+                                    <Button x:Name="boutonAjouterCM_Geii2_FA"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterCM_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerCM_Geii2_FA"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerCM_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="TD"
+                                      FontWeight="Bold"
+                                      Margin="0,2.5,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeTd_Geii2_FA"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeTdTotal_Geii2_FA"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterTD_Geii2_FA"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterTD_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerTD_Geii2_FA"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerTD_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="TP"
+                                      Margin="0,2.5,0,0"
+                                      FontWeight="Bold"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeTp_Geii2_FA"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeTpTotal_Geii2_FA"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterTP_Geii2_FA"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterTP_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerTP_Geii2_FA"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerTP_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                        </StackPanel>
                     </Grid>
                 </Grid>
                 <Grid Grid.Row="1">
@@ -647,28 +935,28 @@
                                   Grid.Row="1"
                                   Height="25" />
 
-                        <TextBlock Text="U.E."
+                        <TextBlock Text="Formation"
                                    Grid.Row="0"
                                    Grid.Column="2"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    FontWeight="Bold" />
 
-                        <ComboBox x:Name="UE"
+                        <ComboBox x:Name="Formation"
+                                  SelectionChanged="Formation_SelectionChanged"
                                   Grid.Row="1"
                                   Grid.Column="2"
-                                  SelectionChanged="UE_SelectionChanged"
                                   Height="25" />
 
-                        <TextBlock Text="Formation"
+                        <TextBlock Text="Parcours"
                                    Grid.Row="0"
                                    Grid.Column="4"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    FontWeight="Bold" />
 
-                        <ComboBox x:Name="Formation"
-                                  SelectionChanged="Formation_SelectionChanged"
+                        <ComboBox x:Name="Parcours"
+                                  SelectionChanged="Parcours_SelectionChanged"
                                   Grid.Row="1"
                                   Grid.Column="4"
                                   Height="25" />
@@ -827,7 +1115,7 @@
                         <ComboBox x:Name="cmbStatutFicheService"
                                   Grid.Row="1"
                                   Grid.Column="6"
-                                  Height="25" >
+                                  Height="25">
                             <sys:String>PR</sys:String>
                             <sys:String>MCF</sys:String>
                             <sys:String>PRAG</sys:String>
@@ -859,7 +1147,7 @@
                              Grid.ColumnSpan="2">
 
                     <FlowDocument ColumnWidth="1000">
-                        <Paragraph Margin="0">                            
+                        <Paragraph Margin="0">
                             <Run Text="Sélectionnez un intervenant et un statut pour afficher la fiche de service prévisionnelle." />
                         </Paragraph>
                     </FlowDocument>
@@ -935,74 +1223,140 @@
             </Grid>
         </Grid>
         <StatusBar Grid.Row="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32" />
+                    <RowDefinition Height="32" />
+                </Grid.RowDefinitions>
 
-            <StatusBarItem>
-                <Border Background="DarkOrange"
-                        Padding="6,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- GEII-1 : occupe les deux lignes -->
+                <Border Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="0"
+                        Background="DarkOrange"
+                        Padding="6,2"
+                        VerticalAlignment="Stretch">
                     <TextBlock x:Name="étatTitreEffectif_Geii1"
                                Text="Effectif Geii1 :"
-                               FontWeight="Bold" />
+                               FontWeight="Bold"
+                               VerticalAlignment="Center" />
                 </Border>
-            </StatusBarItem>
 
-            <Separator />
-
-            <StatusBarItem>
                 <TextBlock x:Name="étatEffectif_Geii1"
+                           Grid.Row="0"
+                           Grid.RowSpan="2"
+                           Grid.Column="1"
                            Text="0"
-                           ToolTip="Effectif Geii1" />
-            </StatusBarItem>
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
 
-            <Separator />
-
-            <StatusBarItem>
                 <TextBlock x:Name="étatNbGroupeTD_Geii1"
+                           Grid.Row="0"
+                           Grid.RowSpan="2"
+                           Grid.Column="2"
                            Text="TD : 0"
-                           ToolTip="Nombre de groupes TD_Geii1" />
-            </StatusBarItem>
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
 
-            <Separator />
-
-            <StatusBarItem>
                 <TextBlock x:Name="étatNbGroupeTP_Geii1"
+                           Grid.Row="0"
+                           Grid.RowSpan="2"
+                           Grid.Column="3"
                            Text="TP : 0"
-                           ToolTip="Nombre de groupes TP_Geii1" />
-            </StatusBarItem>
-            <Separator />
-            <Separator />
-            <StatusBarItem>
-                <Border Background="DarkOrchid"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <!-- GEII-2 FI : première ligne -->
+                <Border Grid.Row="0"
+                        Grid.Column="5"
+                        Background="DarkOrchid"
                         Padding="6,2">
                     <TextBlock x:Name="étatTitreEffectif_Geii2_FI"
-                               Text="Effectif Geii2_FI :"
-                               FontWeight="Bold" />
+                               Text="Effectif Geii2 FI :"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center" />
                 </Border>
-            </StatusBarItem>
 
-            <Separator />
-
-            <StatusBarItem>
                 <TextBlock x:Name="étatEffectif_Geii2_FI"
+                           Grid.Row="0"
+                           Grid.Column="6"
                            Text="0"
-                           ToolTip="Effectif Geii2_FI" />
-            </StatusBarItem>
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
 
-            <Separator />
-
-            <StatusBarItem>
                 <TextBlock x:Name="étatNbGroupeTD_Geii2_FI"
+                           Grid.Row="0"
+                           Grid.Column="7"
                            Text="TD : 0"
-                           ToolTip="Nombre de groupes TD_Geii2_FI" />
-            </StatusBarItem>
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
 
-            <Separator />
-
-            <StatusBarItem>
                 <TextBlock x:Name="étatNbGroupeTP_Geii2_FI"
+                           Grid.Row="0"
+                           Grid.Column="8"
                            Text="TP : 0"
-                           ToolTip="Nombre de groupes TP_Geii2_FI" />
-            </StatusBarItem>
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
 
+                <TextBlock x:Name="étatNbGroupeTPSp_Geii2_FI"
+                           Grid.Row="0"
+                           Grid.Column="9"
+                           Text="TPSp : 0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <!-- GEII-2 FA : deuxième ligne -->
+                <Border Grid.Row="1"
+                        Grid.Column="5"
+                        Background="DarkSeaGreen"
+                        Padding="6,2">
+                    <TextBlock x:Name="étatTitreEffectif_Geii2_FA"
+                               Text="Effectif Geii2 FA :"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center" />
+                </Border>
+
+                <TextBlock x:Name="étatEffectif_Geii2_FA"
+                           Grid.Row="1"
+                           Grid.Column="6"
+                           Text="0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <TextBlock x:Name="étatNbGroupeTD_Geii2_FA"
+                           Grid.Row="1"
+                           Grid.Column="7"
+                           Text="TD : 0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <TextBlock x:Name="étatNbGroupeTP_Geii2_FA"
+                           Grid.Row="1"
+                           Grid.Column="8"
+                           Text="TP : 0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <TextBlock x:Name="étatNbGroupeTPSp_Geii2_FA"
+                           Grid.Row="1"
+                           Grid.Column="9"
+                           Text="TPSp : 0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+            </Grid>
         </StatusBar>
     </Grid>
 </Window>

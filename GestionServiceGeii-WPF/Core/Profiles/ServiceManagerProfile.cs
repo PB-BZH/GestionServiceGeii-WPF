@@ -84,19 +84,39 @@ namespace GestionServiceGeii.Core.Profiles {
   }
 
   public sealed class ServiceGroupsOptions {
-    public bool IsConfigured { get; set; }
-    public string FormationName { get; set; } = "GEII 1";
+    public bool Geii1_IsConfigured { get; set; } = false;
+    public string Geii1_FormationName { get; set; } = "GEII 1";
     public int Geii1_StudentCount { get; set; }
     public int Geii1_TdGroupCount { get; set; }
     public int Geii1_TpGroupCount { get; set; }
     public int MaxStudentsPerTpGroup { get; set; }
     public string[] Geii1_TdGroupNames { get; set; } = [];
     public string[] Geii1_TpGroupNames { get; set; } = [];
-    public int Geii2_StudentCount { get; set; }
-    public int Geii2_TdGroupCount { get; set; }
-    public int Geii2_TpGroupCount { get; set; }
-    public string[] Geii2_TdGroupNames { get; set; } = [];
-    public string[] Geii2_TpGroupNames { get; set; } = [];
+    public string[] Geii1_TpSpGroupNames { get; set; } = [];
+
+    public bool Geii2_FI_IsConfigured { get; set; } = false;
+    public string Geii2_FI_FormationName { get; set; } = "GEII 2 FI";
+    public int Geii2_FI_StudentCount { get; set; }
+    public int Geii2_FI_TdGroupCount { get; set; }
+    public int Geii2_FI_Td_officiel_GroupCount { get; set; }
+    public int Geii2_FI_TpGroupCount { get; set; }
+    public int Geii2_FI_TpSpGroupCount { get; set; }
+    public string[] Geii2_FI_TdGroupNames { get; set; } = [];
+    public string[] Geii2_FI_Td_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FI_TpGroupNames { get; set; } = [];
+    public string[] Geii2_FI_TpSpGroupNames { get; set; } = [];
+
+    public bool Geii2_FA_IsConfigured { get; set; } = false;
+    public string Geii2_FA_FormationName { get; set; } = "GEII 2 FA";
+    public int Geii2_FA_StudentCount { get; set; }
+    public int Geii2_FA_TdGroupCount { get; set; }
+    public int Geii2_FA_Td_officiel_GroupCount { get; set; }
+    public int Geii2_FA_TpGroupCount { get; set; }
+    public int Geii2_FA_TpSpGroupCount { get; set; }
+    public string[] Geii2_FA_TdGroupNames { get; set; } = [];
+    public string[] Geii2_FA_Td_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FA_TpGroupNames { get; set; } = [];
+    public string[] Geii2_FA_TpSpGroupNames { get; set; } = [];
   }
 
   public sealed class ServiceFilesOptions {

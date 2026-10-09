@@ -6,11 +6,10 @@
         xmlns:local="clr-namespace:GestionServiceGeii.UI.Windows"
         mc:Ignorable="d"
         Title="Configuration des effectifs en GEII-2"
-        Height="420"
+        Height="504"
         Width="1000">
 
     <Window.Resources>
-
         <Style x:Key="EffectifTextBoxBase"
                TargetType="TextBox">
             <Setter Property="Width"
@@ -29,13 +28,12 @@
                TargetType="TextBox"
                BasedOn="{StaticResource EffectifTextBoxBase}">
             <EventSetter Event="TextChanged"
-                         Handler="EffectifParcoursFi_TextChanged" />
+                         Handler="EffectifParcours_TextChanged" />
         </Style>
 
         <Style x:Key="EffectifTPTextBox"
                TargetType="TextBox"
                BasedOn="{StaticResource EffectifTextBoxBase}" />
-
     </Window.Resources>
 
     <Grid Margin="10">
@@ -45,19 +43,19 @@
             <RowDefinition Height="64" />
         </Grid.RowDefinitions>
         <TextBlock x:Name="lblFormationName"
-               Text="GEII-2"
-               Grid.Row="0"
-               Grid.Column="0"
-               Grid.ColumnSpan="3"
-               VerticalAlignment="Center"
-               HorizontalAlignment="Center"
-               FontFamily="Segoe UI"
-               FontSize="18"
-               FontStyle="Italic"
-               FontWeight="Bold" />
+                   Text="GEII-2"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   FontFamily="Segoe UI"
+                   FontSize="18"
+                   FontStyle="Italic"
+                   FontWeight="Bold" />
         <Grid x:Name="pnlFi"
               Visibility="Visible"
-              d:Visibility="Visible"
+              d:Visibility="Collapsed"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -66,116 +64,713 @@
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GroupBox x:Name="grpParcoursGEII_2_Fi"
+                          Header="Configuration des parcours de spécialité"
+                          Grid.Row="0"
+                          Height="170"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-            <GroupBox x:Name="grpParcoursGEII_2_Fi"
-                      Header="Configuration des parcours de spécialité"
-                      Grid.Row="1"
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="15" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="lblParcoursGEII_2_Fi"
+                                   Text="Effectif :"
+                                   Grid.Column="0"
+                                   Grid.Row="0"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold"
+                                   FontSize="14" />
+
+                        <TextBox x:Name="txtNbEtudiantsFi"
+                                 Grid.Column="2"
+                                 Grid.Row="0"
+                                 Width="100"
+                                 Height="25"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center" />
+
+                        <CheckBox x:Name="chkParcoursEseFi"
+                                  Grid.Column="0"
+                                  Grid.Row="2"
+                                  Content="ESE_FI"
+                                  VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtNbEtudiantsEseFi"
+                                 Grid.Column="2"
+                                 Grid.Row="2">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox"
+                                       BasedOn="{StaticResource EffectifParcoursTextBox}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursEseFi}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <CheckBox x:Name="chkParcoursEmeFi"
+                                  Grid.Column="0"
+                                  Grid.Row="3"
+                                  Content="EME_FI"
+                                  VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtNbEtudiantsEmeFi"
+                                 Grid.Column="2"
+                                 Grid.Row="3">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox"
+                                       BasedOn="{StaticResource EffectifParcoursTextBox}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursEmeFi}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <CheckBox x:Name="chkParcoursAiiFi"
+                                  Grid.Column="0"
+                                  Grid.Row="4"
+                                  Content="AII_FI"
+                                  VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtNbEtudiantsAiiFi"
+                                 Grid.Column="2"
+                                 Grid.Row="4">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox"
+                                       BasedOn="{StaticResource EffectifParcoursTextBox}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursAiiFi}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox x:Name="grpRegroupement_TD_Fi"
+                          Header="Configuration des groupes de TD"
+                          Grid.Row="1"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="txtTd1_FI"
+                                   Text="TD1"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
+                                   VerticalAlignment="Center" />
+                        <StackPanel Grid.Row="0"
+                                    Grid.Column="2"
+                                    Margin="5,0"
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <CheckBox x:Name="ChkESE"
+                                      Content="ESE"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      Margin="0,0,10,0"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkEME"
+                                      Content="EME"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkAII"
+                                      Content="AII"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      Margin="10,0,0,0"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <TextBlock Text="Effectif : "
+                                   Grid.Row="0"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTotalTD1_FI"
+                                 Grid.Row="0"
+                                 Width="Auto"
+                                 Grid.Column="6"
+                                 VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Center" />
+
+                        <TextBox x:Name="txtTd2_FI"
+                                 Text="TD2"
+                                 Grid.Row="1"
+                                 Grid.Column="0"
+                                 Width="50"
+                                 VerticalAlignment="Center" />
+                        <StackPanel Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    Margin="5,0"
+                                    Grid.Column="2"
+                                    Orientation="Horizontal">
+                            <CheckBox x:Name="ChkESE_2"
+                                      Content="ESE"
+                                      Margin="0,0,10,0"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkEME_2"
+                                      Content="EME"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkAII_2"
+                                      Content="AII"
+                                      Margin="10,0,0,0"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="Effectif : "
+                                   Grid.Row="1"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTotalTD2_FI"
+                                 Grid.Row="1"
+                                 Grid.Column="6"
+                                 Width="Auto"
+                                 VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Center" />
+
+                        <TextBox x:Name="txtTd3_FI"
+                                 Text="TD3"
+                                 Grid.Row="2"
+                                 Grid.Column="0"
+                                 Width="50"
+                                 VerticalAlignment="Center" />
+                        <StackPanel Grid.Row="2"
+                                    HorizontalAlignment="Center"
+                                    Margin="5,0"
+                                    Grid.Column="2"
+                                    Orientation="Horizontal">
+                            <CheckBox x:Name="ChkESE_3"
+                                      Content="ESE"
+                                      Margin="0,0,10,0"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkEME_3"
+                                      Content="EME"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkAII_3"
+                                      Content="AII"
+                                      Margin="10,0,0,0"
+                                      Checked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="Effectif : "
+                                   Grid.Row="2"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTotalTD3_FI"
+                                 Grid.Row="2"
+                                 Grid.Column="6"
+                                 Width="Auto"
+                                 VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Center" />
+
+                    </Grid>
+                </GroupBox>
+            </Grid>
+
+            <GroupBox x:Name="grpTPCommunGroup_Fi"
+                      Header="Groupes TP communs"
+                      Grid.Row="0"
                       Margin="5"
-                      VerticalAlignment="Center"
-                      Grid.Column="0">
+                      Grid.Column="2">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="150" />
                         <ColumnDefinition Width="10" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
                     <Grid.RowDefinitions>
                         <RowDefinition Height="32" />
-                        <RowDefinition Height="15" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
                         <RowDefinition Height="32" />
                         <RowDefinition Height="32" />
                         <RowDefinition Height="32" />
                     </Grid.RowDefinitions>
+                    <TextBlock x:Name="tbkTpCommunEse21"
+                               Text="ESE21_FI"
+                               Grid.Column="0"
+                               Grid.Row="0"
+                               VerticalAlignment="Center" />
 
-                    <TextBlock x:Name="lblParcoursGEII_2_Fi"
-                           Text="Effectif :"
-                           Grid.Column="0"
-                           Grid.Row="0"
-                           HorizontalAlignment="Center"
-                           FontWeight="Bold"
-                           FontSize="14" />
-
-                    <TextBox x:Name="txtNbEtudiantsFi"
+                    <TextBox x:Name="txtTpCommunEse21"
                              Grid.Column="2"
                              Grid.Row="0"
-                             Width="100"
-                             Height="25"
-                             HorizontalContentAlignment="Center"
-                             VerticalContentAlignment="Center" />
+                             Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <CheckBox x:Name="chkParcoursEseFi"
-                              Grid.Column="0"
-                              Grid.Row="2"
-                              Content="ESE__FI"
-                              VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunEse22"
+                               Text="ESE22_FI"
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtNbEtudiantsEseFi"
+                    <TextBox x:Name="txtTpCommunEse22"
                              Grid.Column="2"
-                             Grid.Row="2">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox"
-                                   BasedOn="{StaticResource EffectifParcoursTextBox}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursEseFi}"
-                                                 Value="True">
-                                        <Setter Property="Visibility"
-                                                Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                             Grid.Row="1"
+                             Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <CheckBox x:Name="chkParcoursEmeFi"
-                              Grid.Column="0"
-                              Grid.Row="3"
-                              Content="EME__FI"
-                              VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunEme21"
+                               Text="EME21_FI"
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtNbEtudiantsEmeFi"
+                    <TextBox x:Name="txtTpCommunEme21"
                              Grid.Column="2"
-                             Grid.Row="3">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox"
-                                   BasedOn="{StaticResource EffectifParcoursTextBox}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursEmeFi}"
-                                                 Value="True">
-                                        <Setter Property="Visibility"
-                                                Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                             Grid.Row="2"
+                             Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <CheckBox x:Name="chkParcoursAiiFi"
-                              Grid.Column="0"
-                              Grid.Row="4"
-                              Content="AII__FI"
-                              VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunEme22"
+                               Text="EME22_FI"
+                               Grid.Column="0"
+                               Grid.Row="3"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtNbEtudiantsAiiFi"
+                    <TextBox x:Name="txtTpCommunEme22"
                              Grid.Column="2"
-                             Grid.Row="4">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox"
-                                   BasedOn="{StaticResource EffectifParcoursTextBox}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursAiiFi}"
-                                                 Value="True">
-                                        <Setter Property="Visibility"
-                                                Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
+                             Grid.Row="3"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+
+                    <TextBlock x:Name="tbkTpCommunAii21"
+                               Text="AII21_FI"
+                               Grid.Column="0"
+                               Grid.Row="4"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpCommunAii21"
+                             Grid.Column="2"
+                             Grid.Row="4"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+
+                    <TextBlock x:Name="tbkTpCommunAii22"
+                               Text="AII22_FI"
+                               Grid.Column="0"
+                               Grid.Row="5"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpCommunAii22"
+                             Grid.Column="2"
+                             Grid.Row="5"
+                             Style="{StaticResource EffectifTextBoxBase}" />
 
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="grpTPCommunGroup_Fi"
+            <GroupBox x:Name="grpTPSpecializedGroup_Fi"
+                      Header="Groupes TP spécialisés"
+                      Margin="5"
+                      Grid.Row="0"
+                      Grid.Column="4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="32" />
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="tbkTpSpecialiséEse21"
+                               Text="ESE21Sp_FI"
+                               Grid.Column="0"
+                               Grid.Row="0"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpSpecialiséEse21"
+                             Grid.Column="2"
+                             Grid.Row="0"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+
+                    <TextBlock x:Name="tbkTpSpecialiséEse22"
+                               Text="ESE22Sp_FI"
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpSpecialiséEse22"
+                             Grid.Column="2"
+                             Grid.Row="1"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+
+                    <TextBlock x:Name="tbkTpSpecialiséEme21"
+                               Text="EME21Sp_FI"
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpSpecialiséEme21"
+                             Grid.Column="2"
+                             Grid.Row="2"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+
+                    <TextBlock x:Name="tbkTpSpecialiséEme22"
+                               Text="EME22Sp_FI"
+                               Grid.Column="0"
+                               Grid.Row="3"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpSpecialiséEme22"
+                             Grid.Column="2"
+                             Grid.Row="3"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+
+                    <TextBlock x:Name="tbkTpSpecialiséAii21"
+                               Text="AII21Sp_FI"
+                               Grid.Column="0"
+                               Grid.Row="4"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpSpecialiséAii21"
+                             Grid.Column="2"
+                             Grid.Row="4"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+
+                    <TextBlock x:Name="tbkTpSpecialiséAii22"
+                               Text="AII22Sp_FI"
+                               Grid.Column="0"
+                               Grid.Row="5"
+                               VerticalAlignment="Center" />
+
+                    <TextBox x:Name="txtTpSpecialiséAii22"
+                             Grid.Column="2"
+                             Grid.Row="5"
+                             Style="{StaticResource EffectifTextBoxBase}" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+        <Grid x:Name="pnlFa"
+              Visibility="Collapsed"
+              d:Visibility="visible"
+              Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <GroupBox x:Name="grpParcoursGEII_2_Fa"
+                          Header="Configuration des parcours de spécialité"
+                          Grid.Row="0"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="15" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="lblParcoursGEII_2_Fa"
+                                   Text="Effectif :"
+                                   Grid.Column="0"
+                                   Grid.Row="0"
+                                   HorizontalAlignment="Center"
+                                   FontWeight="Bold"
+                                   FontSize="14" />
+
+                        <TextBox x:Name="txtNbEtudiantsFa"
+                                 Grid.Column="2"
+                                 Grid.Row="0"
+                                 Width="100"
+                                 Height="25"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center" />
+
+                        <CheckBox x:Name="chkParcoursEseFa"
+                                  Grid.Column="0"
+                                  Grid.Row="2"
+                                  Content="ESE_FA"
+                                  VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtNbEtudiantsEseFa"
+                                 Grid.Column="2"
+                                 Grid.Row="2">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox"
+                                       BasedOn="{StaticResource EffectifParcoursTextBox}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursEseFa}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <CheckBox x:Name="chkParcoursEmeFa"
+                                  Grid.Column="0"
+                                  Grid.Row="3"
+                                  Content="EME_FA"
+                                  VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtNbEtudiantsEmeFa"
+                                 Grid.Column="2"
+                                 Grid.Row="3">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox"
+                                       BasedOn="{StaticResource EffectifParcoursTextBox}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursEmeFa}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <CheckBox x:Name="chkParcoursAiiFa"
+                                  Grid.Column="0"
+                                  Grid.Row="4"
+                                  Content="AII_FA"
+                                  VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtNbEtudiantsAiiFa"
+                                 Grid.Column="2"
+                                 Grid.Row="4">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox"
+                                       BasedOn="{StaticResource EffectifParcoursTextBox}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkParcoursAiiFa}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox x:Name="grpRegroupement_TD_Fa"
+                          Header="Configuration des groupes de TD"
+                          Grid.Row="1"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Name="txtTd1_FA"
+                                   Text="TD1"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
+                                   VerticalAlignment="Center" />
+                        <StackPanel Grid.Row="0"
+                                    Grid.Column="2"
+                                    Margin="5,0"
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <CheckBox x:Name="ChkESE_FA"
+                                      Content="ESE"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      Margin="0,0,10,0"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkEME_FA"
+                                      Content="EME"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkAII_FA"
+                                      Content="AII"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      Margin="10,0,0,0"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <TextBlock Text="Effectif : "
+                                   Grid.Row="0"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTotalTD1_FA"
+                                 Grid.Row="0"
+                                 Width="Auto"
+                                 Grid.Column="6"
+                                 VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Center" />
+
+                        <TextBox x:Name="txtTd2_FA"
+                                 Text="TD2"
+                                 Grid.Row="1"
+                                 Grid.Column="0"
+                                 Width="50"
+                                 VerticalAlignment="Center" />
+                        <StackPanel Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    Margin="5,0"
+                                    Grid.Column="2"
+                                    Orientation="Horizontal">
+                            <CheckBox x:Name="ChkESE_2_FA"
+                                      Content="ESE"
+                                      Margin="0,0,10,0"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkEME_2_FA"
+                                      Content="EME"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkAII_2_FA"
+                                      Content="AII"
+                                      Margin="10,0,0,0"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="Effectif : "
+                                   Grid.Row="1"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTotalTD2_FA"
+                                 Grid.Row="1"
+                                 Grid.Column="6"
+                                 Width="Auto"
+                                 VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Center" />
+
+                        <TextBox x:Name="txtTd3_FA"
+                                 Text="TD3"
+                                 Grid.Row="2"
+                                 Grid.Column="0"
+                                 Width="50"
+                                 VerticalAlignment="Center" />
+                        <StackPanel Grid.Row="2"
+                                    HorizontalAlignment="Center"
+                                    Margin="5,0"
+                                    Grid.Column="2"
+                                    Orientation="Horizontal">
+                            <CheckBox x:Name="ChkESE_3_FA"
+                                      Content="ESE"
+                                      Margin="0,0,10,0"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkEME_3_FA"
+                                      Content="EME"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                            <CheckBox x:Name="ChkAII_3_FA"
+                                      Content="AII"
+                                      Margin="10,0,0,0"
+                                      Checked="GroupeTD_FA_CheckedChanged"
+                                      Unchecked="GroupeTD_FA_CheckedChanged"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="Effectif : "
+                                   Grid.Row="2"
+                                   Grid.Column="4"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTotalTD3_FA"
+                                 Grid.Row="2"
+                                 Grid.Column="6"
+                                 Width="Auto"
+                                 VerticalAlignment="Center"
+                                 HorizontalContentAlignment="Center" />
+
+                    </Grid>
+                </GroupBox>
+            </Grid>
+            <GroupBox x:Name="grpTPCommunGroup_Fa"
                       Header="Groupes TP communs"
                       Grid.Row="1"
                       Margin="5"
@@ -194,75 +789,75 @@
                         <RowDefinition Height="32" />
                         <RowDefinition Height="32" />
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="tbkTpCommunEse21"
-                           Text="ESE21_FI"
-                           Grid.Column="0"
-                           Grid.Row="0"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunEse21_Fa"
+                               Text="ESE21_FA"
+                               Grid.Column="0"
+                               Grid.Row="0"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpCommunEse21"
+                    <TextBox x:Name="txtTpCommunEse21_Fa"
                              Grid.Column="2"
                              Grid.Row="0"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpCommunEse22"
-                           Text="ESE22_FI"
-                           Grid.Column="0"
-                           Grid.Row="1"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunEse22_Fa"
+                               Text="ESE22_FA"
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpCommunEse22"
+                    <TextBox x:Name="txtTpCommunEse22_Fa"
                              Grid.Column="2"
                              Grid.Row="1"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpCommunEme21"
-                           Text="EME21_FI"
-                           Grid.Column="0"
-                           Grid.Row="2"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunEme21_Fa"
+                               Text="EME21_FA"
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpCommunEme21"
+                    <TextBox x:Name="txtTpCommunEme21_Fa"
                              Grid.Column="2"
                              Grid.Row="2"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpCommunEme22"
-                           Text="EME22_FI"
-                           Grid.Column="0"
-                           Grid.Row="3"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunEme22_Fa"
+                               Text="EME22_FA"
+                               Grid.Column="0"
+                               Grid.Row="3"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpCommunEme22"
+                    <TextBox x:Name="txtTpCommunEme22_Fa"
                              Grid.Column="2"
                              Grid.Row="3"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpCommunAii21"
-                           Text="AII21_FI"
-                           Grid.Column="0"
-                           Grid.Row="4"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunAii21_Fa"
+                               Text="AII21_FA"
+                               Grid.Column="0"
+                               Grid.Row="4"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpCommunAii21"
+                    <TextBox x:Name="txtTpCommunAii21_Fa"
                              Grid.Column="2"
                              Grid.Row="4"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpCommunAii22"
-                           Text="AII22_FI"
-                           Grid.Column="0"
-                           Grid.Row="5"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpCommunAii22_Fa"
+                               Text="AII22_FA"
+                               Grid.Column="0"
+                               Grid.Row="5"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpCommunAii22"
+                    <TextBox x:Name="txtTpCommunAii22_Fa"
                              Grid.Column="2"
                              Grid.Row="5"
                              Style="{StaticResource EffectifTextBoxBase}" />
-                    
+
                 </Grid>
             </GroupBox>
-            <GroupBox x:Name="grpTPSpecializedGroup_Fi"
+            <GroupBox x:Name="grpTPSpecializedGroup_Fa"
                       Header="Groupes TP spécialisés"
                       Margin="5"
                       Grid.Row="1"
@@ -281,106 +876,73 @@
                         <RowDefinition Height="32" />
                         <RowDefinition Height="32" />
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="tbkTpSpecialiséEse21"
-                           Text="ESE21_FI"
-                           Grid.Column="0"
-                           Grid.Row="0"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpSpecialiséEse21_Fa"
+                               Text="ESE21_FA"
+                               Grid.Column="0"
+                               Grid.Row="0"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséEse21"
+                    <TextBox x:Name="txtTpSpecialiséEse21_Fa"
                              Grid.Column="2"
                              Grid.Row="0"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséEse22"
-                           Text="ESE22_FI"
-                           Grid.Column="0"
-                           Grid.Row="1"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpSpecialiséEse22_Fa"
+                               Text="ESE22_FA"
+                               Grid.Column="0"
+                               Grid.Row="1"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséEse22"
+                    <TextBox x:Name="txtTpSpecialiséEse22_Fa"
                              Grid.Column="2"
                              Grid.Row="1"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséEme21"
-                           Text="EME21_FI"
-                           Grid.Column="0"
-                           Grid.Row="2"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpSpecialiséEme21_Fa"
+                               Text="EME21_FA"
+                               Grid.Column="0"
+                               Grid.Row="2"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséEme21"
+                    <TextBox x:Name="txtTpSpecialiséEme21_Fa"
                              Grid.Column="2"
                              Grid.Row="2"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséEme22"
-                           Text="EME22_FI"
-                           Grid.Column="0"
-                           Grid.Row="3"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpSpecialiséEme22_Fa"
+                               Text="EME22_FA"
+                               Grid.Column="0"
+                               Grid.Row="3"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséEme22"
+                    <TextBox x:Name="txtTpSpecialiséEme22_Fa"
                              Grid.Column="2"
                              Grid.Row="3"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséAii21"
-                           Text="AII21_FI"
-                           Grid.Column="0"
-                           Grid.Row="4"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpSpecialiséAii21_Fa"
+                               Text="AII21_FA"
+                               Grid.Column="0"
+                               Grid.Row="4"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséAii21"
+                    <TextBox x:Name="txtTpSpecialiséAii21_Fa"
                              Grid.Column="2"
                              Grid.Row="4"
                              Style="{StaticResource EffectifTextBoxBase}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséAii22"
-                           Text="AII22_FI"
-                           Grid.Column="0"
-                           Grid.Row="5"
-                           VerticalAlignment="Center" />
+                    <TextBlock x:Name="tbkTpSpecialiséAii22_Fa"
+                               Text="AII22_FA"
+                               Grid.Column="0"
+                               Grid.Row="5"
+                               VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséAii22"
+                    <TextBox x:Name="txtTpSpecialiséAii22_Fa"
                              Grid.Column="2"
                              Grid.Row="5"
                              Style="{StaticResource EffectifTextBoxBase}" />
                 </Grid>
             </GroupBox>
-        </Grid>
-        <Grid x:Name="pnlFa"
-              Visibility="Collapsed"
-              d:Visibility="Collapsed"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <GroupBox x:Name="grpParcoursGEII_2_Fa"
-                      Header="Configuration des parcours de spécialité"
-                      Grid.Row="1"
-                      Margin="5"
-                      Grid.Column="0">
-            </GroupBox>
-            <StackPanel Orientation="Vertical"
-                        Grid.Row="1"
-                        Grid.Column="2">
-
-                <GroupBox x:Name="grpTPCommunGroup_Fa"
-                          Header="Groupes TP communs"
-                          Grid.Row="1"
-                          Margin="5"
-                          Grid.Column="2">
-                </GroupBox>
-                <GroupBox x:Name="grpTPSpecializedGroup_Fa"
-                          Header="Groupes TP spécialisés"
-                          Margin="5"
-                          Grid.Row="1"
-                          Grid.Column="2">
-                </GroupBox>
-            </StackPanel>
         </Grid>
 
         <Grid Grid.Row="2"
@@ -408,16 +970,33 @@
                       Checked="chkFa_Checked"
                       VerticalContentAlignment="Center"
                       Grid.Column="0" />
-            <Button x:Name="btnSave"
-                    Content="Enregistrer"
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Grid.Column="2"
-                    Width="100"
-                    HorizontalAlignment="Right"
-                    Click="btnSave_Click"
-                    Height="30"
-                    Margin="5" />
+            <StackPanel Grid.RowSpan="2"
+                        Grid.Column="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+
+                <Button x:Name="btnUpdate"
+                        Content="Mise à jour"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="2"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Click="btnUpdate_Click"
+                        Height="30"
+                        Margin="5" />
+
+                <Button x:Name="btnOk"
+                        Content="Valider"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Click="btnOk_Click"
+                        Height="30"
+                        Margin="5" />
+            </StackPanel>
         </Grid>
 
     </Grid>

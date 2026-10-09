@@ -313,6 +313,24 @@ namespace GestionServiceGeii.Shared.Database {
       Debug.WriteLine($"[CHRONO CACHE OLEDB] Lecture S2 : {chrono.ElapsedMilliseconds} ms | {grilleS2.Rows.Count} ligne(s) x {grilleS2.Columns.Count} colonne(s)");
 
       chrono.Restart();
+      DataTable grilleS3 = LireFeuilleSemestreCommeGrille_OleDb(connection,"S3 FIFA");
+      Debug.WriteLine($"[CHRONO CACHE OLEDB] Lecture S3 FIFA : {chrono.ElapsedMilliseconds} ms | {grilleS3.Rows.Count} ligne(s) x {grilleS3.Columns.Count} colonne(s)");
+
+      List<AffectationGroupeSemestre> affectationsS3 = LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(grilleS3);
+
+      Debug.WriteLine("===== S3 FIFA : DIAGNOSTIC R3-08 =====");
+
+      for (int i = 0;i < grilleS3.Rows.Count;i++) {
+        string code = Convert.ToString(grilleS3.Rows[i][4])?.Trim() ?? string.Empty;
+
+        if (!code.Contains("R308",StringComparison.OrdinalIgnoreCase))
+          continue;
+
+        string contenu = string.Join(" | ",grilleS3.Rows[i].ItemArray
+            .Select((valeur,index) => $"C{index}={valeur}"));
+
+        Debug.WriteLine($"Ligne DataTable {i} : {contenu}");
+      }
 
       NormaliserColonnesGlobalPourInterface(tableGlobal);
       EnrichirCodesGlobalDepuisLibelleCourt(tableGlobal);
@@ -321,10 +339,8 @@ namespace GestionServiceGeii.Shared.Database {
 
       chrono.Restart();
 
-      ReconstruireNomsGlobalDepuisAffectations_OleDb(
-          tableGlobal,
-          grilleS1,
-          grilleS2);
+      ReconstruireNomsGlobalDepuisAffectations_OleDb(tableGlobal,grilleS1,grilleS2);
+      ReconstruireNomsGlobalDepuisAffectationsS3_OleDb(tableGlobal,grilleS3);
 
       Debug.WriteLine($"[CHRONO CACHE OLEDB] Reconstruction NOMS : {chrono.ElapsedMilliseconds} ms");
 
@@ -1500,6 +1516,18 @@ namespace GestionServiceGeii.Shared.Database {
       internal string Infos { get; set; } = string.Empty;
     }
 
+    private static string NormaliserLibelleCourtS3(string libelle) {
+      if (string.IsNullOrWhiteSpace(libelle))
+        return string.Empty;
+
+      Match match = Regex.Match(libelle.Trim(),@"^R3(\d{2})[A-Z]?-(CM|TD|TP|DS)$",RegexOptions.IgnoreCase);
+
+      if (!match.Success)
+        return libelle.Trim();
+
+      return $"R3-{match.Groups[1].Value}-{match.Groups[2].Value}".ToUpperInvariant();
+    }
+
     internal static void EnrichirGroupesGlobalDepuisFeuilleSemestre_Epplus(
         string cheminFichier,
         DataTable tableGlobal,
@@ -1960,26 +1988,13 @@ namespace GestionServiceGeii.Shared.Database {
 
       List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(grille);
 
-      Debug.WriteLine($"[CHRONO LIGNES OLEDB] Lecture affectations : {chrono.ElapsedMilliseconds} ms");
-      Debug.WriteLine($"[CHRONO LIGNES OLEDB] Nombre affectations : {affectations.Count}");
-
       if (affectations.Count == 0)
         return;
-
-      chrono.Restart();
 
       int prochainId = TrouverProchainIdGlobal(tableGlobal);
       AjouterColonnesSourceSemestreSiAbsentes(tableGlobal);
 
-      Debug.WriteLine($"[CHRONO LIGNES OLEDB] Préparation DataTable : {chrono.ElapsedMilliseconds} ms");
-
-      chrono.Restart();
-
       ReconstruireLignesInfosSpecialesDepuisAffectations(tableGlobal,colonneLibelleCourt,affectations);
-
-      Debug.WriteLine($"[CHRONO LIGNES OLEDB] Infos spéciales : {chrono.ElapsedMilliseconds} ms");
-
-      chrono.Restart();
 
       Dictionary<string,DataRow> indexActivites = new(StringComparer.OrdinalIgnoreCase);
       Dictionary<string,DataRow> indexModeles = new(StringComparer.OrdinalIgnoreCase);
@@ -2003,10 +2018,6 @@ namespace GestionServiceGeii.Shared.Database {
           indexModeles.Add(cleModele,row);
 
       }
-
-      Debug.WriteLine($"[CHRONO LIGNES OLEDB] Construction index : {chrono.ElapsedMilliseconds} ms");
-
-      chrono.Restart();
 
       int nbExistantes = 0;
       int nbAjoutees = 0;
@@ -2101,10 +2112,6 @@ namespace GestionServiceGeii.Shared.Database {
               affectation.SourceRow);
         }
       }
-
-      Debug.WriteLine($"[CHRONO LIGNES OLEDB] Recherche + ajout : {chrono.ElapsedMilliseconds} ms");
-      Debug.WriteLine($"[CHRONO LIGNES OLEDB] Existantes : {nbExistantes} | Ajoutées : {nbAjoutees} | Sans modèle : {nbSansModele}");
-      Debug.WriteLine("Ajout lignes manquantes OleDb depuis " + nomFeuille + " terminé.");
 
       tableGlobal.AcceptChanges();
     }
@@ -2669,10 +2676,104 @@ namespace GestionServiceGeii.Shared.Database {
       foreach (DataRow row in lignesASupprimer) {
         tableGlobal.Rows.Remove(row);
       }
+    }
 
-      if (lignesASupprimer.Count > 0) {
-        Debug.WriteLine("Lignes INFOS spéciales supprimées avant reconstruction : " + lignesASupprimer.Count);
+    private static void ReconstruireNomsGlobalDepuisAffectationsS3_OleDb(DataTable tableGlobal,DataTable grilleS3) {
+      if (tableGlobal == null || grilleS3 == null || grilleS3.Rows.Count == 0)
+        return;
+
+      if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Semestre) ||
+          !tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Formation) ||
+          !tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Cours) ||
+          !tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Noms))
+        return;
+
+      string colonneLibelleCourt = TrouverNomColonneIgnoreCase(tableGlobal,ExcelSchemaNames.Columns.LibelleCourt);
+
+      if (string.IsNullOrWhiteSpace(colonneLibelleCourt))
+        return;
+
+      AjouterColonnesSourceSemestreSiAbsentes(tableGlobal);
+
+      List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(grilleS3);
+
+      if (affectations.Count == 0)
+        return;
+
+      Dictionary<string,List<AffectationGroupeSemestre>> affectationsParCle = new(StringComparer.OrdinalIgnoreCase);
+
+      foreach (AffectationGroupeSemestre affectation in affectations) {
+        if (string.IsNullOrWhiteSpace(affectation.Noms))
+          continue;
+
+        bool estFA = Regex.IsMatch(affectation.LibelleCourt,@"^R3\d{2}A-",RegexOptions.IgnoreCase);
+        string formation = estFA ? "FA" : "FI";
+        string libelleGlobal = NormaliserLibelleCourtS3(affectation.LibelleCourt);
+        string cle = $"S3|{formation}|{affectation.Cours}|{libelleGlobal}";
+
+        if (!affectationsParCle.TryGetValue(cle,out List<AffectationGroupeSemestre>? liste)) {
+          liste = new List<AffectationGroupeSemestre>();
+          affectationsParCle.Add(cle,liste);
+        }
+
+        liste.Add(affectation);
       }
+
+      foreach (KeyValuePair<string,List<AffectationGroupeSemestre>> entree in affectationsParCle) {
+        List<AffectationGroupeSemestre> listeAffectations = entree.Value;
+
+        if (listeAffectations.Count == 0)
+          continue;
+
+        AffectationGroupeSemestre premiereAffectation = listeAffectations[0];
+
+        bool estFA = Regex.IsMatch(premiereAffectation.LibelleCourt,@"^R3\d{2}A-",RegexOptions.IgnoreCase);
+        string formation = estFA ? "FA" : "FI";
+        string libelleGlobal = NormaliserLibelleCourtS3(premiereAffectation.LibelleCourt);
+
+        List<DataRow> lignesGlobal = tableGlobal.Rows.Cast<DataRow>()
+            .Where(row =>
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre),"S3",StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Formation),formation,StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours),premiereAffectation.Cours,StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(GetRowValueIfColumnExists(row,colonneLibelleCourt),libelleGlobal,StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (lignesGlobal.Count == 0) {
+          Debug.WriteLine($"[S3 FIFA] Aucun modèle Global : {formation} | {premiereAffectation.Cours} | {libelleGlobal}");
+          continue;
+        }
+
+        DataRow ligneModele = lignesGlobal[0];
+
+        for (int i = 0;i < listeAffectations.Count;i++) {
+          AffectationGroupeSemestre affectation = listeAffectations[i];
+          DataRow ligne;
+
+          if (i < lignesGlobal.Count) {
+            ligne = lignesGlobal[i];
+          }
+          else {
+            ligne = tableGlobal.NewRow();
+            ligne.ItemArray = (object[])ligneModele.ItemArray.Clone();
+            tableGlobal.Rows.Add(ligne);
+          }
+
+          ligne[ExcelSchemaNames.Columns.Noms] = affectation.Noms;
+
+          if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Groupe))
+            ligne[ExcelSchemaNames.Columns.Groupe] = affectation.Groupe;
+
+          ligne[ExcelSchemaNames.Columns.SourceSheet] = affectation.SourceSheet;
+          ligne[ExcelSchemaNames.Columns.SourceRow] = affectation.SourceRow.ToString();
+          ligne[ExcelSchemaNames.Columns.SourceColumn] = affectation.SourceColumn.ToString();
+        }
+
+        for (int i = lignesGlobal.Count - 1;i >= listeAffectations.Count;i--)
+          tableGlobal.Rows.Remove(lignesGlobal[i]);
+      }
+
+      tableGlobal.AcceptChanges();
     }
 
     private static void ReconstruireNomsGlobalDepuisAffectations_OleDb(DataTable tableGlobal,params DataTable[] grillesSemestres) {
@@ -2804,6 +2905,79 @@ namespace GestionServiceGeii.Shared.Database {
       }
 
       tableGlobal.AcceptChanges();
+    }
+
+    private static List<AffectationGroupeSemestre> LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(DataTable grille) {
+      List<AffectationGroupeSemestre> affectations = new();
+
+      if (grille == null || grille.Rows.Count == 0 || grille.Columns.Count == 0)
+        return affectations;
+
+      string nomFeuille = grille.TableName;
+
+      if (!TrouverCelluleTexteFeuilleSemestre(grille,"SALLES",out int ligneSalles,out int colonneSalles))
+        return affectations;
+
+      Dictionary<int,string> groupes = new();
+
+      for (int col = colonneSalles + 1;col <= grille.Columns.Count;col++) {
+        string entete = LireCelluleGrille(grille,ligneSalles + 1,col);
+
+        if (Regex.IsMatch(entete,@"^(TD|TP)\d+$",RegexOptions.IgnoreCase))
+          groupes[col] = entete.ToUpperInvariant();
+      }
+
+      if (groupes.Count == 0)
+        return affectations;
+
+      int rowMax = TrouverDerniereLigneUtileSemestre(grille);
+      Regex regexCodeService = new(@"^(R3\d{2})(A?)-(CM|TD|TP|DS)$",RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+      for (int row = 1;row <= rowMax;row++) {
+        string celluleModule = LireCelluleGrille(grille,row,1);
+        string codeService = LireCelluleGrille(grille,row,5);
+
+        Match match = regexCodeService.Match(codeService);
+
+        if (!match.Success)
+          continue;
+
+        string cours = match.Groups[3].Value.ToUpperInvariant();
+
+        if (cours != "TD" && cours != "TP")
+          continue;
+
+        int dureeLigne = LireDureeDepuisLigneFeuilleSemestre(grille,row,colonneSalles);
+
+        foreach (KeyValuePair<int,string> groupe in groupes) {
+          if (cours == "TD" && !groupe.Value.StartsWith("TD",StringComparison.OrdinalIgnoreCase))
+            continue;
+
+          if (cours == "TP" && !groupe.Value.StartsWith("TP",StringComparison.OrdinalIgnoreCase))
+            continue;
+
+          string nomIntervenant = LireCelluleGrille(grille,row,groupe.Key);
+
+          if (!EstNomIntervenantValidePourGroupe(nomIntervenant))
+            continue;
+
+          affectations.Add(new AffectationGroupeSemestre {
+            Semestre = nomFeuille,
+            Module = celluleModule,
+            LibelleCourt = codeService,
+            Cours = cours,
+            Noms = nomIntervenant,
+            Groupe = groupe.Value,
+            Duree = dureeLigne,
+            Infos = string.Empty,
+            SourceSheet = nomFeuille,
+            SourceRow = row,
+            SourceColumn = groupe.Key
+          });
+        }
+      }
+
+      return affectations;
     }
 
     private static List<AffectationGroupeSemestre> LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(DataTable grille) {

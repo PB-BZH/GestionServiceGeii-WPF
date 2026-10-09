@@ -79,12 +79,7 @@ public class ClasseGénérique {
     return liste;
   }
 
-  public static T RempliComboBox<T>(
-      T liste,
-      DataSet dataSet,
-      string nomListe,
-      T critèreDeSelection)
-      where T : ComboBox, new() {
+  public static T RempliComboBox<T>(T liste,DataSet dataSet,string nomListe,T critèreDeSelection) where T : ComboBox, new() {
 
     if (liste == null)
       return liste!;
@@ -127,6 +122,54 @@ public class ClasseGénérique {
 
     return liste;
   }
+
+  public static T RempliComboBox<T>(T liste,DataSet dataSet,string nomListe,params ComboBox[] criteres) where T : ComboBox, new() {
+    if (liste == null)
+      return liste!;
+
+    liste.ItemsSource = null;
+    liste.SelectedIndex = -1;
+
+    if (dataSet == null || !dataSet.Tables.Contains(nomListe))
+      return liste;
+
+    DataTable table = dataSet.Tables[nomListe]!;
+    string colonneAffichage = TrouverNomColonne(table,liste.Name);
+
+    if (string.IsNullOrWhiteSpace(colonneAffichage))
+      return liste;
+
+    List<string> filtres = new();
+
+    foreach (ComboBox critere in criteres) {
+      if (critere == null)
+        continue;
+
+      string colonneCritere = TrouverNomColonne(table,critere.Name);
+      string valeurCritere = critere.SelectedValue?.ToString()?.Trim() ?? string.Empty;
+
+      if (string.IsNullOrWhiteSpace(colonneCritere) || string.IsNullOrWhiteSpace(valeurCritere))
+        continue;
+
+      string valeurFiltre = valeurCritere.Replace("'","''");
+      filtres.Add($"[{colonneCritere}] = '{valeurFiltre}'");
+    }
+
+    DataView vue = new(table);
+
+    if (filtres.Count > 0)
+      vue.RowFilter = string.Join(" AND ",filtres);
+
+    liste.DisplayMemberPath = colonneAffichage;
+    liste.SelectedValuePath = colonneAffichage;
+    liste.ItemsSource = vue;
+
+    if (liste.Items.Count > 0)
+      liste.SelectedIndex = 0;
+
+    return liste;
+  }
+
 
   private static string TrouverNomColonne(DataTable table,string nomRecherche) {
     foreach (DataColumn colonne in table.Columns) {

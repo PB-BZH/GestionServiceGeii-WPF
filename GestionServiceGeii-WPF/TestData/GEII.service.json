@@ -2,12 +2,12 @@
   "ProfileName": "GEII",
   "AcademicYear": "2026-2027",
   "Groups": {
-    "IsConfigured": true,
-    "FormationName": "GEII 2 FI",
+    "Geii1_IsConfigured": true,
+    "Geii1_FormationName": "GEII 1",
     "Geii1_StudentCount": 70,
     "Geii1_TdGroupCount": 3,
     "Geii1_TpGroupCount": 6,
-    "MaxStudentsPerTpGroup": 12,
+    "MaxStudentsPerTpGroup": 0,
     "Geii1_TdGroupNames": [
       "11",
       "12",
@@ -24,20 +24,71 @@
       null,
       null
     ],
-    "Geii2_StudentCount": 43,
-    "Geii2_TdGroupCount": 3,
-    "Geii2_TpGroupCount": 5,
-    "Geii2_TdGroupNames": [
-      "ESE__FI",
-      "EME__FI",
-      "AII__FI"
+    "Geii1_TpSpGroupNames": [],
+    "Geii2_FI_IsConfigured": true,
+    "Geii2_FI_FormationName": "GEII 2 FI",
+    "Geii2_FI_StudentCount": 43,
+    "Geii2_FI_TdGroupCount": 3,
+    "Geii2_FI_Td_officiel_GroupCount": 2,
+    "Geii2_FI_TpGroupCount": 5,
+    "Geii2_FI_TpSpGroupCount": 5,
+    "Geii2_FI_TdGroupNames": [
+      "ESE_FI",
+      "EME_FI",
+      "AII_FI"
     ],
-    "Geii2_TpGroupNames": [
+    "Geii2_FI_Td_officiel_GroupNames": [
+      "TD1",
+      "TD2",
+      null
+    ],
+    "Geii2_FI_TpGroupNames": [
       "ESE21_FI",
       "ESE22_FI",
       "EME21_FI",
       "EME22_FI",
       "AII21_FI",
+      null
+    ],
+    "Geii2_FI_TpSpGroupNames": [
+      "ESE21Sp_FI",
+      "ESE22Sp_FI",
+      "EME21Sp_FI",
+      "EME22Sp_FI",
+      "AII21Sp_FI",
+      null
+    ],
+    "Geii2_FA_IsConfigured": true,
+    "Geii2_FA_FormationName": "GEII 2 FA",
+    "Geii2_FA_StudentCount": 12,
+    "Geii2_FA_TdGroupCount": 2,
+    "Geii2_FA_Td_officiel_GroupCount": 1,
+    "Geii2_FA_TpGroupCount": 2,
+    "Geii2_FA_TpSpGroupCount": 2,
+    "Geii2_FA_TdGroupNames": [
+      "ESE_FA",
+      "EME_FA",
+      null
+    ],
+    "Geii2_FA_Td_officiel_GroupNames": [
+      "TD1",
+      null,
+      null
+    ],
+    "Geii2_FA_TpGroupNames": [
+      "ESE21_FA",
+      "EME21_FA",
+      null,
+      null,
+      null,
+      null
+    ],
+    "Geii2_FA_TpSpGroupNames": [
+      "ESE21_FA",
+      "EME21_FA",
+      null,
+      null,
+      null,
       null
     ]
   },
@@ -92,14 +143,14 @@
     "ApplicationId": ""
   },
   "SaveState": {
-    "CurrentSemester": "S3",
+    "CurrentSemester": "S1",
     "CurrentFormation": "FI",
-    "CurrentModule": "AN3",
+    "CurrentModule": "AN1",
     "CurrentCourse": "CM"
   },
   "Window": {
-    "Left": 217.0,
-    "Top": 167.0,
+    "Left": 223.0,
+    "Top": 88.0,
     "Width": 1311.0,
     "Height": 759.0,
     "State": 0

@@ -28,28 +28,12 @@
 */
 namespace GestionServiceGeii.Shared.Librairie_GEII {
   public class Promotion {
-    private int nbEtudiants;
-    private int nbGroupeTD;
-    private int nbGroupeTP;
-    private string? cours;
-
-    internal string? Cours {
-      get => cours;
-      set => cours = value ?? cours;
-    }
-
-    internal int NbEtudiants {
-      get => nbEtudiants;
-      set => nbEtudiants = value;
-    }
-    internal int NbGroupeTD {
-      get => nbGroupeTD;
-      set => nbGroupeTD = value;
-    }
-    internal int NbGroupeTP {
-      get => nbGroupeTP;
-      set => nbGroupeTP = value;
-    }
+    internal int NbEtudiants { get; set; }
+    internal int NbGroupeTD { get; set; }
+    internal int NbGroupeTD_officiel { get; set; }
+    internal int NbGroupeTP { get; set; }
+    internal int NbGroupeTPSp { get; set; }
+    internal string? Cours { get; set; }
   }
 
   public class FormationGEII {

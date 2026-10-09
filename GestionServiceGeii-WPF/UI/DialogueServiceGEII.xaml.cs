@@ -79,8 +79,20 @@ public partial class DialogueServiceGEII: Window {
   private static int indexLigne_vue;
   internal static string[] NomGroupeTD_Geii1 = new string[4];
   internal static string[] NomGroupeTP_Geii1 = new string[8];
-  internal static string[] NomGroupeTD_Geii2 = new string[3];
-  internal static string[] NomGroupeTP_Geii2 = new string[6];
+
+  internal static string[] NomGroupeTD_Geii2_o_FI = new string[3];
+  internal static int nbGroupeTD_officiel_Geii2_FI;
+  internal static string[] NomGroupeTD_Geii2_officiel_FI = new string[3];
+  internal static string[] NomGroupeTP_Geii2_FI = new string[6];
+  internal static string[] NomGroupeTPSp_Geii2_FI = new string[6];
+
+  internal static string[] NomGroupeTD_Geii2_FA = new string[3];
+  internal static string[] NomGroupeTD_Geii2_FI = new string[3];
+  internal static int nbGroupeTD_officiel_Geii2_FA;
+  internal static string[] NomGroupeTD_Geii2_officiel_FA = new string[3];
+  internal static string[] NomGroupeTP_Geii2_FA = new string[6];
+  internal static string[] NomGroupeTPSp_Geii2_FA = new string[6];
+
   private ServiceManagerProfile _profile = new();
   private string _currentProfilePath = string.Empty;
   private bool _serviceWorkbookLoaded = false;
@@ -344,17 +356,16 @@ public partial class DialogueServiceGEII: Window {
     List<string> intervenants = FicheServiceHelper.ExtraireIntervenantsDepuisTable(nomTableGlobal);
 
     cmbIntervenantFicheService.ItemsSource = intervenants;
-    //cmbIntervenantFicheService.ItemsSource = intervenants.ToList();
 
     if (cmbIntervenantFicheService.Items.Count > 0)
       cmbIntervenantFicheService.SelectedIndex = 0;
   }
 
-  private void RestaurerEffectifsGeii1DepuisProfil() {
+  private void RestaurerEffectifsGeii1_DepuisProfil() {
     if (_profile == null || _profile.Groups == null)
       return;
 
-    if (!_profile.Groups.IsConfigured)
+    if (!_profile.Groups.Geii1_IsConfigured)
       return;
 
     FormationGEII.Geii_1_FI.NbEtudiants = _profile.Groups.Geii1_StudentCount;
@@ -373,21 +384,24 @@ public partial class DialogueServiceGEII: Window {
       = Visibility.Visible;
   }
 
-  private void RestaurerEffectifsGeii2DepuisProfil() {
+  private void RestaurerEffectifsGeii2_FI_DepuisProfil() {
     if (_profile == null || _profile.Groups == null)
       return;
 
-    if (!_profile.Groups.IsConfigured)
+    if (!_profile.Groups.Geii1_IsConfigured)
       return;
 
-    FormationGEII.Geii_2_FI.NbEtudiants = _profile.Groups.Geii2_StudentCount;
-    FormationGEII.Geii_2_FI.NbGroupeTD = _profile.Groups.Geii2_TdGroupCount;
-    FormationGEII.Geii_2_FI.NbGroupeTP = _profile.Groups.Geii2_TpGroupCount;
-    NomGroupeTD_Geii2 = _profile.Groups.Geii2_TdGroupNames ?? [];
-    NomGroupeTP_Geii2 = _profile.Groups.Geii2_TpGroupNames ?? [];
+    FormationGEII.Geii_2_FI.NbEtudiants = _profile.Groups.Geii2_FI_StudentCount;
+    FormationGEII.Geii_2_FI.NbGroupeTD_officiel = _profile.Groups.Geii2_FI_Td_officiel_GroupCount;
+    FormationGEII.Geii_2_FI.NbGroupeTP = _profile.Groups.Geii2_FI_TpGroupCount;
+    FormationGEII.Geii_2_FI.NbGroupeTPSp = _profile.Groups.Geii2_FI_TpSpGroupCount;
+    NomGroupeTD_Geii2_FI = _profile.Groups.Geii2_FI_TdGroupNames ?? [];
+    NomGroupeTP_Geii2_FI = _profile.Groups.Geii2_FI_TpGroupNames ?? [];
+    NomGroupeTPSp_Geii2_FI = _profile.Groups.Geii2_FI_TpSpGroupNames ?? [];
     étatEffectif_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbEtudiants.ToString() + " étudiants : ";
-    étatNbGroupeTD_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTD + " groupes de TD, ";
-    étatNbGroupeTP_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTP + " groupes de TP\t";
+    étatNbGroupeTD_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTD_officiel + " groupes de TD, ";
+    étatNbGroupeTP_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTP + " groupes de TP, ";
+    étatNbGroupeTPSp_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTPSp + " groupes de TP Sp";
 
     étatTitreEffectif_Geii2_FI.Visibility
       = étatEffectif_Geii2_FI.Visibility
@@ -396,12 +410,39 @@ public partial class DialogueServiceGEII: Window {
       = Visibility.Visible;
   }
 
+  private void RestaurerEffectifsGeii2_FA_DepuisProfil() {
+    if (_profile == null || _profile.Groups == null)
+      return;
+
+    if (!_profile.Groups.Geii1_IsConfigured)
+      return;
+
+    FormationGEII.Geii_2_FA.NbEtudiants = _profile.Groups.Geii2_FA_StudentCount;
+    FormationGEII.Geii_2_FA.NbGroupeTD_officiel = _profile.Groups.Geii2_FA_Td_officiel_GroupCount;
+    FormationGEII.Geii_2_FA.NbGroupeTP = _profile.Groups.Geii2_FA_TpGroupCount;
+    FormationGEII.Geii_2_FA.NbGroupeTPSp = _profile.Groups.Geii2_FA_TpSpGroupCount;
+    NomGroupeTD_Geii2_FA = _profile.Groups.Geii2_FA_TdGroupNames ?? [];
+    NomGroupeTP_Geii2_FA = _profile.Groups.Geii2_FA_TpGroupNames ?? [];
+    NomGroupeTPSp_Geii2_FA = _profile.Groups.Geii2_FA_TpSpGroupNames ?? [];
+    étatEffectif_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbEtudiants.ToString() + " étudiants : ";
+    étatNbGroupeTD_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTD_officiel + " groupes de TD, ";
+    étatNbGroupeTP_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTP + " groupes de TP, ";
+    étatNbGroupeTPSp_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTPSp + " groupes de TP Sp";
+
+    étatTitreEffectif_Geii2_FA.Visibility
+      = étatEffectif_Geii2_FA.Visibility
+      = étatNbGroupeTD_Geii2_FA.Visibility
+      = étatNbGroupeTP_Geii2_FA.Visibility
+      = Visibility.Visible;
+  }
+
   private void OpenProfileAndLoadView(string profilePath) {
     _profile = ServiceProfileSerializer.Load(profilePath);
     _currentProfilePath = profilePath;
 
-    RestaurerEffectifsGeii1DepuisProfil();
-    RestaurerEffectifsGeii2DepuisProfil();
+    RestaurerEffectifsGeii1_DepuisProfil();
+    RestaurerEffectifsGeii2_FI_DepuisProfil();
+    RestaurerEffectifsGeii2_FA_DepuisProfil();
 
     _applicationSettings.LastProfilePath = profilePath;
     ApplicationSettingsService.Save(_applicationSettings);
@@ -423,10 +464,8 @@ public partial class DialogueServiceGEII: Window {
       case "Semestre":
         Semestre = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name);
         break;
-      case "UE":
-        UE = critèreDeSelection == null
-            ? ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name)
-            : ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,critèreDeSelection);
+      case "Parcours":
+        Parcours = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,Semestre,Formation);
         break;
       case "Formation":
         Formation = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name);
@@ -451,9 +490,7 @@ public partial class DialogueServiceGEII: Window {
       case "INFOS":
         break;
       case "Module":
-        Module = critèreDeSelection == null
-            ? ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name)
-            : ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,critèreDeSelection);
+        Module = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,Semestre,Formation,Parcours);
         break;
       default:
         MessageBox.Show("la variable " + liste.Name + " est introuvable");
@@ -605,6 +642,7 @@ public partial class DialogueServiceGEII: Window {
   private IEnumerable<ComboBox> GetSelectionComboBoxes() {
     yield return Semestre;
     yield return Formation;
+    yield return Parcours;
     yield return Cours;
     yield return Intervenants;
     yield return Titulaires;
@@ -620,10 +658,56 @@ public partial class DialogueServiceGEII: Window {
     ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
   }
 
+  private void ActualiserPanneauCours() {
+    string formation = Formation.Text?.Trim() ?? string.Empty;
+    string semestre = Semestre.Text?.Trim() ?? string.Empty;
+
+    splCoursGeii1.Visibility = Visibility.Collapsed;
+    splCoursGeii2_FI.Visibility = Visibility.Collapsed;
+    splCoursGeii2_FA.Visibility = Visibility.Collapsed;
+
+    if (formation == "FI" && (semestre == "S1" || semestre == "S2"))
+      splCoursGeii1.Visibility = Visibility.Visible;
+    else if (formation == "FI" && (semestre == "S3" || semestre == "S4"))
+      splCoursGeii2_FI.Visibility = Visibility.Visible;
+    else if (formation == "FA" && (semestre == "S3" || semestre == "S4"))
+      splCoursGeii2_FA.Visibility = Visibility.Visible;
+  }
+
   private void Formation_SelectionChanged(object sender,SelectionChangedEventArgs e) {
     if (_suspendViewRefresh || _isInitializingView)
       return;
+    _suspendViewRefresh = true;
 
+    try {
+      AfficherListesDonnées(Parcours);
+      AfficherListesDonnées(Module);
+    }
+    finally {
+      _suspendViewRefresh = false;
+    }
+
+    RequestRefreshModuleView();
+
+    Dispatcher.BeginInvoke(() => {
+      ActualiserPanneauCours();
+    },DispatcherPriority.ContextIdle);
+  }
+
+  private void Parcours_SelectionChanged(object sender,SelectionChangedEventArgs e) {
+    if (_suspendViewRefresh || _isInitializingView)
+      return;
+
+    _suspendViewRefresh = true;
+
+    try {
+      AfficherListesDonnées(Module);
+    }
+    finally {
+      _suspendViewRefresh = false;
+    }
+
+    ActualiserPanneauCours();
     RequestRefreshModuleView();
   }
 
@@ -961,10 +1045,10 @@ public partial class DialogueServiceGEII: Window {
   }
 
   internal void ControleCouleurBoutonsTDetTP() {
-    ushort td = ushort.Parse(nbGroupeTd.Content?.ToString() ?? "0");
-    ushort tdTotal = ushort.Parse(nbGroupeTdTotal.Content?.ToString() ?? "0");
-    ushort tp = ushort.Parse(nbGroupeTp.Content?.ToString() ?? "0");
-    ushort tpTotal = ushort.Parse(nbGroupeTpTotal.Content?.ToString() ?? "0");
+    ushort td = ushort.Parse(nbGroupeTd_Geii1.Content?.ToString() ?? "0");
+    ushort tdTotal = ushort.Parse(nbGroupeTdTotal_Geii1.Content?.ToString() ?? "0");
+    ushort tp = ushort.Parse(nbGroupeTp_Geii1.Content?.ToString() ?? "0");
+    ushort tpTotal = ushort.Parse(nbGroupeTpTotal_Geii1.Content?.ToString() ?? "0");
 
     if (td != tdTotal) {
       if (td < tdTotal) {
@@ -1025,15 +1109,44 @@ public partial class DialogueServiceGEII: Window {
 
     CompterLesTypesDeCours(VisualisationDonnées);
 
-    nbGroupeTd.Content = ClasseBaseDeDonnées.CompteurTD.ToString();
-    nbGroupeTp.Content = ClasseBaseDeDonnées.CompteurTP.ToString();
-    nbGroupeTdTotal.Content = FormationGEII.Geii_1_FI.NbGroupeTD.ToString();
-    nbGroupeTpTotal.Content = FormationGEII.Geii_1_FI.NbGroupeTP.ToString();
-    nbEtudiants.Content = FormationGEII.Geii_1_FI.NbEtudiants.ToString();
+    nbGroupeTd_Geii1.Content = CompteurTD.ToString();
+    nbGroupeTp_Geii1.Content = CompteurTP.ToString();
+    nbGroupeTdTotal_Geii1.Content = FormationGEII.Geii_1_FI.NbGroupeTD.ToString();
+    nbGroupeTpTotal_Geii1.Content = FormationGEII.Geii_1_FI.NbGroupeTP.ToString();
+    nbEtudiants_Geii1.Content = FormationGEII.Geii_1_FI.NbEtudiants.ToString();
+
+    int nbTdModuleFI = CompterGroupesDistinctsModule("FI","TD");
+    int nbTpModuleFI = CompterGroupesDistinctsModule("FI","TP");
+    int nbTdModuleFA = CompterGroupesDistinctsModule("FA","TD");
+    int nbTpModuleFA = CompterGroupesDistinctsModule("FA","TP");
+
+    nbGroupeTd_Geii2_FI.Content = CompteurTD.ToString();
+    nbGroupeTp_Geii2_FI.Content = CompteurTP.ToString();
+    nbGroupeTdTotal_Geii2_FI.Content = nbTdModuleFI.ToString();
+    nbGroupeTpTotal_Geii2_FI.Content = nbTpModuleFI.ToString();
+    nbEtudiants_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbEtudiants.ToString();
+
+    nbGroupeTd_Geii2_FA.Content = CompteurTD.ToString();
+    nbGroupeTp_Geii2_FA.Content = CompteurTP.ToString();
+    nbGroupeTdTotal_Geii2_FA.Content = nbTdModuleFA.ToString();
+    nbGroupeTpTotal_Geii2_FA.Content = nbTpModuleFA.ToString();
+    nbEtudiants_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbEtudiants.ToString();
 
     ControleCouleurBoutonsTDetTP();
 
     BoutonsDeModification.Visibility = Visibility.Visible;
+  }
+
+  private int CompterGroupesDistinctsModule(string formation,string cours) {
+    return VisualisationDonnées.Items
+        .OfType<DataRowView>()
+        .Where(row =>
+            string.Equals(GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Formation),formation,StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Cours),cours,StringComparison.OrdinalIgnoreCase))
+        .Select(row => GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Groupe))
+        .Where(groupe => !string.IsNullOrWhiteSpace(groupe) && groupe != "0")
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .Count();
   }
 
   private void HorairesModule() {
@@ -1074,27 +1187,27 @@ public partial class DialogueServiceGEII: Window {
     AfficheFicheModule();
   }
 
-  private void RestaurerGroupesDepuisProfil() {
-    if (_profile == null || _profile.Groups == null)
-      return;
+  //private void RestaurerGroupesDepuisProfil() {
+  //  if (_profile == null || _profile.Groups == null)
+  //    return;
 
-    if (!_profile.Groups.IsConfigured)
-      return;
+  //  if (!_profile.Groups.Geii1_IsConfigured)
+  //    return;
 
-    FormationGEII.Geii_1_FI.NbEtudiants = _profile.Groups.Geii1_StudentCount;
-    FormationGEII.Geii_1_FI.NbGroupeTD = _profile.Groups.Geii1_TdGroupCount;
-    FormationGEII.Geii_1_FI.NbGroupeTP = _profile.Groups.Geii1_TpGroupCount;
-    NomGroupeTD_Geii1 = _profile.Groups.Geii1_TdGroupNames ?? [];
-    NomGroupeTP_Geii1 = _profile.Groups.Geii1_TpGroupNames ?? [];
-    étatEffectif_Geii1.Text = FormationGEII.Geii_1_FI.NbEtudiants.ToString() + " étudiants : ";
-    étatNbGroupeTD_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTD + " groupes de TD, ";
-    étatNbGroupeTP_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTP + " groupes de TP\t";
-    étatTitreEffectif_Geii1.Visibility
-      = étatEffectif_Geii1.Visibility
-      = étatNbGroupeTD_Geii1.Visibility
-      = étatNbGroupeTP_Geii1.Visibility
-      = Visibility.Collapsed;
-  }
+  //  FormationGEII.Geii_1_FI.NbEtudiants = _profile.Groups.Geii1_StudentCount;
+  //  FormationGEII.Geii_1_FI.NbGroupeTD = _profile.Groups.Geii1_TdGroupCount;
+  //  FormationGEII.Geii_1_FI.NbGroupeTP = _profile.Groups.Geii1_TpGroupCount;
+  //  NomGroupeTD_Geii1 = _profile.Groups.Geii1_TdGroupNames ?? [];
+  //  NomGroupeTP_Geii1 = _profile.Groups.Geii1_TpGroupNames ?? [];
+  //  étatEffectif_Geii1.Text = FormationGEII.Geii_1_FI.NbEtudiants.ToString() + " étudiants : ";
+  //  étatNbGroupeTD_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTD + " groupes de TD, ";
+  //  étatNbGroupeTP_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTP + " groupes de TP\t";
+  //  étatTitreEffectif_Geii1.Visibility
+  //    = étatEffectif_Geii1.Visibility
+  //    = étatNbGroupeTD_Geii1.Visibility
+  //    = étatNbGroupeTP_Geii1.Visibility
+  //    = Visibility.Collapsed;
+  //}
 
   private void RequestRefreshModuleView() {
     if (_refreshModuleViewTimer == null)
@@ -1302,10 +1415,10 @@ public partial class DialogueServiceGEII: Window {
     return (nouveauTypeCours,nouveauGroupe);
   }
 
-  private string AfficheChoixDuGroupe(DataGrid table,string groupeCourant) {
+  private string AfficheChoixDuGroupe(DataGrid table,string groupeCourant,string[] groupeTD,string[] groupeTP) {
     GestionDesGroupes gestionGroupes = new();
 
-    gestionGroupes.InitialiserContexteGroupes(table,groupeCourant,false);
+    gestionGroupes.InitialiserContexteGroupes(table,groupeCourant,groupeTD,groupeTP,false);
 
     if (gestionGroupes.ShowDialog() == true)
       return gestionGroupes.CbChoixGroupe.Text;
@@ -1409,20 +1522,45 @@ public partial class DialogueServiceGEII: Window {
           ligneCourante[ExcelSchemaNames.Columns.TotalType] = (dureeCours * nbGroupes).ToString();
           break;
         case "Groupe":
-          if (NomGroupeTD_Geii1 == null || NomGroupeTD_Geii1.Length == 0 || NomGroupeTD_Geii1[0] == null) {
-            RestaurerGroupesDepuisProfil();
-            if (NomGroupeTD_Geii1 == null || NomGroupeTD_Geii1.Length == 0 || NomGroupeTD_Geii1[0] == null) {
-              MenuEffectifGeii_1();
-            }
-          }
-          groupeCourant = GetCellValue(table,CelluleCible) == null
-                  ? string.Empty
-                  : GetCellValue(table,CelluleCible) ?? string.Empty;
-          Hide();
-          DataRowView? row = table.Items[(int)CelluleCible.Y] as DataRowView;
-          SetCurrentCellValue(table,AfficheChoixDuGroupe(table,groupeCourant) ?? string.Empty,CelluleCible);
-          Show();
+          string[] groupesTD = [];
+          string[] groupesTP = [];
 
+          if (Semestre.Text == "S1" || Semestre.Text == "S2") {
+            if (NomGroupeTD_Geii1 == null || NomGroupeTD_Geii1.Length == 0 || NomGroupeTD_Geii1[0] == null) {
+              RestaurerEffectifsGeii1_DepuisProfil();
+              if (NomGroupeTD_Geii1 == null || NomGroupeTD_Geii1.Length == 0 || NomGroupeTD_Geii1[0] == null)
+                MenuEffectifGeii_1();
+            }
+
+            groupesTD = NomGroupeTD_Geii1!;
+            groupesTP = NomGroupeTP_Geii1!;
+          }
+          else if ((Semestre.Text == "S3" || Semestre.Text == "S4") && Formation.Text == "FI") {
+            if (NomGroupeTD_Geii2_officiel_FI == null || NomGroupeTD_Geii2_officiel_FI.Length == 0 || NomGroupeTD_Geii2_officiel_FI[0] == null) {
+              RestaurerEffectifsGeii2_FI_DepuisProfil();
+              if (NomGroupeTD_Geii2_officiel_FI == null || NomGroupeTD_Geii2_officiel_FI.Length == 0 || NomGroupeTD_Geii2_officiel_FI[0] == null)
+                MenuEffectifGeii_2(_profile);
+            }
+
+            groupesTD = NomGroupeTD_Geii2_officiel_FI!;
+            groupesTP = NomGroupeTP_Geii2_FI!;
+          }
+          else if ((Semestre.Text == "S3" || Semestre.Text == "S4") && Formation.Text == "FA") {
+            if (NomGroupeTD_Geii2_officiel_FA == null || NomGroupeTD_Geii2_officiel_FA.Length == 0 || NomGroupeTD_Geii2_officiel_FA[0] == null) {
+              RestaurerEffectifsGeii2_FA_DepuisProfil();
+              if (NomGroupeTD_Geii2_officiel_FA == null || NomGroupeTD_Geii2_officiel_FA.Length == 0 || NomGroupeTD_Geii2_officiel_FA[0] == null)
+                MenuEffectifGeii_2(_profile);
+            }
+
+            groupesTD = NomGroupeTD_Geii2_officiel_FA!;
+            groupesTP = NomGroupeTP_Geii2_FA!;
+          }
+
+          groupeCourant = GetCellValue(table,CelluleCible) ?? string.Empty;
+
+          Hide();
+          SetCurrentCellValue(table,AfficheChoixDuGroupe(table,groupeCourant,groupesTD,groupesTP) ?? string.Empty,CelluleCible);
+          Show();
           break;
         default:
           MessageBox.Show("Veuillez sélectionner la bonne CelluleCours à modifier");
@@ -1780,9 +1918,9 @@ public partial class DialogueServiceGEII: Window {
     }
 
     string groupeCourant = string.Empty;
-    string formation = ClasseBaseDeDonnées.GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Formation).Trim();
-    string cours = ClasseBaseDeDonnées.GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Cours).Trim();
-    string module = ClasseBaseDeDonnées.GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Module).Trim();
+    string formation = GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Formation).Trim();
+    string cours = GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Cours).Trim();
+    string module = GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Module).Trim();
 
 
     if (!string.Equals(cours,coursAttendu,StringComparison.OrdinalIgnoreCase)) {
@@ -2196,14 +2334,15 @@ public partial class DialogueServiceGEII: Window {
     }
   }
 
-  private void EnregistrerEffectifsGeii1DansProfil() {
+  private void EnregistrerEffectifsGeii1_DansProfil() {
     if (_profile == null)
       return;
 
     _profile.Groups ??= new ServiceGroupsOptions();
-    _profile.Groups.IsConfigured = true;
-    _profile.Groups.FormationName = "GEII 1";
+    _profile.Groups.Geii1_IsConfigured = true;
+    _profile.Groups.Geii1_FormationName = "GEII 1";
     _profile.Groups.Geii1_StudentCount = FormationGEII.Geii_1_FI.NbEtudiants;
+    _profile.Groups.Geii1_TdGroupCount = FormationGEII.Geii_1_FI.NbGroupeTD;
     _profile.Groups.Geii1_TdGroupCount = FormationGEII.Geii_1_FI.NbGroupeTD;
     _profile.Groups.Geii1_TpGroupCount = FormationGEII.Geii_1_FI.NbGroupeTP;
     _profile.Groups.Geii1_TdGroupNames = NomGroupeTD_Geii1;
@@ -2216,24 +2355,48 @@ public partial class DialogueServiceGEII: Window {
     }
   }
 
-  private void EnregistrerEffectifsGeii2DansProfil() {
+  private void EnregistrerEffectifsGeii2_FI_DansProfil() {
     if (_profile == null)
       return;
 
     _profile.Groups ??= new ServiceGroupsOptions();
-    _profile.Groups.IsConfigured = true;
-    _profile.Groups.FormationName = "GEII 2 FI";
-    _profile.Groups.Geii2_StudentCount = FormationGEII.Geii_2_FI.NbEtudiants;
-    _profile.Groups.Geii2_TdGroupCount = FormationGEII.Geii_2_FI.NbGroupeTD;
-    _profile.Groups.Geii2_TpGroupCount = FormationGEII.Geii_2_FI.NbGroupeTP;
-    _profile.Groups.Geii2_TdGroupNames = NomGroupeTD_Geii2;
-    _profile.Groups.Geii2_TpGroupNames = NomGroupeTP_Geii2;
-    if (!string.IsNullOrWhiteSpace(_currentProfilePath)) {
-      ServiceProfileSerializer.Save(
-          _currentProfilePath,
-          _profile
-      );
-    }
+    _profile.Groups.Geii2_FI_IsConfigured = true;
+    _profile.Groups.Geii2_FI_FormationName = "GEII 2 FI";
+
+    _profile.Groups.Geii2_FI_StudentCount = FormationGEII.Geii_2_FI.NbEtudiants;
+    _profile.Groups.Geii2_FI_TdGroupCount = FormationGEII.Geii_2_FI.NbGroupeTD;
+    _profile.Groups.Geii2_FI_Td_officiel_GroupCount = FormationGEII.Geii_2_FI.NbGroupeTD_officiel;
+    _profile.Groups.Geii2_FI_TpGroupCount = FormationGEII.Geii_2_FI.NbGroupeTP;
+    _profile.Groups.Geii2_FI_TpSpGroupCount = FormationGEII.Geii_2_FI.NbGroupeTPSp;
+    _profile.Groups.Geii2_FI_TdGroupNames = NomGroupeTD_Geii2_FI;
+    _profile.Groups.Geii2_FI_Td_officiel_GroupNames = NomGroupeTD_Geii2_officiel_FI;
+    _profile.Groups.Geii2_FI_TpGroupNames = NomGroupeTP_Geii2_FI;
+    _profile.Groups.Geii2_FI_TpSpGroupNames = NomGroupeTPSp_Geii2_FI;
+
+    if (!string.IsNullOrWhiteSpace(_currentProfilePath))
+      ServiceProfileSerializer.Save(_currentProfilePath,_profile);
+  }
+
+  private void EnregistrerEffectifsGeii2_FA_DansProfil() {
+    if (_profile == null)
+      return;
+
+    _profile.Groups ??= new ServiceGroupsOptions();
+    _profile.Groups.Geii2_FA_IsConfigured = true;
+    _profile.Groups.Geii2_FA_FormationName = "GEII 2 FA";
+
+    _profile.Groups.Geii2_FA_StudentCount = FormationGEII.Geii_2_FA.NbEtudiants;
+    _profile.Groups.Geii2_FA_TdGroupCount = FormationGEII.Geii_2_FA.NbGroupeTD;
+    _profile.Groups.Geii2_FA_Td_officiel_GroupCount = FormationGEII.Geii_2_FA.NbGroupeTD_officiel;
+    _profile.Groups.Geii2_FA_TpGroupCount = FormationGEII.Geii_2_FA.NbGroupeTP;
+    _profile.Groups.Geii2_FA_TpSpGroupCount = FormationGEII.Geii_2_FA.NbGroupeTPSp;
+    _profile.Groups.Geii2_FA_TdGroupNames = NomGroupeTD_Geii2_FA;
+    _profile.Groups.Geii2_FA_Td_officiel_GroupNames = NomGroupeTD_Geii2_officiel_FA;
+    _profile.Groups.Geii2_FA_TpGroupNames = NomGroupeTP_Geii2_FA;
+    _profile.Groups.Geii2_FA_TpSpGroupNames = NomGroupeTPSp_Geii2_FA;
+
+    if (!string.IsNullOrWhiteSpace(_currentProfilePath))
+      ServiceProfileSerializer.Save(_currentProfilePath,_profile);
   }
 
   private void MenuEffectifGeii_1() {
@@ -2242,18 +2405,10 @@ public partial class DialogueServiceGEII: Window {
     Hide();
     _configurationEffectifs_GEII_1.nomDeLaFormation.Content = $"Répartition prévisionnelle des effectifs en {formation}";
     _configurationEffectifs_GEII_1.ShowDialog();
-    étatEffectif_Geii1.Text = FormationGEII.Geii_1_FI.NbEtudiants.ToString() + " étudiants : ";
-    étatNbGroupeTD_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTD + " groupes de TD, ";
-    étatNbGroupeTP_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTP + " groupes de TP\t";
-    étatTitreEffectif_Geii1.Visibility
-      = étatEffectif_Geii1.Visibility
-      = étatNbGroupeTD_Geii1.Visibility
-      = étatNbGroupeTP_Geii1.Visibility
-      = Visibility.Visible;
 
     NomGroupeTD_Geii1 = _configurationEffectifs_GEII_1.NomGroupeTD;
     NomGroupeTP_Geii1 = _configurationEffectifs_GEII_1.NomGroupeTP;
-    EnregistrerEffectifsGeii1DansProfil();
+    EnregistrerEffectifsGeii1_DansProfil();
 
     if (!string.IsNullOrWhiteSpace(FichierDeService.Service.CheminFichier) && File.Exists(FichierDeService.Service.CheminFichier)) {
       AfficheFicheModule();
@@ -2267,19 +2422,20 @@ public partial class DialogueServiceGEII: Window {
 
     window.ShowDialog();
 
-    étatEffectif_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbEtudiants.ToString() + " étudiants : ";
-    étatNbGroupeTD_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTD + " groupes de TD, ";
-    étatNbGroupeTP_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTP + " groupes de TP\t";
-    étatTitreEffectif_Geii2_FI.Visibility
-      = étatEffectif_Geii2_FI.Visibility
-      = étatNbGroupeTD_Geii2_FI.Visibility
-      = étatNbGroupeTP_Geii2_FI.Visibility
-      = Visibility.Visible;
+    nbGroupeTD_officiel_Geii2_FI = window.nbGroupeTD_officiel_FI;
+    NomGroupeTD_Geii2_FI = window.NomGroupeTD_FI;
+    NomGroupeTD_Geii2_officiel_FI = window.NomGroupeTD_officiel_FI;
+    NomGroupeTP_Geii2_FI = window.NomGroupeTP_FI;
+    NomGroupeTPSp_Geii2_FI = window.NomGroupeTPSp_FI;
 
-    NomGroupeTD_Geii2 = window.NomGroupeTD;
-    NomGroupeTP_Geii2 = window.NomGroupeTP;
+    nbGroupeTD_officiel_Geii2_FA = window.nbGroupeTD_officiel_FA;
+    NomGroupeTD_Geii2_FA = window.NomGroupeTD_FA;
+    NomGroupeTD_Geii2_officiel_FA = window.NomGroupeTD_officiel_FA;
+    NomGroupeTP_Geii2_FA = window.NomGroupeTP_FA;
+    NomGroupeTPSp_Geii2_FA = window.NomGroupeTPSp_FA;
 
-    EnregistrerEffectifsGeii2DansProfil();
+    EnregistrerEffectifsGeii2_FI_DansProfil();
+    EnregistrerEffectifsGeii2_FA_DansProfil();
 
     if (!string.IsNullOrWhiteSpace(FichierDeService.Service.CheminFichier) && File.Exists(FichierDeService.Service.CheminFichier)) {
       AfficheFicheModule();
@@ -2695,8 +2851,7 @@ public partial class DialogueServiceGEII: Window {
     if (!_applicationSettings.AutoOpenLastProfileOnStartup)
       return;
 
-    string lastProfilePath =
-        _applicationSettings.LastProfilePath;
+    string lastProfilePath = _applicationSettings.LastProfilePath;
 
     if (string.IsNullOrWhiteSpace(lastProfilePath))
       return;
@@ -2731,16 +2886,15 @@ public partial class DialogueServiceGEII: Window {
     _suspendViewRefresh = true;
 
     try {
-      AfficherListesDonnées(Module,Semestre);
+      AfficherListesDonnées(Parcours);
+      AfficherListesDonnées(Module);
     }
     finally {
       _suspendViewRefresh = false;
     }
-    RequestRefreshModuleView();
-  }
 
-  private void UE_SelectionChanged(object sender,SelectionChangedEventArgs e) {
-    // UE n'est plus utilisé comme filtre principal.
+    ActualiserPanneauCours();
+    RequestRefreshModuleView();
   }
 
   private void Module_SelectionChanged(object sender,SelectionChangedEventArgs e) {

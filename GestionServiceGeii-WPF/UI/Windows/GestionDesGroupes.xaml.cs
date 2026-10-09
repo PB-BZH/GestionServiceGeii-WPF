@@ -13,6 +13,8 @@ namespace GestionServiceGeii.UI.Windows {
     private bool _selectionTypeCoursEffectuee;
     internal const string GroupeEnAttente = "";
     private bool _autoriserGroupesDejaAffectes;
+    private string[] _nomGroupeTD = [];
+    private string[] _nomGroupeTP = [];
 
     public GestionDesGroupes() {
       InitializeComponent();
@@ -22,9 +24,17 @@ namespace GestionServiceGeii.UI.Windows {
       ThemeManager.ApplyTheme(this);
     }
 
-    internal void InitialiserContexteGroupes(DataGrid vueCourante,string groupeCourant,bool autoriserGroupesDejaAffectes = false) {
+    internal void InitialiserContexteGroupes(
+      DataGrid vueCourante,
+      string groupeCourant,
+      string[] nomGroupeTD,
+      string[] nomGroupeTP,
+      bool autoriserGroupesDejaAffectes = false) {
+
       _vueCourante = vueCourante;
       _groupeCourant = groupeCourant ?? string.Empty;
+      _nomGroupeTD = nomGroupeTD ?? [];
+      _nomGroupeTP = nomGroupeTP ?? [];
       _typeCoursCourant = DeterminerTypeCoursCourant();
       _autoriserGroupesDejaAffectes = autoriserGroupesDejaAffectes;
     }
@@ -148,7 +158,7 @@ namespace GestionServiceGeii.UI.Windows {
       else if (ckBoxTP.IsChecked == true) ckBoxTP.IsChecked = false;
       else ckBoxTD.IsChecked = true;
 
-      ChargerGroupesDisponibles(DialogueServiceGEII.NomGroupeTD_Geii1,"TD");
+      ChargerGroupesDisponibles(_nomGroupeTD,"TD");
       SelectionnerGroupeCourantOuPremier();
     }
 
@@ -157,9 +167,10 @@ namespace GestionServiceGeii.UI.Windows {
       else if (ckBoxTD.IsChecked == true) ckBoxTD.IsChecked = false;
       else ckBoxTP.IsChecked = true;
 
-      ChargerGroupesDisponibles(DialogueServiceGEII.NomGroupeTP_Geii1,"TP");
+      ChargerGroupesDisponibles(_nomGroupeTP,"TP");
       SelectionnerGroupeCourantOuPremier();
     }
+
     private void ValidationTypeDeCours_Click(object sender,RoutedEventArgs e) {
       DialogResult = true;
     }
