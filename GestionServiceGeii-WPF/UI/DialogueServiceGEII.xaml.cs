@@ -228,6 +228,7 @@ public partial class DialogueServiceGEII: Window {
       _ => SaveWindowStateMode.Normal
     };
   }
+
   private void ApplyProfileToUi() {
     string title = "Gestion Services GEII";
 
@@ -252,17 +253,30 @@ public partial class DialogueServiceGEII: Window {
 
     Title = title;
 
-    if (!string.IsNullOrWhiteSpace(_profile!.SaveState.CurrentSemester))
-      SelectionnerValeurComboBox(Semestre,_profile.SaveState.CurrentSemester);
+    bool ancienneSuspension = _suspendViewRefresh;
+    _suspendViewRefresh = true;
 
-    if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentFormation))
-      SelectionnerValeurComboBox(Formation,_profile.SaveState.CurrentFormation);
+    try {
+      if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentSemester))
+        SelectionnerValeurComboBox(Semestre,_profile.SaveState.CurrentSemester);
 
-    if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentModule))
-      SelectionnerValeurComboBox(Module,_profile.SaveState.CurrentModule);
+      if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentFormation))
+        SelectionnerValeurComboBox(Formation,_profile.SaveState.CurrentFormation);
 
-    if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentCourse))
-      SelectionnerValeurComboBox(Cours,_profile.SaveState.CurrentCourse);
+      // Reconstruire la liste des modules avec le semestre et la formation restaurés.
+      AfficherListesDonnées(Module);
+
+      if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentModule))
+        SelectionnerValeurComboBox(Module,_profile.SaveState.CurrentModule);
+
+      if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentCourse))
+        SelectionnerValeurComboBox(Cours,_profile.SaveState.CurrentCourse);
+
+      ActualiserComboOseDepuisModule(Module.Text.Trim());
+    }
+    finally {
+      _suspendViewRefresh = ancienneSuspension;
+    }
 
     Left = _profile.Window.Left;
     Top = _profile.Window.Top;
@@ -1034,7 +1048,7 @@ public partial class DialogueServiceGEII: Window {
     if (!_serviceWorkbookLoaded)
       return;
 
-    ClasseBaseDeDonnées.DataSetExcel = DataSetExcelService;
+    DataSetExcel = DataSetExcelService;
 
     LireDonnées(VisualisationDonnées,CB1,CB2,CB3,CB4,tableSelection);
     TotalType(VisualisationDonnées);
@@ -1045,7 +1059,7 @@ public partial class DialogueServiceGEII: Window {
     if (!_serviceWorkbookLoaded)
       return;
 
-    ClasseBaseDeDonnées.DataSetExcel = DataSetExcelService;
+    DataSetExcel = DataSetExcelService;
 
     LireDonnées(VisualisationDonnées,CB1,CB2,CB3,CB4,CB5,tableSelection);
     TotalType(VisualisationDonnées);
@@ -1265,7 +1279,7 @@ public partial class DialogueServiceGEII: Window {
     AfficheFicheModule();
   }
 
-  private void RequestRefreshModuleView() {
+  internal void RequestRefreshModuleView() {
     if (_refreshModuleViewTimer == null)
       return;
 

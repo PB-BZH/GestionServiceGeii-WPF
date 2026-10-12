@@ -5248,6 +5248,10 @@ namespace GestionServiceGeii.Shared.Database {
       if (string.IsNullOrWhiteSpace(tableDeDonnée))
         tableDeDonnée = ExcelSchemaNames.Tables.NomTableGlobal;
 
+      Debug.WriteLine($"[LireDonnées] Table={tableDeDonnée} | Global présente={DataSetExcel.Tables.Contains(ExcelSchemaNames.Tables.NomTableGlobal)}");
+
+      Debug.WriteLine($"[LireDonnées] Module={liste1?.Text} | Autres filtres={liste2?.Text}, {liste3?.Text}, {liste4?.Text}");
+
       DataTable? tableSource = DataSetExcel.Tables.Contains(tableDeDonnée) ? DataSetExcel.Tables[tableDeDonnée] : null;
 
       if (tableSource == null)
@@ -5281,6 +5285,8 @@ namespace GestionServiceGeii.Shared.Database {
       }
 
       string filtreListe = string.Join(" AND ",filtres);
+
+      Debug.WriteLine($"[LireDonnées] Filtre final : {filtreListe}");
 
       FiltreAffichage(table,tableDeDonnée,filtreListe);
     }
