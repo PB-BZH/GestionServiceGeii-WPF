@@ -1456,13 +1456,51 @@ namespace GestionServiceGeii.Shared.Database {
       if (string.IsNullOrWhiteSpace(libelle))
         return string.Empty;
 
-      Match match = Regex.Match(libelle.Trim(),@"^R3-(\d{2})([A-Z]?)-(CM|TD|TP|DS)$",RegexOptions.IgnoreCase);
+      string code = Regex.Replace(libelle.Trim().ToUpperInvariant(),@"\s+"," ");
 
-      if (!match.Success)
-        return libelle.Trim().ToUpperInvariant();
+      code = Regex.Replace(code,@"_FA$","",RegexOptions.IgnoreCase);
 
-      return $"R3-{match.Groups[1].Value}{match.Groups[2].Value}-{match.Groups[3].Value}".ToUpperInvariant();
+      return code switch {
+        // R310-TD -> R3-10-TD
+        _ when Regex.IsMatch(code,@"^R3\d{2}A?-(CM|TD|TP|DS)$")
+          => Regex.Replace(code,@"^R3(\d{2})A?-(CM|TD|TP|DS)$","R3-$1-$2"),
+
+        // R3-01A-TD -> R3-01-TD
+        _ when Regex.IsMatch(code,@"^R3-\d{2}A-(CM|TD|TP|DS)$")
+          => Regex.Replace(code,@"^R3-(\d{2})A-(CM|TD|TP|DS)$","R3-$1-$2"),
+
+        // R3ESE13-CM -> R3-ESE13-CM
+        _ when Regex.IsMatch(code,@"^R3[A-Z]+\d{2}-(CM|TD|TP|DS)$")
+          => Regex.Replace(code,@"^R3([A-Z]+)(\d{2})-(CM|TD|TP|DS)$","R3-$1$2-$3"),
+
+        // R3-ESE-15-TP -> R3-ESE15-TP
+        _ when Regex.IsMatch(code,@"^R3-[A-Z]+-\d{2}-(CM|TD|TP|DS)$")
+          => Regex.Replace(code,@"^R3-([A-Z]+)-(\d{2})-(CM|TD|TP|DS)$","R3-$1$2-$3"),
+
+        // SAE 3-EME-02 -> SAE32-EME-TP
+        // SAE 3-EME-02-TD -> SAE32-EME-TD
+        _ when Regex.IsMatch(code,@"^SAE\s*3-([A-Z]+)-0*(\d+)(?:-(CM|TD|TP|DS))?$")
+          => Regex.Replace(code,@"^SAE\s*3-([A-Z]+)-0*(\d+)(?:-(CM|TD|TP|DS))?$",
+              m => $"SAE3{m.Groups[2].Value}-{m.Groups[1].Value}-{(m.Groups[3].Success ? m.Groups[3].Value : "TP")}"),
+
+        _ => code
+      };
     }
+
+    //private static string NormaliserLibelleCourtS3(string libelle) {
+    //  if (string.IsNullOrWhiteSpace(libelle))
+    //    return string.Empty;
+
+    //  string resultat = libelle.Trim().ToUpperInvariant();
+
+    //  // Formation FA : R3-01A-TD -> R3-01-TD
+    //  resultat = Regex.Replace(resultat,@"^(R3-\d{2})A-(CM|TD|TP|DS)$","$1-$2",RegexOptions.IgnoreCase);
+
+    //  // Parcours spécialisés : R3-ESE-15-TD -> R3-ESE15-TD
+    //  resultat = Regex.Replace(resultat,@"^(R3-[A-Z]+)-(\d{2})-(CM|TD|TP|DS)$","$1$2-$3",RegexOptions.IgnoreCase);
+
+    //  return resultat;
+    //}
 
     internal static void EnrichirGroupesGlobalDepuisFeuilleSemestre_Epplus(
         string cheminFichier,
@@ -2626,6 +2664,18 @@ namespace GestionServiceGeii.Shared.Database {
 
       List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(grilleS3);
 
+      foreach (AffectationGroupeSemestre affectation in affectations
+          .Where(a => a.LibelleCourt.Contains("SAE32",StringComparison.OrdinalIgnoreCase))) {
+
+        Debug.WriteLine(
+            $"[S3 SAE32] Code='{affectation.LibelleCourt}' | " +
+            $"Noms='{affectation.Noms}' | " +
+            $"Cours='{affectation.Cours}' | " +
+            $"Groupe='{affectation.Groupe}' | " +
+            $"Durée='{affectation.Duree}'");
+      }
+
+
       if (affectations.Count == 0)
         return;
 
@@ -2635,17 +2685,20 @@ namespace GestionServiceGeii.Shared.Database {
         if (string.IsNullOrWhiteSpace(affectation.Noms))
           continue;
 
-        bool estFA = Regex.IsMatch(affectation.LibelleCourt,@"^R3-\d{2}A-",RegexOptions.IgnoreCase);
+        bool estFA =
+            Regex.IsMatch(affectation.LibelleCourt,@"^R3-?\d{2}A-",RegexOptions.IgnoreCase) ||
+            affectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase);
 
         string formation = estFA ? "FA" : "FI";
         string libelleGlobal = NormaliserLibelleCourtS3(affectation.LibelleCourt);
+
         string cle = $"S3|{formation}|{affectation.Cours}|{libelleGlobal}";
 
         if (!affectationsParCle.TryGetValue(cle,out List<AffectationGroupeSemestre>? liste)) {
           liste = new List<AffectationGroupeSemestre>();
           affectationsParCle.Add(cle,liste);
         }
-
+        Debug.WriteLine($"[S3 DUREE] Code={affectation.LibelleCourt} | Cours={affectation.Cours} | Groupe={affectation.Groupe} | Durée={affectation.Duree}");
         liste.Add(affectation);
       }
 
@@ -2657,7 +2710,9 @@ namespace GestionServiceGeii.Shared.Database {
 
         AffectationGroupeSemestre premiereAffectation = listeAffectations[0];
 
-        bool estFA = Regex.IsMatch(premiereAffectation.LibelleCourt,@"^R3-\d{2}A-",RegexOptions.IgnoreCase);
+        bool estFA =
+            Regex.IsMatch(premiereAffectation.LibelleCourt,@"^R3-?\d{2}A-",RegexOptions.IgnoreCase) ||
+            premiereAffectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase);
 
         string formation = estFA ? "FA" : "FI";
         string libelleGlobal = NormaliserLibelleCourtS3(premiereAffectation.LibelleCourt);
@@ -2691,6 +2746,9 @@ namespace GestionServiceGeii.Shared.Database {
           }
 
           ligne[ExcelSchemaNames.Columns.Noms] = affectation.Noms;
+
+          if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Duree))
+            ligne[ExcelSchemaNames.Columns.Duree] = affectation.Duree;
 
           if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Groupe))
             ligne[ExcelSchemaNames.Columns.Groupe] = affectation.Groupe;
@@ -2838,6 +2896,37 @@ namespace GestionServiceGeii.Shared.Database {
       tableGlobal.AcceptChanges();
     }
 
+    private static string NormaliserCodePedagogique(string code) {
+      if (string.IsNullOrWhiteSpace(code))
+        return string.Empty;
+
+      string valeur = code.Trim().ToUpperInvariant();
+
+      return valeur switch {
+        // R310-TD -> R3-10-TD
+        _ when Regex.IsMatch(valeur,@"^R3\d{2}A?-(CM|TD|TP|DS)$")
+          => Regex.Replace(valeur,@"^R3(\d{2})A?-(CM|TD|TP|DS)$","R3-$1-$2"),
+
+        // R3-01A-TD -> R3-01-TD
+        _ when Regex.IsMatch(valeur,@"^R3-\d{2}A-(CM|TD|TP|DS)$")
+          => Regex.Replace(valeur,@"^R3-(\d{2})A-(CM|TD|TP|DS)$","R3-$1-$2"),
+
+        // R3ESE13-CM -> R3-ESE13-CM
+        _ when Regex.IsMatch(valeur,@"^R3[A-Z]+\d{2}-(CM|TD|TP|DS)$")
+          => Regex.Replace(valeur,@"^R3([A-Z]+)(\d{2})-(CM|TD|TP|DS)$","R3-$1$2-$3"),
+
+        // R3-ESE-15-TP -> R3-ESE15-TP
+        _ when Regex.IsMatch(valeur,@"^R3-[A-Z]+-\d{2}-(CM|TD|TP|DS)$")
+          => Regex.Replace(valeur,@"^R3-([A-Z]+)-(\d{2})-(CM|TD|TP|DS)$","R3-$1$2-$3"),
+
+        // SAE 3-ESE-01 -> SAE3-ESE-01
+        _ when Regex.IsMatch(valeur,@"^SAE\s+3-[A-Z]+-\d{2}$")
+          => Regex.Replace(valeur,@"^SAE\s+3-([A-Z]+)-(\d{2})$","SAE3-$1-$2"),
+
+        _ => valeur
+      };
+    }
+
     private static List<AffectationGroupeSemestre> LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(DataTable grille) {
       List<AffectationGroupeSemestre> affectations = new();
 
@@ -2862,7 +2951,10 @@ namespace GestionServiceGeii.Shared.Database {
         return affectations;
 
       int rowMax = TrouverDerniereLigneUtileSemestre(grille);
-      Regex regexCodeService = new(@"^(R3-\d{2})(A?)-(CM|TD|TP|DS)$",RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+      Regex regexCodeService = new(
+          @"^(R3-?(?:\d{2}|[A-Z]+-?\d{2})(A?)-(CM|TD|TP|DS)|SAE\s*3-[A-Z]+-\d{2}(?:_FA)?)$",
+          RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
       for (int row = 1;row <= rowMax;row++) {
         string celluleModule = LireCelluleGrille(grille,row,1);
@@ -2870,10 +2962,23 @@ namespace GestionServiceGeii.Shared.Database {
 
         Match match = regexCodeService.Match(codeService);
 
-        if (!match.Success)
-          continue;
+        if (!match.Success) {
+          if (codeService.Contains("SAE",StringComparison.OrdinalIgnoreCase))
+            Debug.WriteLine($"[S3 SAE IGNORÉE] Ligne={row} | Code='{codeService}'");
 
-        string cours = match.Groups[3].Value.ToUpperInvariant();
+          continue;
+        }
+
+        if (codeService.Contains("SAE",StringComparison.OrdinalIgnoreCase))
+          Debug.WriteLine($"[S3 SAE RECONNUE] Ligne={row} | Code='{codeService}' | Cours='{match.Groups[3].Value}'");
+
+        string cours = codeService.StartsWith("SAE",StringComparison.OrdinalIgnoreCase)
+            ? "TP"
+            : match.Groups[3].Value.ToUpperInvariant();
+
+        if (string.IsNullOrWhiteSpace(cours) &&
+            codeService.StartsWith("SAE",StringComparison.OrdinalIgnoreCase))
+          cours = "TP";
 
         if (cours != "TD" && cours != "TP")
           continue;
@@ -5235,22 +5340,10 @@ namespace GestionServiceGeii.Shared.Database {
     /// <param name="liste5">Cinquième ComboBox optionnelle utilisée pour le filtre.</param>
     /// <param name="liste6">Sixième ComboBox optionnelle utilisée pour le filtre.</param>
     /// <param name="tableDeDonnée">Nom de la table DataSet à filtrer. Par défaut : Table_complete.</param>
-    public static void LireDonnées(
-        DataGrid table,
-        ComboBox liste1,
-        ComboBox liste2 = null!,
-        ComboBox liste3 = null!,
-        ComboBox liste4 = null!,
-        ComboBox liste5 = null!,
-        ComboBox liste6 = null!,
-        string tableDeDonnée = "") {
+    public static void LireDonnées(DataGrid table,ComboBox liste1,ComboBox liste2 = null!,ComboBox liste3 = null!,ComboBox liste4 = null!,ComboBox liste5 = null!,ComboBox liste6 = null!,string tableDeDonnée = "") {
 
       if (string.IsNullOrWhiteSpace(tableDeDonnée))
         tableDeDonnée = ExcelSchemaNames.Tables.NomTableGlobal;
-
-      Debug.WriteLine($"[LireDonnées] Table={tableDeDonnée} | Global présente={DataSetExcel.Tables.Contains(ExcelSchemaNames.Tables.NomTableGlobal)}");
-
-      Debug.WriteLine($"[LireDonnées] Module={liste1?.Text} | Autres filtres={liste2?.Text}, {liste3?.Text}, {liste4?.Text}");
 
       DataTable? tableSource = DataSetExcel.Tables.Contains(tableDeDonnée) ? DataSetExcel.Tables[tableDeDonnée] : null;
 
@@ -5286,10 +5379,9 @@ namespace GestionServiceGeii.Shared.Database {
 
       string filtreListe = string.Join(" AND ",filtres);
 
-      Debug.WriteLine($"[LireDonnées] Filtre final : {filtreListe}");
-
       FiltreAffichage(table,tableDeDonnée,filtreListe);
     }
+
 
     public static void LireDonnées(DataGrid table,string tableDeDonnée) {
       LireDonnées(table,null!,null!,null!,null!,null!,null!,tableDeDonnée);

@@ -27,8 +27,8 @@
     "Geii1_TpSpGroupNames": [],
     "Geii2_FI_IsConfigured": true,
     "Geii2_FI_FormationName": "GEII 2 FI",
-    "Geii2_FI_StudentCount": 43,
-    "Geii2_FI_TdGroupCount": 3,
+    "Geii2_FI_StudentCount": 15,
+    "Geii2_FI_TdGroupCount": 0,
     "Geii2_FI_Td_officiel_GroupCount": 2,
     "TotalGoupe_Geii2_Td_FI": [
       3
@@ -54,9 +54,9 @@
       14,
       14
     ],
-    "Geii2_FI_TpGroupCount": 5,
+    "Geii2_FI_TpGroupCount": 0,
     "Geii2_FI_Tp_officiel_GroupCount": 2,
-    "Geii2_FI_TpSpGroupCount": 5,
+    "Geii2_FI_TpSpGroupCount": 0,
     "Geii2_FI_TpSp_officiel_GroupCount": 3,
     "Geii2_FI_Td_officiel_GroupNames": [
       "TD1",
@@ -75,8 +75,8 @@
     ],
     "Geii2_FA_IsConfigured": true,
     "Geii2_FA_FormationName": "GEII 2 FA",
-    "Geii2_FA_StudentCount": 12,
-    "Geii2_FA_TdGroupCount": 2,
+    "Geii2_FA_StudentCount": 15,
+    "Geii2_FA_TdGroupCount": 0,
     "Geii2_FA_Td_officiel_GroupCount": 1,
     "TotalGoupe_Geii2_Td_FA": [
       3
@@ -102,9 +102,9 @@
       7,
       0
     ],
-    "Geii2_FA_TpGroupCount": 2,
+    "Geii2_FA_TpGroupCount": 0,
     "Geii2_FA_Tp_officiel_GroupCount": 1,
-    "Geii2_FA_TpSpGroupCount": 2,
+    "Geii2_FA_TpSpGroupCount": 0,
     "Geii2_FA_TpSp_officiel_GroupCount": 2,
     "Geii2_FA_Td_officiel_GroupNames": [
       "TD1",
@@ -329,13 +329,14 @@
   "SaveState": {
     "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "AN3",
-    "CurrentCourse": "CM"
+    "CurrentModule": "SAE32 Vérif / Maint",
+    "CurrentCourse": "CM",
+    "CurrentParcours": "Parcours EME"
   },
   "Window": {
-    "Left": 275.0,
-    "Top": 136.0,
-    "Width": 1300.0,
+    "Left": 197.0,
+    "Top": 7.0,
+    "Width": 1433.0,
     "Height": 764.0,
     "State": 0
   }

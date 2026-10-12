@@ -49,6 +49,7 @@ namespace GestionServiceGeii.Core.Profiles {
     public string CurrentFormation { get; set; } = string.Empty;
     public string CurrentModule { get; set; } = string.Empty;
     public string CurrentCourse { get; set; } = string.Empty;
+    public string CurrentParcours { get; set; } = string.Empty;
   }
 
   public sealed class UpdateManifest {

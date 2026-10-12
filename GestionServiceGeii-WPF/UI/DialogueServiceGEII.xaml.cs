@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -199,7 +200,9 @@ public partial class DialogueServiceGEII: Window {
     _refreshModuleViewTimer.Tick += RefreshModuleViewTimer_Tick;
     _applicationSettings = ApplicationSettingsService.Load();
     mnuAutoOpenLastProfileOnStartup.IsChecked = _applicationSettings.AutoOpenLastProfileOnStartup;
+
     ApplyProfileToUi();
+
     ContentRendered += DialogueServiceGEII_Shown;
   }
 
@@ -217,6 +220,7 @@ public partial class DialogueServiceGEII: Window {
     _profile.SaveState.CurrentCourse = Cours.Text.Trim();
     _profile.SaveState.CurrentModule =
         texteMatière.Content?.ToString()?.Trim() ?? string.Empty;
+    _profile.SaveState.CurrentParcours = Parcours.Text.Trim();
 
     _profile.Window.Left = Left;
     _profile.Window.Top = Top;
@@ -228,6 +232,30 @@ public partial class DialogueServiceGEII: Window {
       _ => SaveWindowStateMode.Normal
     };
   }
+
+  private static void ExporterDataTableCsv(DataTable table,string cheminFichier) {
+    if (table == null)
+      throw new ArgumentNullException(nameof(table));
+
+    static string Csv(object? valeur) {
+      string texte = valeur == null || valeur == DBNull.Value ? "" : Convert.ToString(valeur) ?? "";
+      return "\"" + texte.Replace("\"","\"\"") + "\"";
+    }
+
+    using StreamWriter fichier = new(cheminFichier,false,new UTF8Encoding(true));
+
+    fichier.WriteLine(string.Join(";",table.Columns.Cast<DataColumn>().Select(c => Csv(c.ColumnName))));
+
+    foreach (DataRow ligne in table.Rows) {
+      if (ligne.RowState == DataRowState.Deleted)
+        continue;
+
+      fichier.WriteLine(string.Join(";",table.Columns.Cast<DataColumn>().Select(c => Csv(ligne[c]))));
+    }
+
+    Debug.WriteLine($"[EXPORT CSV] {table.Rows.Count} lignes exportées vers {cheminFichier}");
+  }
+
 
   private void ApplyProfileToUi() {
     string title = "Gestion Services GEII";
@@ -263,7 +291,9 @@ public partial class DialogueServiceGEII: Window {
       if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentFormation))
         SelectionnerValeurComboBox(Formation,_profile.SaveState.CurrentFormation);
 
-      // Reconstruire la liste des modules avec le semestre et la formation restaurés.
+      if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentParcours))
+        SelectionnerValeurComboBox(Parcours,_profile.SaveState.CurrentParcours);
+
       AfficherListesDonnées(Module);
 
       if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentModule))
@@ -1294,7 +1324,32 @@ public partial class DialogueServiceGEII: Window {
     try {
       LoadWorkbookDataSets();
 
-      ClasseBaseDeDonnées.DataSetExcel = DataSetExcelService;
+      DataSetExcel = DataSetExcelService;
+
+      DataTable global = DataSetExcel.Tables["Global"]!;
+
+      foreach (DataRow ligne in global.Rows.Cast<DataRow>()
+          .Where(r => r["OSE"]?.ToString()?.Trim() == "F2S32B"
+                   && r["Noms"]?.ToString()?.Trim() == "ROUDAUT")) {
+
+        Debug.WriteLine(
+            $"[SAE32 EME] Module='{ligne["Module"]}' | " +
+            $"Cours='{ligne["Cours"]}' | " +
+            $"Noms='{ligne["Noms"]}' | " +
+            $"Durée='{ligne["Durée"]}' | " +
+            $"Groupe='{ligne["Groupe"]}' | " +
+            $"SourceSheet='{ligne["SourceSheet"]}' | " +
+            $"SourceRow='{ligne["SourceRow"]}'");
+      }
+
+
+      if (DataSetExcelService.Tables.Contains("Global")) {
+        string cheminCsv = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            "Global_Diagnostic.csv");
+
+        ExporterDataTableCsv(DataSetExcelService.Tables["Global"]!,cheminCsv);
+      }
 
       BindSelectionComboBoxes();
       ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
@@ -1302,9 +1357,6 @@ public partial class DialogueServiceGEII: Window {
     finally {
       _isInitializingView = false;
     }
-
-    Debug.WriteLine(">>> APPEL DIRECT RefreshModuleView");
-    RefreshModuleView();
   }
 
   private void LoadFilesFromProfile(bool showSuccessMessage) {
@@ -1334,6 +1386,7 @@ public partial class DialogueServiceGEII: Window {
       FichierDeService.Service = loadResult.ServiceWorkbook!;
       InitialiserVueDepuisClasseurs();
       ApplyProfileToUi();
+      RequestRefreshModuleView();
     }
     catch (Exception ex) {
       MessageBox.Show(
@@ -2955,8 +3008,6 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void Module_SelectionChanged(object sender,SelectionChangedEventArgs e) {
-    Debug.WriteLine($"Module_SelectionChanged : {Module.Text} | Suspendu = {_suspendViewRefresh}");
-
     if (_suspendViewRefresh)
       return;
 
