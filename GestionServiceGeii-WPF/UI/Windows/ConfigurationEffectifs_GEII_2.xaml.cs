@@ -15,100 +15,346 @@ public partial class ConfigurationEffectifs_GEII_2: Window {
   private int nbGroupeTD;
   private int nbGroupeTP;
   private int nbGroupeTPSp;
-  public int nbGroupeTD_officiel_FI;
   public string[] NomGroupeTD_FI = new string[3];
   public string[] NomGroupeTD_officiel_FI = new string[3];
   public string[] NomGroupeTP_FI = new string[6];
+  public string[] NomGroupeTP_officiel_FI = new string[6];
   public string[] NomGroupeTPSp_FI = new string[6];
+  public string[] NomGroupeTPSp_officiel_FI = new string[6];
+  public int nbGroupeTD_officiel_FI;
   public int nbGroupeTD_officiel_FA;
+  public int nbGroupeTP_officiel_FI;
+  public int nbGroupeTP_officiel_FA;
+  public int nbGroupeTPSp_officiel_FI;
+  public int nbGroupeTPSp_officiel_FA;
   public string[] NomGroupeTD_FA = new string[3];
   public string[] NomGroupeTD_officiel_FA = new string[3];
   public string[] NomGroupeTP_FA = new string[6];
+  public string[] NomGroupeTP_officiel_FA = new string[3];
   public string[] NomGroupeTPSp_FA = new string[6];
+  public string[] NomGroupeTPSp_officiel_FA = new string[3];
   private readonly ServiceManagerProfile _profile;
   private bool _configurationTDInitialisee;
 
   public ConfigurationEffectifs_GEII_2(ServiceManagerProfile profile) {
     InitializeComponent();
     ThemeManager.ApplyTheme(this);
-    chkFi.IsChecked = true;
+
     _profile = profile;
+    _configurationTDInitialisee = false;
+
+    ApplyProfileToUi(profile);
 
     _configurationTDInitialisee = true;
+
+    ActualiserGroupesTp_FI();
+    ActualiserGroupesTp_FA();
+
     CalculEffectifGroupeTD_FI();
+    CalculEffectifGroupeTD_FA();
+
+    CalculEffectifGroupeTP_FI();
+    CalculEffectifGroupeTP_FA();
+
+    CalculEffectifGroupeTP_Sp_FI();
+    CalculEffectifGroupeTP_Sp_FA();
+
+    chkFi.IsChecked = true;
   }
 
-  private void ActualiserGroupesTp() {
-    int.TryParse(txtNbEtudiantsEseFi.Text,out int nbEseFi);
-    int.TryParse(txtNbEtudiantsEmeFi.Text,out int nbEmeFi);
-    int.TryParse(txtNbEtudiantsAiiFi.Text,out int nbAiiFi);
-
-    int.TryParse(txtNbEtudiantsEseFa.Text,out int nbEseFa);
-    int.TryParse(txtNbEtudiantsEmeFa.Text,out int nbEmeFa);
-    int.TryParse(txtNbEtudiantsAiiFa.Text,out int nbAiiFa);
-
-    ActualiserGroupeTp(txtTpCommunEse21,tbkTpCommunEse21,nbEseFi > 0);
-    ActualiserGroupeTp(txtTpCommunEse22,tbkTpCommunEse22,nbEseFi > 14);
-    ActualiserGroupeTp(txtTpSpecialiséEse21,tbkTpSpecialiséEse21,nbEseFi > 0);
-    ActualiserGroupeTp(txtTpSpecialiséEse22,tbkTpSpecialiséEse22,nbEseFi > 14);
-
-    ActualiserGroupeTp(txtTpCommunEme21,tbkTpCommunEme21,nbEmeFi > 0);
-    ActualiserGroupeTp(txtTpCommunEme22,tbkTpCommunEme22,nbEmeFi > 14);
-    ActualiserGroupeTp(txtTpSpecialiséEme21,tbkTpSpecialiséEme21,nbEmeFi > 0);
-    ActualiserGroupeTp(txtTpSpecialiséEme22,tbkTpSpecialiséEme22,nbEmeFi > 14);
-
-    ActualiserGroupeTp(txtTpCommunAii21,tbkTpCommunAii21,nbAiiFi > 0);
-    ActualiserGroupeTp(txtTpCommunAii22,tbkTpCommunAii22,nbAiiFi > 14);
-    ActualiserGroupeTp(txtTpSpecialiséAii21,tbkTpSpecialiséAii21,nbAiiFi > 0);
-    ActualiserGroupeTp(txtTpSpecialiséAii22,tbkTpSpecialiséAii22,nbAiiFi > 14);
-
-    ActualiserGroupeTp(txtTpCommunEse21_Fa,tbkTpCommunEse21_Fa,nbEseFa > 0);
-    ActualiserGroupeTp(txtTpCommunEse22_Fa,tbkTpCommunEse22_Fa,nbEseFa > 14);
-    ActualiserGroupeTp(txtTpSpecialiséEse21_Fa,tbkTpSpecialiséEse21_Fa,nbEseFa > 0);
-    ActualiserGroupeTp(txtTpSpecialiséEse22_Fa,tbkTpSpecialiséEse22_Fa,nbEseFa > 14);
-
-    ActualiserGroupeTp(txtTpCommunEme21_Fa,tbkTpCommunEme21_Fa,nbEmeFa > 0);
-    ActualiserGroupeTp(txtTpCommunEme22_Fa,tbkTpCommunEme22_Fa,nbEmeFa > 14);
-    ActualiserGroupeTp(txtTpSpecialiséEme21_Fa,tbkTpSpecialiséEme21_Fa,nbEmeFa > 0);
-    ActualiserGroupeTp(txtTpSpecialiséEme22_Fa,tbkTpSpecialiséEme22_Fa,nbEmeFa > 14);
-
-    ActualiserGroupeTp(txtTpCommunAii21_Fa,tbkTpCommunAii21_Fa,nbAiiFa > 0);
-    ActualiserGroupeTp(txtTpCommunAii22_Fa,tbkTpCommunAii22_Fa,nbAiiFa > 14);
-    ActualiserGroupeTp(txtTpSpecialiséAii21_Fa,tbkTpSpecialiséAii21_Fa,nbAiiFa > 0);
-    ActualiserGroupeTp(txtTpSpecialiséAii22_Fa,tbkTpSpecialiséAii22_Fa,nbAiiFa > 14);
+  private static bool[] LireEtatsCheckBox(params CheckBox[] cases) {
+    return cases.Select(c => c.IsChecked == true).ToArray();
   }
 
-  private static void ActualiserGroupeTp(TextBox textBox,TextBlock textBlock,bool visible) {
+  private static void RestaurerEtatsCheckBox(bool[]? etats,params CheckBox[] cases) {
+    for (int i = 0;i < cases.Length;i++)
+      cases[i].IsChecked = etats != null && i < etats.Length && etats[i];
+  }
+
+  private static void RestaurerEffectifs(int[]? effectifs,params TextBox[] controles) {
+    if (effectifs == null)
+      return;
+
+    for (int i = 0;i < controles.Length && i < effectifs.Length;i++)
+      controles[i].Text = effectifs[i].ToString();
+  }
+
+  private void ApplyProfileToUi(ServiceManagerProfile profile) {
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FI_Checks,chkParcoursEseFi,chkParcoursEmeFi,chkParcoursAiiFi);
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FA_Checks,chkParcoursEseFa,chkParcoursEmeFa,chkParcoursAiiFa);
+
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FI_Td_Checks,ChkESE_Fi,ChkEME_Fi,ChkAII_Fi,ChkESE_2_Fi,ChkEME_2_Fi,ChkAII_2_Fi,ChkESE_3_Fi,ChkEME_3_Fi,ChkAII_3_Fi);
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FA_Td_Checks,ChkESE_FA,ChkEME_FA,ChkAII_FA,ChkESE_2_FA,ChkEME_2_FA,ChkAII_2_FA,ChkESE_3_FA,ChkEME_3_FA,ChkAII_3_FA);
+
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FI_Tp_Checks,
+      chkTP11_Fi,chkTP12_Fi,chkTP13_Fi,chkTP14_Fi,chkTP15_Fi,chkTP16_Fi,
+      chkTP21_Fi,chkTP22_Fi,chkTP23_Fi,chkTP24_Fi,chkTP25_Fi,chkTP26_Fi,
+      chkTP31_Fi,chkTP32_Fi,chkTP33_Fi,chkTP34_Fi,chkTP35_Fi,chkTP36_Fi);
+
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FA_Tp_Checks,
+      chkTP11_Fa,chkTP12_Fa,chkTP13_Fa,chkTP14_Fa,chkTP15_Fa,chkTP16_Fa,
+      chkTP21_Fa,chkTP22_Fa,chkTP23_Fa,chkTP24_Fa,chkTP25_Fa,chkTP26_Fa,
+      chkTP31_Fa,chkTP32_Fa,chkTP33_Fa,chkTP34_Fa,chkTP35_Fa,chkTP36_Fa);
+
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FI_TpSp_Checks,
+      chkTP11Sp_Fi,chkTP12Sp_Fi,chkTP13Sp_Fi,chkTP14Sp_Fi,chkTP15Sp_Fi,chkTP16Sp_Fi,
+      chkTP21Sp_Fi,chkTP22Sp_Fi,chkTP23Sp_Fi,chkTP24Sp_Fi,chkTP25Sp_Fi,chkTP26Sp_Fi,
+      chkTP31Sp_Fi,chkTP32Sp_Fi,chkTP33Sp_Fi,chkTP34Sp_Fi,chkTP35Sp_Fi,chkTP36Sp_Fi);
+
+    RestaurerEtatsCheckBox(_profile.Groups.Geii2_FA_TpSp_Checks,
+      chkTP11Sp_Fa,chkTP12Sp_Fa,chkTP13Sp_Fa,chkTP14Sp_Fa,chkTP15Sp_Fa,chkTP16Sp_Fa,
+      chkTP21Sp_Fa,chkTP22Sp_Fa,chkTP23Sp_Fa,chkTP24Sp_Fa,chkTP25Sp_Fa,chkTP26Sp_Fa,
+      chkTP31Sp_Fa,chkTP32Sp_Fa,chkTP33Sp_Fa,chkTP34Sp_Fa,chkTP35Sp_Fa,chkTP36Sp_Fa);
+
+
+    RestaurerEffectifs(_profile.Groups.TotalGoupe_Geii2_Td_FI,txtTotalTD1_Fi,txtTotalTD2_Fi,txtTotalTD3_Fi);
+    RestaurerEffectifs(_profile.Groups.TotalGoupe_Geii2_Td_FA,txtTotalTD1_FA,txtTotalTD2_FA,txtTotalTD3_FA);
+
+    RestaurerEffectifs(
+      _profile.Groups.TotalGroupe_Geii2_Tp_FI_officiel,
+      txtTP1_officiel_Fi,
+      txtTP2_officiel_Fi,
+      txtTP3_officiel_Fi);
+    RestaurerEffectifs(
+      _profile.Groups.TotalGroupe_Geii2_Tp_FA_officiel,
+      txtTP1_officiel_Fa,
+      txtTP2_officiel_Fa,
+      txtTP3_officiel_Fa);
+    RestaurerEffectifs(
+      _profile.Groups.TotalGroupe_Geii2_TpSp_FI_officiel,
+      txtTP1Sp_officiel_Fi,
+      txtTP2Sp_officiel_Fi,
+      txtTP3Sp_officiel_Fi);
+    RestaurerEffectifs(
+      _profile.Groups.TotalGroupe_Geii2_TpSp_FA_officiel,
+      txtTP1Sp_officiel_Fa,
+      txtTP2Sp_officiel_Fa,
+      txtTP3Sp_officiel_Fa);
+
+    RestaurerEffectifs(_profile.Groups.Geii2_FI_TD_Effectifs,txtNbEtudiantsEseFi,txtNbEtudiantsEmeFi,txtNbEtudiantsAiiFi);
+    RestaurerEffectifs(_profile.Groups.Geii2_FA_TD_Effectifs,txtNbEtudiantsEseFa,txtNbEtudiantsEmeFa,txtNbEtudiantsAiiFa);
+
+    RestaurerEffectifs(_profile.Groups.Geii2_FI_Tp_Effectifs,txtTpCommunEse21_Fi,txtTpCommunEse22_Fi,txtTpCommunEme21_Fi,txtTpCommunEme22_Fi,txtTpCommunAii21_Fi,txtTpCommunAii22_Fi);
+    RestaurerEffectifs(_profile.Groups.Geii2_FA_Tp_Effectifs,txtTpCommunEse21_Fa,txtTpCommunEse22_Fa,txtTpCommunEme21_Fa,txtTpCommunEme22_Fa,txtTpCommunAii21_Fa,txtTpCommunAii22_Fa);
+
+    RestaurerEffectifs(_profile.Groups.Geii2_FI_TpSp_Effectifs,txtTpSpEse21_Fi,txtTpSpEse22_Fi,txtTpSpEme21_Fi,txtTpSpEme22_Fi,txtTpSpAii21_Fi,txtTpSpAii22_Fi);
+    RestaurerEffectifs(_profile.Groups.Geii2_FA_TpSp_Effectifs,txtTpSpEse21_Fa,txtTpSpEse22_Fa,txtTpSpEme21_Fa,txtTpSpEme22_Fa,txtTpSpAii21_Fa,txtTpSpAii22_Fa);
+
+    txtNbEtudiantsFi.Text = _profile.Groups.Geii2_FI_StudentCount.ToString();
+    txtNbEtudiantsFa.Text = _profile.Groups.Geii2_FA_StudentCount.ToString();
+
+    NomGroupeTP_officiel_FI = _profile.Groups.Geii2_FI_Tp_officiel_GroupNames;
+
+    _profile.Groups.Geii2_FI_StudentCount = int.TryParse(txtNbEtudiantsEseFi.Text,out int NbEtudiantsFi) ? NbEtudiantsFi : 0;
+    _profile.Groups.Geii2_FA_StudentCount = int.TryParse(txtNbEtudiantsEseFi.Text,out int NbEtudiantsFa) ? NbEtudiantsFa : 0;
+
+    _profile.Groups.Geii2_FI_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FI.Clone();
+    _profile.Groups.Geii2_FI_Tp_officiel_GroupNames = (string[])NomGroupeTP_FI.Clone();
+    _profile.Groups.Geii2_FI_TpSp_officiel_GroupNames = (string[])NomGroupeTPSp_FI.Clone();
+
+    _profile.Groups.Geii2_FA_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FA.Clone();
+    _profile.Groups.Geii2_FA_Tp_officiel_GroupNames = (string[])NomGroupeTP_FA.Clone();
+    _profile.Groups.Geii2_FA_TpSp_officiel_GroupNames = (string[])NomGroupeTPSp_FA.Clone();
+  }
+
+  private void ApplyUiToProfile(ServiceManagerProfile profile) {
+    _profile.Groups.Geii2_FI_Checks = LireEtatsCheckBox(
+      chkParcoursEseFi,
+      chkParcoursEmeFi,
+      chkParcoursAiiFi);
+    _profile.Groups.Geii2_FA_Checks = LireEtatsCheckBox(
+      chkParcoursEseFa,
+      chkParcoursEmeFa,
+      chkParcoursAiiFa);
+
+    _profile.Groups.Geii2_FI_Td_Checks = LireEtatsCheckBox(
+      ChkESE_Fi,ChkEME_Fi,ChkAII_Fi,
+      ChkESE_2_Fi,ChkEME_2_Fi,ChkAII_2_Fi,
+      ChkESE_3_Fi,ChkEME_3_Fi,ChkAII_3_Fi);
+    _profile.Groups.Geii2_FA_Td_Checks = LireEtatsCheckBox(
+      ChkESE_FA,ChkEME_FA,ChkAII_FA,
+      ChkESE_2_FA,ChkEME_2_FA,ChkAII_2_FA,
+      ChkESE_3_FA,ChkEME_3_FA,ChkAII_3_FA);
+
+    _profile.Groups.Geii2_FI_Tp_Checks = LireEtatsCheckBox(
+      chkTP11_Fi,chkTP12_Fi,chkTP13_Fi,chkTP14_Fi,chkTP15_Fi,chkTP16_Fi,
+      chkTP21_Fi,chkTP22_Fi,chkTP23_Fi,chkTP24_Fi,chkTP25_Fi,chkTP26_Fi,
+      chkTP31_Fi,chkTP32_Fi,chkTP33_Fi,chkTP34_Fi,chkTP35_Fi,chkTP36_Fi);
+    _profile.Groups.Geii2_FA_Tp_Checks = LireEtatsCheckBox(
+      chkTP11_Fa,chkTP12_Fa,chkTP13_Fa,chkTP14_Fa,chkTP15_Fa,chkTP16_Fa,
+      chkTP21_Fa,chkTP22_Fa,chkTP23_Fa,chkTP24_Fa,chkTP25_Fa,chkTP26_Fa,
+      chkTP31_Fa,chkTP32_Fa,chkTP33_Fa,chkTP34_Fa,chkTP35_Fa,chkTP36_Fa);
+
+    _profile.Groups.Geii2_FI_TpSp_Checks = LireEtatsCheckBox(
+      chkTP11Sp_Fi,chkTP12Sp_Fi,chkTP13Sp_Fi,chkTP14Sp_Fi,chkTP15Sp_Fi,chkTP16Sp_Fi,
+      chkTP21Sp_Fi,chkTP22Sp_Fi,chkTP23Sp_Fi,chkTP24Sp_Fi,chkTP25Sp_Fi,chkTP26Sp_Fi,
+      chkTP31Sp_Fi,chkTP32Sp_Fi,chkTP33Sp_Fi,chkTP34Sp_Fi,chkTP35Sp_Fi,chkTP36Sp_Fi);
+    _profile.Groups.Geii2_FA_TpSp_Checks = LireEtatsCheckBox(
+      chkTP11Sp_Fa,chkTP12Sp_Fa,chkTP13Sp_Fa,chkTP14Sp_Fa,chkTP15Sp_Fa,chkTP16Sp_Fa,
+      chkTP21Sp_Fa,chkTP22Sp_Fa,chkTP23Sp_Fa,chkTP24Sp_Fa,chkTP25Sp_Fa,chkTP26Sp_Fa,
+      chkTP31Sp_Fa,chkTP32Sp_Fa,chkTP33Sp_Fa,chkTP34Sp_Fa,chkTP35Sp_Fa,chkTP36Sp_Fa);
+
+    _profile.Groups.Geii2_FI_TD_Effectifs = [
+      int.TryParse(txtNbEtudiantsEseFi.Text,out int eseTd_FI) ? eseTd_FI : 0,
+      int.TryParse(txtNbEtudiantsEmeFi.Text,out int emeTd_FI) ? emeTd_FI : 0,
+      int.TryParse(txtNbEtudiantsAiiFi.Text,out int AiiTd_FI) ? AiiTd_FI : 0,
+    ];
+    _profile.Groups.Geii2_FA_TD_Effectifs = [
+      int.TryParse(txtNbEtudiantsEseFa.Text,out int eseTd_FA) ? eseTd_FA : 0,
+      int.TryParse(txtNbEtudiantsEmeFa.Text,out int emeTd_FA) ? emeTd_FA : 0,
+      int.TryParse(txtNbEtudiantsAiiFa.Text,out int AiiTd_FA) ? AiiTd_FA : 0,
+    ];
+    _profile.Groups.Geii2_FI_Tp_Effectifs = [
+      int.TryParse(txtTpCommunEse21_Fi.Text,out int eseTp_FI_21) ? eseTp_FI_21 : 0,
+      int.TryParse(txtTpCommunEse22_Fi.Text,out int eseTp_FI_22) ? eseTp_FI_22 : 0,
+      int.TryParse(txtTpCommunEme21_Fi.Text,out int emeTp_FI_21) ? emeTp_FI_21 : 0,
+      int.TryParse(txtTpCommunEme22_Fi.Text,out int emeTp_FI_22) ? emeTp_FI_22 : 0,
+      int.TryParse(txtTpCommunAii21_Fi.Text,out int aiiTp_FI_21) ? aiiTp_FI_21 : 0,
+      int.TryParse(txtTpCommunAii22_Fi.Text,out int aiiTp_FI_22) ? aiiTp_FI_22 : 0
+    ];
+    _profile.Groups.Geii2_FA_Tp_Effectifs = [
+      int.TryParse(txtTpCommunEse21_Fa.Text,out int eseTp_FA_21) ? eseTp_FA_21 : 0,
+      int.TryParse(txtTpCommunEse22_Fa.Text,out int eseTp_FA_22) ? eseTp_FA_22 : 0,
+      int.TryParse(txtTpCommunEme21_Fa.Text,out int emeTp_FA_21) ? emeTp_FA_21 : 0,
+      int.TryParse(txtTpCommunEme22_Fa.Text,out int emeTp_FA_22) ? emeTp_FA_22 : 0,
+      int.TryParse(txtTpCommunAii21_Fa.Text,out int aiiTp_FA_21) ? aiiTp_FA_21 : 0,
+      int.TryParse(txtTpCommunAii22_Fa.Text,out int aiiTp_FA_22) ? aiiTp_FA_22 : 0
+    ];
+
+    _profile.Groups.Geii2_FI_TpSp_Effectifs = [
+      int.TryParse(txtTpSpAii22_Fi.Text,out int eseTpSp_FI_21) ? eseTpSp_FI_21 : 0,
+      int.TryParse(txtTpSpEse22_Fi.Text,out int eseTpSp_FI_22) ? eseTpSp_FI_22 : 0,
+      int.TryParse(txtTpSpEme21_Fi.Text,out int emeTpSp_FI_21) ? emeTpSp_FI_21 : 0,
+      int.TryParse(txtTpSpEme22_Fi.Text,out int emeTpSp_FI_22) ? emeTpSp_FI_22 : 0,
+      int.TryParse(txtTpSpAii21_Fi.Text,out int aiiTpSp_FI_21) ? aiiTpSp_FI_21 : 0,
+      int.TryParse(txtTpSpAii22_Fi.Text,out int aiiTpSp_FI_22) ? aiiTpSp_FI_22 : 0
+    ];
+    _profile.Groups.Geii2_FA_TpSp_Effectifs = [
+      int.TryParse(txtTpSpEse21_Fa.Text,out int eseTpSp_FA_21) ? eseTpSp_FA_21 : 0,
+      int.TryParse(txtTpSpEse22_Fa.Text,out int eseTpSp_FA_22) ? eseTpSp_FA_22 : 0,
+      int.TryParse(txtTpSpEme21_Fa.Text,out int emeTpSp_FA_21) ? emeTpSp_FA_21 : 0,
+      int.TryParse(txtTpSpEme22_Fa.Text,out int emeTpSp_FA_22) ? emeTpSp_FA_22 : 0,
+      int.TryParse(txtTpSpAii21_Fa.Text,out int aiiTpSp_FA_21) ? aiiTpSp_FA_21 : 0,
+      int.TryParse(txtTpSpAii22_Fa.Text,out int aiiTpSp_FA_22) ? aiiTpSp_FA_22 : 0
+    ];
+
+    _profile.Groups.TotalGroupe_Geii2_Td_FI_officiel = [
+      int.TryParse(txtTotalTD1_Fi.Text, out int td1_Fi) ? td1_Fi : 0,
+      int.TryParse(txtTotalTD2_Fi.Text, out int td2_Fi) ? td2_Fi : 0,
+      int.TryParse(txtTotalTD3_Fi.Text, out int td3_Fi) ? td3_Fi : 0,
+      ];
+    _profile.Groups.TotalGroupe_Geii2_Td_FA_officiel = [
+      int.TryParse(txtTotalTD1_FA.Text, out int td1_Fa) ? td1_Fa : 0,
+      int.TryParse(txtTotalTD2_FA.Text, out int td2_Fa) ? td2_Fa : 0,
+      int.TryParse(txtTotalTD3_FA.Text, out int td3_Fa) ? td3_Fa : 0,
+      ];
+
+    _profile.Groups.TotalGroupe_Geii2_Tp_FI_officiel = [
+      int.TryParse(txtTP1_officiel_Fi.Text, out int tp1_Fi) ? tp1_Fi : 0,
+      int.TryParse(txtTP2_officiel_Fi.Text, out int tp2_Fi) ? tp2_Fi : 0,
+      int.TryParse(txtTP3_officiel_Fi.Text, out int tp3_Fi) ? tp3_Fi : 0,
+      ];
+    _profile.Groups.TotalGroupe_Geii2_Tp_FA_officiel = [
+      int.TryParse(txtTP1_officiel_Fi.Text, out int tp1_Fa) ? tp1_Fa : 0,
+      int.TryParse(txtTP2_officiel_Fi.Text, out int tp2_Fa) ? tp2_Fa : 0,
+      int.TryParse(txtTP3_officiel_Fi.Text, out int tp3_Fa) ? tp3_Fa : 0,
+      ];
+
+    _profile.Groups.TotalGroupe_Geii2_TpSp_FI_officiel = [
+      int.TryParse(txtTP1Sp_officiel_Fi.Text, out int tp1Sp_Fi) ? tp1Sp_Fi : 0,
+      int.TryParse(txtTP2Sp_officiel_Fi.Text, out int tp2Sp_Fi) ? tp2Sp_Fi : 0,
+      int.TryParse(txtTP3Sp_officiel_Fi.Text, out int tp3Sp_Fi) ? tp3Sp_Fi: 0,
+      ];
+    _profile.Groups.TotalGroupe_Geii2_TpSp_FA_officiel = [
+      int.TryParse(txtTP1Sp_officiel_Fa.Text, out int tp1Sp_Fa) ? tp1Sp_Fa : 0,
+      int.TryParse(txtTP2Sp_officiel_Fa.Text, out int tp2Sp_Fa) ? tp2Sp_Fa : 0,
+      int.TryParse(txtTP3Sp_officiel_Fa.Text, out int tp3Sp_Fa) ? tp3Sp_Fa: 0,
+      ];
+
+
+    _profile.Groups.Geii2_FI_StudentCount = int.TryParse(txtNbEtudiantsFi.Text,out int Effectif_FI) ? Effectif_FI : 0;
+    _profile.Groups.Geii2_FA_StudentCount = int.TryParse(txtNbEtudiantsFa.Text,out int Effectif_FA) ? Effectif_FA : 0;
+
+    _profile.Groups.Geii2_FI_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FI.Clone();
+    _profile.Groups.Geii2_FI_Tp_officiel_GroupNames = (string[])NomGroupeTP_FI.Clone();
+    _profile.Groups.Geii2_FI_TpSp_officiel_GroupNames = (string[])NomGroupeTPSp_FI.Clone();
+
+    _profile.Groups.Geii2_FA_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FA.Clone();
+    _profile.Groups.Geii2_FA_Tp_officiel_GroupNames = (string[])NomGroupeTP_FA.Clone();
+    _profile.Groups.Geii2_FA_TpSp_officiel_GroupNames = (string[])NomGroupeTPSp_FA.Clone();
+  }
+
+  private static void ActualiserGroupesTp(
+    int effectif,
+    StackPanel tp21,StackPanel tp22,
+    StackPanel tp21Specialise,StackPanel tp22Specialise) {
+
+    bool premierGroupe = effectif > 0;
+    bool secondGroupe = effectif > 14;
+
+    ActualiserGroupeTp(tp21,premierGroupe);
+    ActualiserGroupeTp(tp22,secondGroupe);
+
+    ActualiserGroupeTp(tp21Specialise,premierGroupe);
+    ActualiserGroupeTp(tp22Specialise,secondGroupe);
+  }
+
+  private void ActualiserGroupesTp_FI() {
+    (TextBox effectif,StackPanel tp21,StackPanel tp22,StackPanel tp21Sp,StackPanel tp22Sp)[] parcours = [
+      (txtNbEtudiantsEseFi,spEse21_Fi,spEse22_Fi,spEse21sp_Fi,spEse22Sp_Fi),
+      (txtNbEtudiantsEmeFi,spEme21_Fi,spEme22_Fi,spEme21Sp_Fi,spEme22Sp_Fi),
+      (txtNbEtudiantsAiiFi,spAii21_Fi,spAii22_Fi,spAii21Sp_Fi,spAii22Sp_Fi)
+    ];
+
+    foreach (var p in parcours) {
+      int.TryParse(p.effectif.Text,out int effectif);
+      ActualiserGroupesTp(effectif,p.tp21,p.tp22,p.tp21Sp,p.tp22Sp);
+    }
+  }
+
+  private void ActualiserGroupesTp_FA() {
+    (TextBox effectif,StackPanel tp21,StackPanel tp22,StackPanel tp21Sp,StackPanel tp22Sp)[] parcours = [
+      (txtNbEtudiantsEseFa,spEse21_Fa,spEse22_Fa,spEse21sp_Fa,spEse22Sp_Fa),
+    (txtNbEtudiantsEmeFa,spEme21_Fa,spEme22_Fa,spEme21Sp_Fa,spEme22Sp_Fa),
+    (txtNbEtudiantsAiiFa,spAii21_Fa,spAii22_Fa,spAii21Sp_Fa,spAii22Sp_Fa)
+    ];
+
+    foreach (var p in parcours) {
+      int.TryParse(p.effectif.Text,out int effectif);
+      ActualiserGroupesTp(effectif,p.tp21,p.tp22,p.tp21Sp,p.tp22Sp);
+    }
+  }
+
+  private static void ActualiserGroupeTp(StackPanel stackPanel,bool visible) {
     Visibility visibility = visible ? Visibility.Visible : Visibility.Collapsed;
 
-    textBox.Visibility = visibility;
-    textBox.IsEnabled = visible;
-    textBlock.Visibility = visibility;
-
-    if (!visible)
-      textBox.Clear();
+    stackPanel.Visibility = visibility;
+    stackPanel.IsEnabled = visible;
   }
 
   private void chkFa_Checked(object sender,RoutedEventArgs e) {
+    string formation = "GEII 2 FA";
     if (chkFa.IsChecked == true) {
       chkFi.IsChecked = false;
     }
-    lblFormationName.Text = "Formation par apprentissage en GEII-2";
+    lblFormationName.Text = $"Répartition prévisionnelle des effectifs en {formation}";
     pnlFa.Visibility = Visibility.Visible;
     pnlFi.Visibility = Visibility.Collapsed;
   }
 
   private void chkFi_Checked(object sender,RoutedEventArgs e) {
+    string formation = "GEII 2 FI";
     if (chkFi.IsChecked == true) {
       chkFa.IsChecked = false;
     }
-    lblFormationName.Text = "Formation initiale en GEII-2";
+    lblFormationName.Text = $"Répartition prévisionnelle des effectifs en {formation}";
     pnlFa.Visibility = Visibility.Collapsed;
     pnlFi.Visibility = Visibility.Visible;
   }
 
   private void EffectifParcours_TextChanged(object sender,TextChangedEventArgs e) {
-    ActualiserGroupesTp();
+    if (chkFi.IsChecked == true) ActualiserGroupesTp_FI();
+    if (chkFa.IsChecked == true) ActualiserGroupesTp_FA();
   }
 
   private void ActualiserGroupesParcours(
@@ -156,14 +402,14 @@ public partial class ConfigurationEffectifs_GEII_2: Window {
     NomGroupeTP_FI = new string[6];
     NomGroupeTPSp_FI = new string[6];
 
-    ActualiserGroupesParcours(chkParcoursEseFi,txtNbEtudiantsEseFi,tbkTpCommunEse21,tbkTpCommunEse22,
-        tbkTpSpecialiséEse21,tbkTpSpecialiséEse22,NomGroupeTD_FI,NomGroupeTP_FI,NomGroupeTPSp_FI,ref i,ref j,ref k);
+    ActualiserGroupesParcours(chkParcoursEseFi,txtNbEtudiantsEseFi,tbkTpCommunEse21_Fi,tbkTpCommunEse22_Fi,
+        tbkTpSpEse21_Fi,tbkTpSpEse22_Fi,NomGroupeTD_FI,NomGroupeTP_FI,NomGroupeTPSp_FI,ref i,ref j,ref k);
 
-    ActualiserGroupesParcours(chkParcoursEmeFi,txtNbEtudiantsEmeFi,tbkTpCommunEme21,tbkTpCommunEme22,
-        tbkTpSpecialiséEme21,tbkTpSpecialiséEme22,NomGroupeTD_FI,NomGroupeTP_FI,NomGroupeTPSp_FI,ref i,ref j,ref k);
+    ActualiserGroupesParcours(chkParcoursEmeFi,txtNbEtudiantsEmeFi,tbkTpCommunEme21_Fi,tbkTpCommunEme22_Fi,
+        tbkTpSpEme21_Fi,tbkTpSpEme22_Fi,NomGroupeTD_FI,NomGroupeTP_FI,NomGroupeTPSp_FI,ref i,ref j,ref k);
 
-    ActualiserGroupesParcours(chkParcoursAiiFi,txtNbEtudiantsAiiFi,tbkTpCommunAii21,tbkTpCommunAii22,
-        tbkTpSpecialiséAii21,tbkTpSpecialiséAii22,NomGroupeTD_FI,NomGroupeTP_FI,NomGroupeTPSp_FI,ref i,ref j,ref k);
+    ActualiserGroupesParcours(chkParcoursAiiFi,txtNbEtudiantsAiiFi,tbkTpCommunAii21_Fi,tbkTpCommunAii22_Fi,
+        tbkTpSpAii21_Fi,tbkTpSpAii22_Fi,NomGroupeTD_FI,NomGroupeTP_FI,NomGroupeTPSp_FI,ref i,ref j,ref k);
 
     CalculEffectifGroupeTD_FI();
 
@@ -173,18 +419,27 @@ public partial class ConfigurationEffectifs_GEII_2: Window {
     FormationGEII.Geii_2_FI.NbGroupeTD = nbGroupeTD;
     FormationGEII.Geii_2_FI.NbGroupeTD_officiel = nbGroupeTD_officiel_FI;
     FormationGEII.Geii_2_FI.NbGroupeTP = nbGroupeTP;
+    FormationGEII.Geii_2_FI.NbGroupeTP_officiel = nbGroupeTP_officiel_FI;
     FormationGEII.Geii_2_FI.NbGroupeTPSp = nbGroupeTPSp;
+    FormationGEII.Geii_2_FI.NbGroupeTPSp_officiel = nbGroupeTPSp_officiel_FI;
+
+
+    FormationGEII.Geii_2_FI.NomGroupeTD = (string[])NomGroupeTD_FI.Clone();
+    FormationGEII.Geii_2_FI.NomGroupeTD_officiel = (string[])NomGroupeTP_FI.Clone();
+    FormationGEII.Geii_2_FI.NomGroupeTP = (string[])NomGroupeTP_FI.Clone();
+    FormationGEII.Geii_2_FI.NomGroupeTP_officiel = (string[])NomGroupeTP_officiel_FI.Clone();
+    FormationGEII.Geii_2_FI.NomGroupeTP_Sp = (string[])NomGroupeTPSp_FI.Clone();
+    FormationGEII.Geii_2_FI.NomGroupeTP_Sp_officiel = (string[])NomGroupeTP_officiel_FI.Clone();
 
     _profile.Groups.Geii2_FI_StudentCount = nbEtudiant;
     _profile.Groups.Geii2_FI_TdGroupCount = nbGroupeTD;
     _profile.Groups.Geii2_FI_Td_officiel_GroupCount = nbGroupeTD_officiel_FI;
     _profile.Groups.Geii2_FI_TpGroupCount = nbGroupeTP;
+    _profile.Groups.Geii2_FI_Tp_officiel_GroupCount = nbGroupeTP_officiel_FI;
     _profile.Groups.Geii2_FI_TpSpGroupCount = nbGroupeTPSp;
+    _profile.Groups.Geii2_FI_TpSp_officiel_GroupCount = nbGroupeTPSp_officiel_FI;
 
-    _profile.Groups.Geii2_FI_TdGroupNames = (string[])NomGroupeTD_FI.Clone();
-    _profile.Groups.Geii2_FI_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FI.Clone();
-    _profile.Groups.Geii2_FI_TpGroupNames = (string[])NomGroupeTP_FI.Clone();
-    _profile.Groups.Geii2_FI_TpSpGroupNames = (string[])NomGroupeTPSp_FI.Clone();
+    ApplyUiToProfile(_profile);
   }
 
   private void EnregistrerConfigurationEffectifs_FA() {
@@ -198,13 +453,13 @@ public partial class ConfigurationEffectifs_GEII_2: Window {
     NomGroupeTPSp_FA = new string[6];
 
     ActualiserGroupesParcours(chkParcoursEseFa,txtNbEtudiantsEseFa,tbkTpCommunEse21_Fa,tbkTpCommunEse22_Fa,
-        tbkTpSpecialiséEse21_Fa,tbkTpSpecialiséEse22_Fa,NomGroupeTD_FA,NomGroupeTP_FA,NomGroupeTPSp_FA,ref i,ref j,ref k);
+        tbkTpSpEse21_Fa,tbkTpSpEse22_Fa,NomGroupeTD_FA,NomGroupeTP_FA,NomGroupeTPSp_FA,ref i,ref j,ref k);
 
     ActualiserGroupesParcours(chkParcoursEmeFa,txtNbEtudiantsEmeFa,tbkTpCommunEme21_Fa,tbkTpCommunEme22_Fa,
-        tbkTpSpecialiséEme21_Fa,tbkTpSpecialiséEme22_Fa,NomGroupeTD_FA,NomGroupeTP_FA,NomGroupeTPSp_FA,ref i,ref j,ref k);
+        tbkTpSpEme21_Fa,tbkTpSpEme22_Fa,NomGroupeTD_FA,NomGroupeTP_FA,NomGroupeTPSp_FA,ref i,ref j,ref k);
 
     ActualiserGroupesParcours(chkParcoursAiiFa,txtNbEtudiantsAiiFa,tbkTpCommunAii21_Fa,tbkTpCommunAii22_Fa,
-        tbkTpSpecialiséAii21_Fa,tbkTpSpecialiséAii22_Fa,NomGroupeTD_FA,NomGroupeTP_FA,NomGroupeTPSp_FA,ref i,ref j,ref k);
+        tbkTpSpAii21_Fa,tbkTpSpAii22_Fa,NomGroupeTD_FA,NomGroupeTP_FA,NomGroupeTPSp_FA,ref i,ref j,ref k);
 
     CalculEffectifGroupeTD_FA();
 
@@ -214,129 +469,231 @@ public partial class ConfigurationEffectifs_GEII_2: Window {
     FormationGEII.Geii_2_FA.NbGroupeTD = nbGroupeTD;
     FormationGEII.Geii_2_FA.NbGroupeTD_officiel = nbGroupeTD_officiel_FA;
     FormationGEII.Geii_2_FA.NbGroupeTP = nbGroupeTP;
+    FormationGEII.Geii_2_FA.NbGroupeTP_officiel = nbGroupeTP_officiel_FA;
     FormationGEII.Geii_2_FA.NbGroupeTPSp = nbGroupeTPSp;
+    FormationGEII.Geii_2_FA.NbGroupeTPSp_officiel = nbGroupeTPSp_officiel_FA;
+
+    FormationGEII.Geii_2_FA.NomGroupeTD = (string[])NomGroupeTD_FA.Clone();
+    FormationGEII.Geii_2_FA.NomGroupeTD_officiel = (string[])NomGroupeTP_FA.Clone();
+    FormationGEII.Geii_2_FA.NomGroupeTP = (string[])NomGroupeTP_FA.Clone();
+    FormationGEII.Geii_2_FA.NomGroupeTP_officiel = (string[])NomGroupeTP_officiel_FA.Clone();
+    FormationGEII.Geii_2_FA.NomGroupeTP_Sp = (string[])NomGroupeTPSp_FA.Clone();
+    FormationGEII.Geii_2_FA.NomGroupeTP_Sp_officiel = (string[])NomGroupeTP_officiel_FA.Clone();
 
     _profile.Groups.Geii2_FA_StudentCount = nbEtudiant;
     _profile.Groups.Geii2_FA_TdGroupCount = nbGroupeTD;
     _profile.Groups.Geii2_FA_Td_officiel_GroupCount = nbGroupeTD_officiel_FA;
     _profile.Groups.Geii2_FA_TpGroupCount = nbGroupeTP;
+    _profile.Groups.Geii2_FA_Tp_officiel_GroupCount = nbGroupeTP_officiel_FA;
     _profile.Groups.Geii2_FA_TpSpGroupCount = nbGroupeTPSp;
+    _profile.Groups.Geii2_FA_TpSp_officiel_GroupCount = nbGroupeTPSp_officiel_FA;
 
-    _profile.Groups.Geii2_FA_TdGroupNames = (string[])NomGroupeTD_FA.Clone();
-    _profile.Groups.Geii2_FA_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FA.Clone();
-    _profile.Groups.Geii2_FA_TpGroupNames = (string[])NomGroupeTP_FA.Clone();
-    _profile.Groups.Geii2_FA_TpSpGroupNames = (string[])NomGroupeTPSp_FA.Clone();
+    ApplyUiToProfile(_profile);
   }
 
   private string[] CalculEffectifGroupeTD_FI() {
-    int.TryParse(txtNbEtudiantsEseFi.Text,out int effectifESE);
-    int.TryParse(txtNbEtudiantsEmeFi.Text,out int effectifEME);
-    int.TryParse(txtNbEtudiantsAiiFi.Text,out int effectifAII);
+    (TextBox effectif,CheckBox td1,CheckBox td2,CheckBox td3)[] groupes = [
+      (txtNbEtudiantsEseFi,ChkESE_Fi,ChkESE_2_Fi,ChkESE_3_Fi),
+      (txtNbEtudiantsEmeFi,ChkEME_Fi,ChkEME_2_Fi,ChkEME_3_Fi),
+      (txtNbEtudiantsAiiFi,ChkAII_Fi,ChkAII_2_Fi,ChkAII_3_Fi)
+    ];
 
-    int totalTD1 = 0;
-    int totalTD2 = 0;
-    int totalTD3 = 0;
+    int[] totaux = new int[3];
 
-    if (ChkESE.IsChecked == true)
-      totalTD1 += effectifESE;
+    foreach (var groupe in groupes) {
+      int.TryParse(groupe.effectif.Text,out int effectif);
 
-    if (ChkEME.IsChecked == true)
-      totalTD1 += effectifEME;
+      if (groupe.td1.IsChecked == true) totaux[0] += effectif;
+      if (groupe.td2.IsChecked == true) totaux[1] += effectif;
+      if (groupe.td3.IsChecked == true) totaux[2] += effectif;
+    }
 
-    if (ChkAII.IsChecked == true)
-      totalTD1 += effectifAII;
-
-    if (ChkESE_2.IsChecked == true)
-      totalTD2 += effectifESE;
-
-    if (ChkEME_2.IsChecked == true)
-      totalTD2 += effectifEME;
-
-    if (ChkAII_2.IsChecked == true)
-      totalTD2 += effectifAII;
-
-    if (ChkESE_3.IsChecked == true)
-      totalTD3 += effectifESE;
-
-    if (ChkEME_3.IsChecked == true)
-      totalTD3 += effectifEME;
-
-    if (ChkAII_3.IsChecked == true)
-      totalTD3 += effectifAII;
-
-    txtTotalTD1_FI.Text = totalTD1.ToString();
-    txtTotalTD2_FI.Text = totalTD2.ToString();
-    txtTotalTD3_FI.Text = totalTD3.ToString();
+    txtTotalTD1_Fi.Text = totaux[0].ToString();
+    txtTotalTD2_Fi.Text = totaux[1].ToString();
+    txtTotalTD3_Fi.Text = totaux[2].ToString();
 
     NomGroupeTD_officiel_FI = new string[3];
 
-    if (totalTD1 > 0)
-      NomGroupeTD_officiel_FI[0] = txtTd1_FI.Text;
-
-    if (totalTD2 > 0)
-      NomGroupeTD_officiel_FI[1] = txtTd2_FI.Text;
-
-    if (totalTD3 > 0)
-      NomGroupeTD_officiel_FI[2] = txtTd3_FI.Text;
+    if (totaux[0] > 0) NomGroupeTD_officiel_FI[0] = txtTd1_Fi.Text;
+    if (totaux[1] > 0) NomGroupeTD_officiel_FI[1] = txtTd2_Fi.Text;
+    if (totaux[2] > 0) NomGroupeTD_officiel_FI[2] = txtTd3_Fi.Text;
 
     nbGroupeTD_officiel_FI = NomGroupeTD_officiel_FI.Count(g => !string.IsNullOrWhiteSpace(g));
+
     return NomGroupeTD_officiel_FI;
   }
+
   private string[] CalculEffectifGroupeTD_FA() {
-    int.TryParse(txtNbEtudiantsEseFa.Text,out int effectifESE);
-    int.TryParse(txtNbEtudiantsEmeFa.Text,out int effectifEME);
-    int.TryParse(txtNbEtudiantsAiiFa.Text,out int effectifAII);
+    (TextBox effectif,CheckBox td1,CheckBox td2,CheckBox td3)[] groupes = [
+      (txtNbEtudiantsEseFa,ChkESE_FA,ChkESE_2_FA,ChkESE_3_FA),
+      (txtNbEtudiantsEmeFa,ChkEME_FA,ChkEME_2_FA,ChkEME_3_FA),
+      (txtNbEtudiantsAiiFa,ChkAII_FA,ChkAII_2_FA,ChkAII_3_FA)
+    ];
 
-    int totalTD1 = 0;
-    int totalTD2 = 0;
-    int totalTD3 = 0;
+    int[] totaux = new int[3];
 
-    if (ChkESE_FA.IsChecked == true)
-      totalTD1 += effectifESE;
+    foreach (var groupe in groupes) {
+      int.TryParse(groupe.effectif.Text,out int effectif);
 
-    if (ChkEME_FA.IsChecked == true)
-      totalTD1 += effectifEME;
+      if (groupe.td1.IsChecked == true) totaux[0] += effectif;
+      if (groupe.td2.IsChecked == true) totaux[1] += effectif;
+      if (groupe.td3.IsChecked == true) totaux[2] += effectif;
+    }
 
-    if (ChkAII_FA.IsChecked == true)
-      totalTD1 += effectifAII;
-
-    if (ChkESE_2_FA.IsChecked == true)
-      totalTD2 += effectifESE;
-
-    if (ChkEME_2_FA.IsChecked == true)
-      totalTD2 += effectifEME;
-
-    if (ChkAII_2_FA.IsChecked == true)
-      totalTD2 += effectifAII;
-
-    if (ChkESE_3_FA.IsChecked == true)
-      totalTD3 += effectifESE;
-
-    if (ChkEME_3_FA.IsChecked == true)
-      totalTD3 += effectifEME;
-
-    if (ChkAII_3_FA.IsChecked == true)
-      totalTD3 += effectifAII;
-
-    txtTotalTD1_FA.Text = totalTD1.ToString();
-    txtTotalTD2_FA.Text = totalTD2.ToString();
-    txtTotalTD3_FA.Text = totalTD3.ToString();
+    txtTotalTD1_FA.Text = totaux[0].ToString();
+    txtTotalTD2_FA.Text = totaux[1].ToString();
+    txtTotalTD3_FA.Text = totaux[2].ToString();
 
     NomGroupeTD_officiel_FA = new string[3];
 
-    if (totalTD1 > 0)
-      NomGroupeTD_officiel_FA[0] = txtTd1_FI.Text;
-
-    if (totalTD2 > 0)
-      NomGroupeTD_officiel_FA[1] = txtTd2_FI.Text;
-
-    if (totalTD3 > 0)
-      NomGroupeTD_officiel_FA[2] = txtTd3_FI.Text;
+    if (totaux[0] > 0) NomGroupeTD_officiel_FA[0] = txtTd1_FA.Text;
+    if (totaux[1] > 0) NomGroupeTD_officiel_FA[1] = txtTd2_FA.Text;
+    if (totaux[2] > 0) NomGroupeTD_officiel_FA[2] = txtTd3_FA.Text;
 
     nbGroupeTD_officiel_FA = NomGroupeTD_officiel_FA.Count(g => !string.IsNullOrWhiteSpace(g));
+
     return NomGroupeTD_officiel_FA;
   }
 
+  private string[] CalculEffectifGroupeTP_FA() {
+    (TextBox effectif,CheckBox tp1,CheckBox tp2,CheckBox tp3)[] groupes = [
+      (txtTpCommunEse21_Fa,chkTP11_Fa,chkTP21_Fa,chkTP31_Fa),
+      (txtTpCommunEse22_Fa,chkTP12_Fa,chkTP22_Fa,chkTP32_Fa),
+      (txtTpCommunEme21_Fa,chkTP13_Fa,chkTP23_Fa,chkTP33_Fa),
+      (txtTpCommunEme22_Fa,chkTP14_Fa,chkTP24_Fa,chkTP34_Fa),
+      (txtTpCommunAii21_Fa,chkTP15_Fa,chkTP25_Fa,chkTP35_Fa),
+      (txtTpCommunAii22_Fa,chkTP16_Fa,chkTP26_Fa,chkTP36_Fa)
+    ];
+
+    int[] totaux = new int[3];
+
+    foreach (var groupe in groupes) {
+      int.TryParse(groupe.effectif.Text,out int effectif);
+
+      if (groupe.tp1.IsChecked == true) totaux[0] += effectif;
+      if (groupe.tp2.IsChecked == true) totaux[1] += effectif;
+      if (groupe.tp3.IsChecked == true) totaux[2] += effectif;
+    }
+
+    txtTP1_officiel_Fa.Text = totaux[0].ToString();
+    txtTP2_officiel_Fa.Text = totaux[1].ToString();
+    txtTP3_officiel_Fa.Text = totaux[2].ToString();
+
+    NomGroupeTP_officiel_FA = new string[3];
+
+    for (int i = 0;i < totaux.Length;i++)
+      if (totaux[i] > 0)
+        NomGroupeTP_officiel_FA[i] = $"TP{i + 1}";
+
+    nbGroupeTP_officiel_FA = NomGroupeTP_officiel_FA.Count(g => !string.IsNullOrWhiteSpace(g));
+
+    return NomGroupeTP_officiel_FA;
+  }
+
+  private string[] CalculEffectifGroupeTP_FI() {
+    (TextBox effectif,CheckBox tp1,CheckBox tp2,CheckBox tp3)[] groupes = [
+      (txtTpCommunEse21_Fi,chkTP11_Fi,chkTP21_Fi,chkTP31_Fi),
+      (txtTpCommunEse22_Fi,chkTP12_Fi,chkTP22_Fi,chkTP32_Fi),
+      (txtTpCommunEme21_Fi,chkTP13_Fi,chkTP23_Fi,chkTP33_Fi),
+      (txtTpCommunEme22_Fi,chkTP14_Fi,chkTP24_Fi,chkTP34_Fi),
+      (txtTpCommunAii21_Fi,chkTP15_Fi,chkTP25_Fi,chkTP35_Fi),
+      (txtTpCommunAii22_Fi,chkTP16_Fi,chkTP26_Fi,chkTP36_Fi)
+    ];
+
+    int[] totaux = new int[3];
+
+    foreach (var groupe in groupes) {
+      int.TryParse(groupe.effectif.Text,out int effectif);
+
+      if (groupe.tp1.IsChecked == true) totaux[0] += effectif;
+      if (groupe.tp2.IsChecked == true) totaux[1] += effectif;
+      if (groupe.tp3.IsChecked == true) totaux[2] += effectif;
+    }
+
+    txtTP1_officiel_Fi.Text = totaux[0].ToString();
+    txtTP2_officiel_Fi.Text = totaux[1].ToString();
+    txtTP3_officiel_Fi.Text = totaux[2].ToString();
+
+    NomGroupeTP_officiel_FI = new string[3];
+
+    for (int i = 0;i < totaux.Length;i++)
+      if (totaux[i] > 0)
+        NomGroupeTP_officiel_FI[i] = $"TP{i + 1}";
+
+    nbGroupeTP_officiel_FI = NomGroupeTP_officiel_FI.Count(g => !string.IsNullOrWhiteSpace(g));
+
+    return NomGroupeTP_officiel_FI;
+  }
+
+  private string[] CalculEffectifGroupeTP_Sp_FA() {
+    (TextBox effectif,CheckBox tp1,CheckBox tp2,CheckBox tp3)[] groupes = [
+      (txtTpSpEse21_Fa,chkTP11Sp_Fa,chkTP21Sp_Fa,chkTP31Sp_Fa),
+      (txtTpSpEse22_Fa,chkTP12Sp_Fa,chkTP22Sp_Fa,chkTP32Sp_Fa),
+      (txtTpSpEme21_Fa,chkTP13Sp_Fa,chkTP23Sp_Fa,chkTP33Sp_Fa),
+      (txtTpSpEme22_Fa,chkTP14Sp_Fa,chkTP24Sp_Fa,chkTP34Sp_Fa),
+      (txtTpSpAii21_Fa,chkTP15Sp_Fa,chkTP25Sp_Fa,chkTP35Sp_Fa),
+      (txtTpSpAii22_Fa,chkTP16Sp_Fa,chkTP26Sp_Fa,chkTP36Sp_Fa)
+    ];
+
+    int[] totaux = new int[3];
+
+    foreach (var groupe in groupes) {
+      int.TryParse(groupe.effectif.Text,out int effectif);
+
+      if (groupe.tp1.IsChecked == true) totaux[0] += effectif;
+      if (groupe.tp2.IsChecked == true) totaux[1] += effectif;
+      if (groupe.tp3.IsChecked == true) totaux[2] += effectif;
+    }
+
+    txtTP1Sp_officiel_Fa.Text = totaux[0].ToString();
+    txtTP2Sp_officiel_Fa.Text = totaux[1].ToString();
+    txtTP3Sp_officiel_Fa.Text = totaux[2].ToString();
+
+    NomGroupeTPSp_officiel_FA = new string[3];
+
+    for (int i = 0;i < totaux.Length;i++)
+      if (totaux[i] > 0)
+        NomGroupeTPSp_officiel_FA[i] = $"TP{i + 1}";
+
+    nbGroupeTPSp_officiel_FA = NomGroupeTPSp_officiel_FA.Count(g => !string.IsNullOrWhiteSpace(g));
+
+    return NomGroupeTPSp_officiel_FA;
+  }
+
+  private string[] CalculEffectifGroupeTP_Sp_FI() {
+    (TextBox effectif,CheckBox tp1,CheckBox tp2,CheckBox tp3)[] groupes = [
+      (txtTpSpEse21_Fi,chkTP11Sp_Fi,chkTP21Sp_Fi,chkTP31Sp_Fi),
+      (txtTpSpEse22_Fi,chkTP12Sp_Fi,chkTP22Sp_Fi,chkTP32Sp_Fi),
+      (txtTpSpEme21_Fi,chkTP13Sp_Fi,chkTP23Sp_Fi,chkTP33Sp_Fi),
+      (txtTpSpEme22_Fi,chkTP14Sp_Fi,chkTP24Sp_Fi,chkTP34Sp_Fi),
+      (txtTpSpAii21_Fi,chkTP15Sp_Fi,chkTP25Sp_Fi,chkTP35Sp_Fi),
+      (txtTpSpAii22_Fi,chkTP16Sp_Fi,chkTP26Sp_Fi,chkTP36Sp_Fi)
+    ];
+
+    int[] totaux = new int[3];
+
+    foreach (var groupe in groupes) {
+      int.TryParse(groupe.effectif.Text,out int effectif);
+
+      if (groupe.tp1.IsChecked == true) totaux[0] += effectif;
+      if (groupe.tp2.IsChecked == true) totaux[1] += effectif;
+      if (groupe.tp3.IsChecked == true) totaux[2] += effectif;
+    }
+
+    txtTP1Sp_officiel_Fi.Text = totaux[0].ToString();
+    txtTP2Sp_officiel_Fi.Text = totaux[1].ToString();
+    txtTP3Sp_officiel_Fi.Text = totaux[2].ToString();
+
+    NomGroupeTPSp_officiel_FI = new string[3];
+
+    for (int i = 0;i < totaux.Length;i++)
+      if (totaux[i] > 0)
+        NomGroupeTPSp_officiel_FI[i] = $"TP{i + 1}";
+
+    nbGroupeTPSp_officiel_FI = NomGroupeTPSp_officiel_FI.Count(g => !string.IsNullOrWhiteSpace(g));
+
+    return NomGroupeTPSp_officiel_FI;
+  }
 
   private void btnUpdate_Click(object sender,RoutedEventArgs e) {
     EnregistrerConfigurationEffectifs_FI();
@@ -359,5 +716,21 @@ public partial class ConfigurationEffectifs_GEII_2: Window {
       return;
 
     NomGroupeTD_officiel_FA = CalculEffectifGroupeTD_FA();
+  }
+
+  private void GroupeTP_FA_CheckedChanged(object sender,RoutedEventArgs e) {
+    NomGroupeTP_officiel_FA = CalculEffectifGroupeTP_FA();
+  }
+
+  private void GroupeTP_Sp_FA_CheckedChanged(object sender,RoutedEventArgs e) {
+    NomGroupeTPSp_officiel_FA = CalculEffectifGroupeTP_Sp_FA();
+  }
+
+  private void GroupeTP_FI_CheckedChanged(object sender,RoutedEventArgs e) {
+    NomGroupeTP_officiel_FI = CalculEffectifGroupeTP_FI();
+  }
+
+  private void GroupeTP_Sp_FI_CheckedChanged(object sender,RoutedEventArgs e) {
+    NomGroupeTPSp_officiel_FI = CalculEffectifGroupeTP_Sp_FI();
   }
 }

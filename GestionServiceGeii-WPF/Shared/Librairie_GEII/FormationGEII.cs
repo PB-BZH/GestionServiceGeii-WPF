@@ -32,8 +32,16 @@ namespace GestionServiceGeii.Shared.Librairie_GEII {
     internal int NbGroupeTD { get; set; }
     internal int NbGroupeTD_officiel { get; set; }
     internal int NbGroupeTP { get; set; }
+    internal int NbGroupeTP_officiel { get; set; }
     internal int NbGroupeTPSp { get; set; }
+    internal int NbGroupeTPSp_officiel { get; set; }
     internal string? Cours { get; set; }
+    internal string?[] NomGroupeTD = [];
+    internal string?[] NomGroupeTD_officiel = [];
+    internal string?[] NomGroupeTP = [];
+    internal string?[] NomGroupeTP_officiel = [];
+    internal string?[] NomGroupeTP_Sp = [];
+    internal string?[] NomGroupeTP_Sp_officiel = [];
   }
 
   public class FormationGEII {

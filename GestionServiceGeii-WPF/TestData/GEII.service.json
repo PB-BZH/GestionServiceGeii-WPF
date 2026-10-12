@@ -30,66 +30,250 @@
     "Geii2_FI_StudentCount": 43,
     "Geii2_FI_TdGroupCount": 3,
     "Geii2_FI_Td_officiel_GroupCount": 2,
-    "Geii2_FI_TpGroupCount": 5,
-    "Geii2_FI_TpSpGroupCount": 5,
-    "Geii2_FI_TdGroupNames": [
-      "ESE_FI",
-      "EME_FI",
-      "AII_FI"
+    "TotalGoupe_Geii2_Td_FI": [
+      3
     ],
+    "TotalGroupe_Geii2_Td_FI_officiel": [
+      15,
+      28,
+      0
+    ],
+    "TotalGroupe_Geii2_Tp_FI": [
+      6
+    ],
+    "TotalGroupe_Geii2_Tp_FI_officiel": [
+      16,
+      27,
+      0
+    ],
+    "TotalGroupe_Geii2_TpSp_FI": [
+      6
+    ],
+    "TotalGroupe_Geii2_TpSp_FI_officiel": [
+      5,
+      14,
+      14
+    ],
+    "Geii2_FI_TpGroupCount": 5,
+    "Geii2_FI_Tp_officiel_GroupCount": 2,
+    "Geii2_FI_TpSpGroupCount": 5,
+    "Geii2_FI_TpSp_officiel_GroupCount": 3,
     "Geii2_FI_Td_officiel_GroupNames": [
       "TD1",
       "TD2",
       null
     ],
-    "Geii2_FI_TpGroupNames": [
-      "ESE21_FI",
-      "ESE22_FI",
-      "EME21_FI",
-      "EME22_FI",
-      "AII21_FI",
+    "Geii2_FI_Tp_officiel_GroupNames": [
+      "TP1",
+      "TP2",
       null
     ],
-    "Geii2_FI_TpSpGroupNames": [
-      "ESE21Sp_FI",
-      "ESE22Sp_FI",
-      "EME21Sp_FI",
-      "EME22Sp_FI",
-      "AII21Sp_FI",
-      null
+    "Geii2_FI_TpSp_officiel_GroupNames": [
+      "TP1",
+      "TP2",
+      "TP3"
     ],
     "Geii2_FA_IsConfigured": true,
     "Geii2_FA_FormationName": "GEII 2 FA",
     "Geii2_FA_StudentCount": 12,
     "Geii2_FA_TdGroupCount": 2,
     "Geii2_FA_Td_officiel_GroupCount": 1,
-    "Geii2_FA_TpGroupCount": 2,
-    "Geii2_FA_TpSpGroupCount": 2,
-    "Geii2_FA_TdGroupNames": [
-      "ESE_FA",
-      "EME_FA",
-      null
+    "TotalGoupe_Geii2_Td_FA": [
+      3
     ],
+    "TotalGroupe_Geii2_Td_FA_officiel": [
+      12,
+      0,
+      0
+    ],
+    "TotalGroupe_Geii2_Tp_FA": [
+      6
+    ],
+    "TotalGroupe_Geii2_Tp_FA_officiel": [
+      16,
+      27,
+      0
+    ],
+    "TotalGroupe_Geii2_TpSp_FA": [
+      6
+    ],
+    "TotalGroupe_Geii2_TpSp_FA_officiel": [
+      5,
+      7,
+      0
+    ],
+    "Geii2_FA_TpGroupCount": 2,
+    "Geii2_FA_Tp_officiel_GroupCount": 1,
+    "Geii2_FA_TpSpGroupCount": 2,
+    "Geii2_FA_TpSp_officiel_GroupCount": 2,
     "Geii2_FA_Td_officiel_GroupNames": [
       "TD1",
       null,
       null
     ],
-    "Geii2_FA_TpGroupNames": [
-      "ESE21_FA",
-      "EME21_FA",
-      null,
-      null,
+    "Geii2_FA_Tp_officiel_GroupNames": [
+      "TP1",
       null,
       null
     ],
-    "Geii2_FA_TpSpGroupNames": [
-      "ESE21_FA",
-      "EME21_FA",
-      null,
-      null,
-      null,
+    "Geii2_FA_TpSp_officiel_GroupNames": [
+      "TP1",
+      "TP2",
       null
+    ],
+    "Geii2_FI_Checks": [
+      true,
+      true,
+      true
+    ],
+    "Geii2_FA_Checks": [
+      true,
+      true,
+      false
+    ],
+    "Geii2_FI_Td_Checks": [
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    "Geii2_FA_Td_Checks": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "Geii2_FI_Tp_Checks": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "Geii2_FA_Tp_Checks": [
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "Geii2_FI_TpSp_Checks": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ],
+    "Geii2_FA_TpSp_Checks": [
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "Geii2_FI_TD_Effectifs": [
+      15,
+      15,
+      13
+    ],
+    "Geii2_FA_TD_Effectifs": [
+      5,
+      7,
+      0
+    ],
+    "Geii2_FI_Tp_Effectifs": [
+      11,
+      5,
+      10,
+      4,
+      13,
+      0
+    ],
+    "Geii2_FA_Tp_Effectifs": [
+      5,
+      0,
+      7,
+      0,
+      0,
+      0
+    ],
+    "Geii2_FI_TpSp_Effectifs": [
+      0,
+      5,
+      10,
+      4,
+      14,
+      0
+    ],
+    "Geii2_FA_TpSp_Effectifs": [
+      5,
+      0,
+      7,
+      0,
+      0,
+      0
     ]
   },
   "Files": {
@@ -97,7 +281,7 @@
     "ListsWorkbookPath": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii-WPF\\GestionServiceGeii-WPF\\TestData\\GEII_selection_reference.xlsx",
     "BackupDirectory": "",
     "ExportDirectory": "",
-    "ExportPdfDirectory": "G:\\OneDrive\\@33 - VS_PRO_2026\\source\\repos\\GestionServiceGeii-WPF\\GestionServiceGeii-WPF\\TestData\\Fiches de service"
+    "ExportPdfDirectory": ""
   },
   "Excel": {
     "ServiceSheetName": "Services",
@@ -143,16 +327,16 @@
     "ApplicationId": ""
   },
   "SaveState": {
-    "CurrentSemester": "S1",
+    "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "AN1",
+    "CurrentModule": "AN3",
     "CurrentCourse": "CM"
   },
   "Window": {
-    "Left": 223.0,
-    "Top": 88.0,
-    "Width": 1311.0,
-    "Height": 759.0,
+    "Left": 275.0,
+    "Top": 136.0,
+    "Width": 1300.0,
+    "Height": 764.0,
     "State": 0
   }
 }

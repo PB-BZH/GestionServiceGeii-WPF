@@ -17,15 +17,48 @@ namespace GestionServiceGeii.UI.Windows {
     private string _typeCoursCourant = string.Empty;
     private bool _selectionTypeCoursEffectuee;
     internal const string GroupeEnAttente = "";
+    private string _formationCourante = string.Empty;
+    private string _parcoursCourant = string.Empty;
 
     public ChoixTypeDeCours() {
       InitializeComponent();
       ThemeManager.ApplyTheme(this);
     }
 
-    internal void InitialiserContexteGroupes(DataGrid vueCourante,string groupeCourant = "") {
+    private string[] ObtenirGroupesDisponibles(string cours) {
+      bool specialite = _parcoursCourant is "Parcours ESE" or "Parcours EME" or "Parcours AII";
+
+      if (_formationCourante == "FI") {
+        return cours switch {
+          "TD" => DialogueServiceGEII.NomGroupeTD_Geii2_officiel_FI,
+          "TP" when specialite => DialogueServiceGEII.NomGroupeTPSp_officiel_Geii2_FI,
+          "TP" => DialogueServiceGEII.NomGroupeTP_officiel_Geii2_FI,
+          _ => []
+        };
+      }
+
+      if (_formationCourante == "FA") {
+        return cours switch {
+          "TD" => DialogueServiceGEII.NomGroupeTD_Geii2_officiel_FA,
+          "TP" when specialite => DialogueServiceGEII.NomGroupeTPSp_officiel_Geii2_FA,
+          "TP" => DialogueServiceGEII.NomGroupeTP_officiel_Geii2_FA,
+          _ => []
+        };
+      }
+
+      return cours switch {
+        "TD" => DialogueServiceGEII.NomGroupeTD_Geii1,
+        "TP" => DialogueServiceGEII.NomGroupeTP_Geii1,
+        _ => []
+      };
+    }
+
+    internal void InitialiserContexteGroupes(DataGrid vueCourante,string groupeCourant = "",
+      string formation = "",string parcours = "") {
       _vueCourante = vueCourante;
       _groupeCourant = groupeCourant ?? string.Empty;
+      _formationCourante = formation;
+      _parcoursCourant = parcours;
       _typeCoursCourant = DeterminerTypeCoursCourant();
     }
 
@@ -136,7 +169,7 @@ namespace GestionServiceGeii.UI.Windows {
 
       TypeDeCoursSelectionne = "CM";
 
-      ChargerGroupesDisponibles(DialogueServiceGEII.NomGroupeTD_Geii1,"CM");
+      ChargerGroupesDisponibles(ObtenirGroupesDisponibles("CM"),"CM");
       SelectionnerGroupeCourantOuPremier();
     }
 
@@ -150,7 +183,7 @@ namespace GestionServiceGeii.UI.Windows {
 
       TypeDeCoursSelectionne = "TD";
 
-      ChargerGroupesDisponibles(DialogueServiceGEII.NomGroupeTD_Geii1,"TD");
+      ChargerGroupesDisponibles(ObtenirGroupesDisponibles("TD"),"TD");
       SelectionnerGroupeCourantOuPremier();
     }
 
@@ -164,7 +197,7 @@ namespace GestionServiceGeii.UI.Windows {
 
       TypeDeCoursSelectionne = "TP";
 
-      ChargerGroupesDisponibles(DialogueServiceGEII.NomGroupeTP_Geii1,"TP");
+      ChargerGroupesDisponibles(ObtenirGroupesDisponibles("TP"),"TP");
       SelectionnerGroupeCourantOuPremier();
     }
 

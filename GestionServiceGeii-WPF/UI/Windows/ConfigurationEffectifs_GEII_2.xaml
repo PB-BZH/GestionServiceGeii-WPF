@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:GestionServiceGeii.UI.Windows"
         mc:Ignorable="d"
         Title="Configuration des effectifs en GEII-2"
-        Height="504"
-        Width="1000">
+        Height="510"
+        Width="1095">
 
     <Window.Resources>
         <Style x:Key="EffectifTextBoxBase"
@@ -20,20 +20,71 @@
                     Value="25" />
             <Setter Property="VerticalContentAlignment"
                     Value="Center" />
-            <Setter Property="Visibility"
-                    Value="Collapsed" />
+
         </Style>
 
         <Style x:Key="EffectifParcoursTextBox"
                TargetType="TextBox"
                BasedOn="{StaticResource EffectifTextBoxBase}">
+            <Setter Property="Visibility"
+                    Value="Collapsed" />
             <EventSetter Event="TextChanged"
                          Handler="EffectifParcours_TextChanged" />
+        </Style>
+        <Style x:Key="effectifParcoursStackPanel"
+               TargetType="StackPanel">
+            <Setter Property="Visibility"
+                    Value="Collapsed" />
         </Style>
 
         <Style x:Key="EffectifTPTextBox"
                TargetType="TextBox"
                BasedOn="{StaticResource EffectifTextBoxBase}" />
+
+        <Style x:Key="Effectif_Fi_CheckBox"
+               TargetType="CheckBox">
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Margin"
+                    Value="11,0" />
+            <EventSetter Event="Checked"
+                         Handler="GroupeTP_FI_CheckedChanged" />
+            <EventSetter Event="Unchecked"
+                         Handler="GroupeTP_FI_CheckedChanged" />
+        </Style>
+        <Style x:Key="Effectif_Sp_Fi_CheckBox"
+               TargetType="CheckBox">
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Margin"
+                    Value="11,0" />
+            <EventSetter Event="Checked"
+                         Handler="GroupeTP_Sp_FI_CheckedChanged" />
+            <EventSetter Event="Unchecked"
+                         Handler="GroupeTP_Sp_FI_CheckedChanged" />
+        </Style>
+        <Style x:Key="Effectif_Fa_CheckBox"
+               TargetType="CheckBox">
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Margin"
+                    Value="11,0" />
+            <EventSetter Event="Checked"
+                         Handler="GroupeTP_FA_CheckedChanged" />
+            <EventSetter Event="Unchecked"
+                         Handler="GroupeTP_FA_CheckedChanged" />
+        </Style>
+        <Style x:Key="Effectif_Sp_Fa_CheckBox"
+               TargetType="CheckBox">
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Margin"
+                    Value="11,0" />
+            <EventSetter Event="Checked"
+                         Handler="GroupeTP_Sp_FA_CheckedChanged" />
+            <EventSetter Event="Unchecked"
+                         Handler="GroupeTP_Sp_FA_CheckedChanged" />
+        </Style>
     </Window.Resources>
 
     <Grid Margin="10">
@@ -54,7 +105,7 @@
                    FontStyle="Italic"
                    FontWeight="Bold" />
         <Grid x:Name="pnlFi"
-              Visibility="Visible"
+              Visibility="Collapsed"
               d:Visibility="Collapsed"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -66,16 +117,16 @@
             </Grid.ColumnDefinitions>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="200" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+
                 <GroupBox x:Name="grpParcoursGEII_2_Fi"
                           Header="Configuration des parcours de spécialité"
                           Grid.Row="0"
-                          Height="170"
                           Margin="5"
                           VerticalAlignment="Center"
-                          Grid.Column="0">
+                          Grid.Column="1">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
@@ -110,7 +161,9 @@
                         <CheckBox x:Name="chkParcoursEseFi"
                                   Grid.Column="0"
                                   Grid.Row="2"
-                                  Content="ESE_FI"
+                                  Content="ESE__Fi"
+                                  Checked="GroupeTD_CheckedChanged"
+                                  Unchecked="GroupeTD_CheckedChanged"
                                   VerticalAlignment="Center" />
 
                         <TextBox x:Name="txtNbEtudiantsEseFi"
@@ -125,6 +178,11 @@
                                             <Setter Property="Visibility"
                                                     Value="Visible" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkTP11}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBox.Style>
@@ -133,7 +191,9 @@
                         <CheckBox x:Name="chkParcoursEmeFi"
                                   Grid.Column="0"
                                   Grid.Row="3"
-                                  Content="EME_FI"
+                                  Content="EME__Fi"
+                                  Checked="GroupeTD_CheckedChanged"
+                                  Unchecked="GroupeTD_CheckedChanged"
                                   VerticalAlignment="Center" />
 
                         <TextBox x:Name="txtNbEtudiantsEmeFi"
@@ -156,7 +216,9 @@
                         <CheckBox x:Name="chkParcoursAiiFi"
                                   Grid.Column="0"
                                   Grid.Row="4"
-                                  Content="AII_FI"
+                                  Content="AII__Fi"
+                                  Checked="GroupeTD_CheckedChanged"
+                                  Unchecked="GroupeTD_CheckedChanged"
                                   VerticalAlignment="Center" />
 
                         <TextBox x:Name="txtNbEtudiantsAiiFi"
@@ -198,7 +260,7 @@
                             <RowDefinition Height="32" />
                             <RowDefinition Height="32" />
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="txtTd1_FI"
+                        <TextBlock x:Name="txtTd1_Fi"
                                    Text="TD1"
                                    Grid.Row="0"
                                    Grid.Column="0"
@@ -208,21 +270,21 @@
                                     Margin="5,0"
                                     HorizontalAlignment="Center"
                                     Orientation="Horizontal">
-                            <CheckBox x:Name="ChkESE"
+                            <CheckBox x:Name="ChkESE_Fi"
                                       Content="ESE"
                                       Checked="GroupeTD_CheckedChanged"
                                       Unchecked="GroupeTD_CheckedChanged"
                                       Margin="0,0,10,0"
                                       VerticalAlignment="Center" />
-                            <CheckBox x:Name="ChkEME"
+                            <CheckBox x:Name="ChkEME_Fi"
                                       Content="EME"
                                       Checked="GroupeTD_CheckedChanged"
                                       Unchecked="GroupeTD_CheckedChanged"
                                       VerticalAlignment="Center" />
-                            <CheckBox x:Name="ChkAII"
+                            <CheckBox x:Name="ChkAII_Fi"
                                       Content="AII"
                                       Checked="GroupeTD_CheckedChanged"
-                                      Unchecked="GroupeTD_CheckedChanged"
+                                      Unchecked="GroupeTD_CheckedChanged    "
                                       Margin="10,0,0,0"
                                       VerticalAlignment="Center" />
                         </StackPanel>
@@ -232,36 +294,35 @@
                                    Grid.Column="4"
                                    VerticalAlignment="Center" />
 
-                        <TextBox x:Name="txtTotalTD1_FI"
+                        <TextBox x:Name="txtTotalTD1_Fi"
                                  Grid.Row="0"
                                  Width="Auto"
                                  Grid.Column="6"
                                  VerticalAlignment="Center"
                                  HorizontalContentAlignment="Center" />
 
-                        <TextBox x:Name="txtTd2_FI"
+                        <TextBox x:Name="txtTd2_Fi"
                                  Text="TD2"
                                  Grid.Row="1"
                                  Grid.Column="0"
-                                 Width="50"
                                  VerticalAlignment="Center" />
                         <StackPanel Grid.Row="1"
                                     HorizontalAlignment="Center"
                                     Margin="5,0"
                                     Grid.Column="2"
                                     Orientation="Horizontal">
-                            <CheckBox x:Name="ChkESE_2"
+                            <CheckBox x:Name="ChkESE_2_Fi"
                                       Content="ESE"
                                       Margin="0,0,10,0"
                                       Checked="GroupeTD_CheckedChanged"
                                       Unchecked="GroupeTD_CheckedChanged"
                                       VerticalAlignment="Center" />
-                            <CheckBox x:Name="ChkEME_2"
+                            <CheckBox x:Name="ChkEME_2_Fi"
                                       Content="EME"
                                       Checked="GroupeTD_CheckedChanged"
                                       Unchecked="GroupeTD_CheckedChanged"
                                       VerticalAlignment="Center" />
-                            <CheckBox x:Name="ChkAII_2"
+                            <CheckBox x:Name="ChkAII_2_Fi"
                                       Content="AII"
                                       Margin="10,0,0,0"
                                       Checked="GroupeTD_CheckedChanged"
@@ -273,36 +334,35 @@
                                    Grid.Column="4"
                                    VerticalAlignment="Center" />
 
-                        <TextBox x:Name="txtTotalTD2_FI"
+                        <TextBox x:Name="txtTotalTD2_Fi"
                                  Grid.Row="1"
                                  Grid.Column="6"
                                  Width="Auto"
                                  VerticalAlignment="Center"
                                  HorizontalContentAlignment="Center" />
 
-                        <TextBox x:Name="txtTd3_FI"
+                        <TextBox x:Name="txtTd3_Fi"
                                  Text="TD3"
                                  Grid.Row="2"
                                  Grid.Column="0"
-                                 Width="50"
                                  VerticalAlignment="Center" />
                         <StackPanel Grid.Row="2"
                                     HorizontalAlignment="Center"
                                     Margin="5,0"
                                     Grid.Column="2"
                                     Orientation="Horizontal">
-                            <CheckBox x:Name="ChkESE_3"
+                            <CheckBox x:Name="ChkESE_3_Fi"
                                       Content="ESE"
                                       Margin="0,0,10,0"
                                       Checked="GroupeTD_CheckedChanged"
                                       Unchecked="GroupeTD_CheckedChanged"
                                       VerticalAlignment="Center" />
-                            <CheckBox x:Name="ChkEME_3"
+                            <CheckBox x:Name="ChkEME_3_Fi"
                                       Content="EME"
                                       Checked="GroupeTD_CheckedChanged"
                                       Unchecked="GroupeTD_CheckedChanged"
                                       VerticalAlignment="Center" />
-                            <CheckBox x:Name="ChkAII_3"
+                            <CheckBox x:Name="ChkAII_3_Fi"
                                       Content="AII"
                                       Margin="10,0,0,0"
                                       Checked="GroupeTD_CheckedChanged"
@@ -314,7 +374,7 @@
                                    Grid.Column="4"
                                    VerticalAlignment="Center" />
 
-                        <TextBox x:Name="txtTotalTD3_FI"
+                        <TextBox x:Name="txtTotalTD3_Fi"
                                  Grid.Row="2"
                                  Grid.Column="6"
                                  Width="Auto"
@@ -324,184 +384,753 @@
                     </Grid>
                 </GroupBox>
             </Grid>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="250" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <GroupBox x:Name="grpTPCommunGroup_Fi"
-                      Header="Groupes TP communs"
-                      Grid.Row="0"
-                      Margin="5"
-                      Grid.Column="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                    </Grid.RowDefinitions>
-                    <TextBlock x:Name="tbkTpCommunEse21"
-                               Text="ESE21_FI"
-                               Grid.Column="0"
-                               Grid.Row="0"
-                               VerticalAlignment="Center" />
+                <GroupBox x:Name="grpTPGroup_Fi"
+                          Header="Groupes TP communs"
+                          Grid.Row="0"
+                          Margin="5"
+                          Grid.Column="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
 
-                    <TextBox x:Name="txtTpCommunEse21"
-                             Grid.Column="2"
-                             Grid.Row="0"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                        <StackPanel x:Name="spEse21_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="tbkTpCommunEse22"
-                               Text="ESE22_FI"
-                               Grid.Column="0"
-                               Grid.Row="1"
-                               VerticalAlignment="Center" />
+                                <TextBlock x:Name="tbkTpCommunEse21_Fi"
+                                           Text="ESE21_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="0"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpCommunEse22"
-                             Grid.Column="2"
-                             Grid.Row="1"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP11_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpCommunEme21"
-                               Text="EME21_FI"
-                               Grid.Column="0"
-                               Grid.Row="2"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP21_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBox x:Name="txtTpCommunEme21"
-                             Grid.Column="2"
-                             Grid.Row="2"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP31_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpCommunEme22"
-                               Text="EME22_FI"
-                               Grid.Column="0"
-                               Grid.Row="3"
-                               VerticalAlignment="Center" />
+                                <TextBox x:Name="txtTpCommunEse21_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="0"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
 
-                    <TextBox x:Name="txtTpCommunEme22"
-                             Grid.Column="2"
-                             Grid.Row="3"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                        <StackPanel x:Name="spEse22_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="1"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="tbkTpCommunAii21"
-                               Text="AII21_FI"
-                               Grid.Column="0"
-                               Grid.Row="4"
-                               VerticalAlignment="Center" />
+                                <TextBlock x:Name="tbkTpCommunEse22_Fi"
+                                           Text="ESE22_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="1"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP12_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBox x:Name="txtTpCommunAii21"
-                             Grid.Column="2"
-                             Grid.Row="4"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP22_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpCommunAii22"
-                               Text="AII22_FI"
-                               Grid.Column="0"
-                               Grid.Row="5"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP32_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBox x:Name="txtTpCommunAii22"
-                             Grid.Column="2"
-                             Grid.Row="5"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <TextBox x:Name="txtTpCommunEse22_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="1"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
 
-                </Grid>
-            </GroupBox>
-            <GroupBox x:Name="grpTPSpecializedGroup_Fi"
-                      Header="Groupes TP spécialisés"
-                      Margin="5"
-                      Grid.Row="0"
-                      Grid.Column="4">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                    </Grid.RowDefinitions>
-                    <TextBlock x:Name="tbkTpSpecialiséEse21"
-                               Text="ESE21Sp_FI"
-                               Grid.Column="0"
-                               Grid.Row="0"
-                               VerticalAlignment="Center" />
+                        <StackPanel x:Name="spEme21_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="txtTpSpecialiséEse21"
-                             Grid.Column="2"
-                             Grid.Row="0"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <TextBlock x:Name="tbkTpCommunEme21_Fi"
+                                           Text="EME21_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="2"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséEse22"
-                               Text="ESE22Sp_FI"
-                               Grid.Column="0"
-                               Grid.Row="1"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP13_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBox x:Name="txtTpSpecialiséEse22"
-                             Grid.Column="2"
-                             Grid.Row="1"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP23_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséEme21"
-                               Text="EME21Sp_FI"
-                               Grid.Column="0"
-                               Grid.Row="2"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP33_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBox x:Name="txtTpSpecialiséEme21"
-                             Grid.Column="2"
-                             Grid.Row="2"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <TextBox x:Name="txtTpCommunEme21_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="2"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
 
-                    <TextBlock x:Name="tbkTpSpecialiséEme22"
-                               Text="EME22Sp_FI"
-                               Grid.Column="0"
-                               Grid.Row="3"
-                               VerticalAlignment="Center" />
+                        <StackPanel x:Name="spEme22_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="3"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="txtTpSpecialiséEme22"
-                             Grid.Column="2"
-                             Grid.Row="3"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <TextBlock x:Name="tbkTpCommunEme22_Fi"
+                                           Text="EME22_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="3"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséAii21"
-                               Text="AII21Sp_FI"
-                               Grid.Column="0"
-                               Grid.Row="4"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP14_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBox x:Name="txtTpSpecialiséAii21"
-                             Grid.Column="2"
-                             Grid.Row="4"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP24_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséAii22"
-                               Text="AII22Sp_FI"
-                               Grid.Column="0"
-                               Grid.Row="5"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP34_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
 
-                    <TextBox x:Name="txtTpSpecialiséAii22"
-                             Grid.Column="2"
-                             Grid.Row="5"
-                             Style="{StaticResource EffectifTextBoxBase}" />
-                </Grid>
-            </GroupBox>
+                                <TextBox x:Name="txtTpCommunEme22_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="3"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii21_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpCommunAii21_Fi"
+                                           Text="AII21_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="4"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP15_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP25_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP35_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Fi_CheckBox}" />
+
+                                <TextBox x:Name="txtTpCommunAii21_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="4"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii22_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpCommunAii22_Fi"
+                                       Text="AII22_Fi"
+                                       Grid.Column="0"
+                                       Grid.Row="5"
+                                       Margin="5,0"
+                                       VerticalAlignment="Center" />
+                            <CheckBox x:Name="chkTP16_Fi"
+                                      Content="TP1"
+                                      Grid.Column="1"
+                                      Grid.Row="5"
+                                      Style="{StaticResource Effectif_Fi_CheckBox}" />
+
+                            <CheckBox x:Name="chkTP26_Fi"
+                                      Content="TP2"
+                                      Grid.Column="2"
+                                      Grid.Row="5"
+                                      Style="{StaticResource Effectif_Fi_CheckBox}" />
+
+                            <CheckBox x:Name="chkTP36_Fi"
+                                      Content="TP3"
+                                      Grid.Column="3"
+                                      Grid.Row="5"
+                                      Style="{StaticResource Effectif_Fi_CheckBox}" />
+
+                            <TextBox x:Name="txtTpCommunAii22_Fi"
+                                     Grid.Column="4"
+                                     Grid.Row="5"
+                                     Style="{StaticResource EffectifTextBoxBase}" />
+                                </Grid>
+                        </StackPanel>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox x:Name="grpRegroupement_TP_Fi"
+                          Header="Effectifs des groupes de TP"
+                          Grid.Row="1"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="txtTP1_Fi"
+                                   Text="TP1"
+                                   Grid.Column="0"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP1_officiel_Fi"
+                                 Grid.Column="1"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP2_Fi"
+                                   Text="TP2"
+                                   Grid.Column="2"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP2_officiel_Fi"
+                                 Grid.Column="3"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP3_Fi"
+                                   Text="TP3"
+                                   Grid.Column="4"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP3_officiel_Fi"
+                                 Grid.Column="5"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                    </Grid>
+                </GroupBox>
+            </Grid>
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="250" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <GroupBox x:Name="grpTPSpecialisedGroup_Fi"
+                          Header="Groupes TP spécialisés"
+                          Grid.Row="0"
+                          Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel x:Name="spEse21sp_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEse21_Fi"
+                                           Text="ESE21_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="0"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP11Sp_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP21Sp_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP31Sp_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEse21_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="0"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spEse22Sp_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="1"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEse22_Fi"
+                                           Text="ESE22_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="1"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP12Sp_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP22Sp_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP32Sp_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEse22_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="1"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spEme21Sp_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEme21_Fi"
+                                           Text="EME21_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="2"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP13Sp_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP23Sp_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP33Sp_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEme21_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="2"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spEme22Sp_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="3"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEme22_Fi"
+                                           Text="EME22_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="3"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP14Sp_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP24Sp_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP34Sp_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEme22_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="3"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii21Sp_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpAii21_Fi"
+                                           Text="AII21_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="4"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP15Sp_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP25Sp_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP35Sp_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpAii21_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="4"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii22Sp_Fi"
+                                    Orientation="Horizontal"
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpAii22_Fi"
+                                           Text="AII22_Fi"
+                                           Grid.Column="0"
+                                           Grid.Row="5"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP16Sp_Fi"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="5"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP26Sp_Fi"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="5"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP36Sp_Fi"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="5"
+                                          Style="{StaticResource Effectif_Sp_Fi_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpAii22_Fi"
+                                         Grid.Column="4"
+                                         Grid.Row="5"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox x:Name="grpRegroupement_TPSp_Fi"
+                          Header="Effectifs des groupes de TP"
+                          Grid.Row="1"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="txtTP1Sp_Fi"
+                                   Text="TP1"
+                                   Grid.Column="0"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP1Sp_officiel_Fi"
+                                 Grid.Column="1"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP2Sp_Fi"
+                                   Text="TP2"
+                                   Grid.Column="2"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP2Sp_officiel_Fi"
+                                 Grid.Column="3"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP3Sp_Fi"
+                                   Text="TP3"
+                                   Grid.Column="4"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP3Sp_officiel_Fi"
+                                 Grid.Column="5"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                    </Grid>
+                </GroupBox>
+            </Grid>
         </Grid>
         <Grid x:Name="pnlFa"
               Visibility="Collapsed"
-              d:Visibility="visible"
+              d:Visibility="Visible"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -521,7 +1150,7 @@
                           Grid.Row="0"
                           Margin="5"
                           VerticalAlignment="Center"
-                          Grid.Column="0">
+                          Grid.Column="1">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
@@ -556,7 +1185,7 @@
                         <CheckBox x:Name="chkParcoursEseFa"
                                   Grid.Column="0"
                                   Grid.Row="2"
-                                  Content="ESE_FA"
+                                  Content="ESE__FA"
                                   VerticalAlignment="Center" />
 
                         <TextBox x:Name="txtNbEtudiantsEseFa"
@@ -571,6 +1200,11 @@
                                             <Setter Property="Visibility"
                                                     Value="Visible" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkTP11}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBox.Style>
@@ -579,7 +1213,7 @@
                         <CheckBox x:Name="chkParcoursEmeFa"
                                   Grid.Column="0"
                                   Grid.Row="3"
-                                  Content="EME_FA"
+                                  Content="EME__FA"
                                   VerticalAlignment="Center" />
 
                         <TextBox x:Name="txtNbEtudiantsEmeFa"
@@ -602,7 +1236,7 @@
                         <CheckBox x:Name="chkParcoursAiiFa"
                                   Grid.Column="0"
                                   Grid.Row="4"
-                                  Content="AII_FA"
+                                  Content="AII__FA"
                                   VerticalAlignment="Center" />
 
                         <TextBox x:Name="txtNbEtudiantsAiiFa"
@@ -689,7 +1323,6 @@
                                  Text="TD2"
                                  Grid.Row="1"
                                  Grid.Column="0"
-                                 Width="50"
                                  VerticalAlignment="Center" />
                         <StackPanel Grid.Row="1"
                                     HorizontalAlignment="Center"
@@ -730,7 +1363,7 @@
                                  Text="TD3"
                                  Grid.Row="2"
                                  Grid.Column="0"
-                                 Width="50"
+
                                  VerticalAlignment="Center" />
                         <StackPanel Grid.Row="2"
                                     HorizontalAlignment="Center"
@@ -770,181 +1403,750 @@
                     </Grid>
                 </GroupBox>
             </Grid>
-            <GroupBox x:Name="grpTPCommunGroup_Fa"
-                      Header="Groupes TP communs"
-                      Grid.Row="1"
-                      Margin="5"
-                      Grid.Column="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                    </Grid.RowDefinitions>
-                    <TextBlock x:Name="tbkTpCommunEse21_Fa"
-                               Text="ESE21_FA"
-                               Grid.Column="0"
-                               Grid.Row="0"
-                               VerticalAlignment="Center" />
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="250" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                    <TextBox x:Name="txtTpCommunEse21_Fa"
-                             Grid.Column="2"
-                             Grid.Row="0"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                <GroupBox x:Name="grpTPCommunGroup_Fa"
+                          Header="Groupes TP communs"
+                          Grid.Row="0"
+                          Margin="5"
+                          Grid.Column="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
 
-                    <TextBlock x:Name="tbkTpCommunEse22_Fa"
-                               Text="ESE22_FA"
-                               Grid.Column="0"
-                               Grid.Row="1"
-                               VerticalAlignment="Center" />
+                        <StackPanel x:Name="spEse21_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="txtTpCommunEse22_Fa"
-                             Grid.Column="2"
-                             Grid.Row="1"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <TextBlock x:Name="tbkTpCommunEse21_Fa"
+                                           Text="ESE21_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="0"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
 
-                    <TextBlock x:Name="tbkTpCommunEme21_Fa"
-                               Text="EME21_FA"
-                               Grid.Column="0"
-                               Grid.Row="2"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP11_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBox x:Name="txtTpCommunEme21_Fa"
-                             Grid.Column="2"
-                             Grid.Row="2"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP21_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpCommunEme22_Fa"
-                               Text="EME22_FA"
-                               Grid.Column="0"
-                               Grid.Row="3"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP31_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBox x:Name="txtTpCommunEme22_Fa"
-                             Grid.Column="2"
-                             Grid.Row="3"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <TextBox x:Name="txtTpCommunEse21_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="0"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
 
-                    <TextBlock x:Name="tbkTpCommunAii21_Fa"
-                               Text="AII21_FA"
-                               Grid.Column="0"
-                               Grid.Row="4"
-                               VerticalAlignment="Center" />
+                        <StackPanel x:Name="spEse22_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="1"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="txtTpCommunAii21_Fa"
-                             Grid.Column="2"
-                             Grid.Row="4"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <TextBlock x:Name="tbkTpCommunEse22_Fa"
+                                           Text="ESE22_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="1"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP12_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpCommunAii22_Fa"
-                               Text="AII22_FA"
-                               Grid.Column="0"
-                               Grid.Row="5"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP22_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBox x:Name="txtTpCommunAii22_Fa"
-                             Grid.Column="2"
-                             Grid.Row="5"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP32_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                </Grid>
-            </GroupBox>
-            <GroupBox x:Name="grpTPSpecializedGroup_Fa"
-                      Header="Groupes TP spécialisés"
-                      Margin="5"
-                      Grid.Row="1"
-                      Grid.Column="4">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="32" />
-                    </Grid.RowDefinitions>
-                    <TextBlock x:Name="tbkTpSpecialiséEse21_Fa"
-                               Text="ESE21_FA"
-                               Grid.Column="0"
-                               Grid.Row="0"
-                               VerticalAlignment="Center" />
+                                <TextBox x:Name="txtTpCommunEse22_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="1"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
 
-                    <TextBox x:Name="txtTpSpecialiséEse21_Fa"
-                             Grid.Column="2"
-                             Grid.Row="0"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                        <StackPanel x:Name="spEme21_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="tbkTpSpecialiséEse22_Fa"
-                               Text="ESE22_FA"
-                               Grid.Column="0"
-                               Grid.Row="1"
-                               VerticalAlignment="Center" />
+                                <TextBlock x:Name="tbkTpCommunEme21_Fa"
+                                           Text="EME21_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="2"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséEse22_Fa"
-                             Grid.Column="2"
-                             Grid.Row="1"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP13_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséEme21_Fa"
-                               Text="EME21_FA"
-                               Grid.Column="0"
-                               Grid.Row="2"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP23_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBox x:Name="txtTpSpecialiséEme21_Fa"
-                             Grid.Column="2"
-                             Grid.Row="2"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP33_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséEme22_Fa"
-                               Text="EME22_FA"
-                               Grid.Column="0"
-                               Grid.Row="3"
-                               VerticalAlignment="Center" />
+                                <TextBox x:Name="txtTpCommunEme21_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="2"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
 
-                    <TextBox x:Name="txtTpSpecialiséEme22_Fa"
-                             Grid.Column="2"
-                             Grid.Row="3"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                        <StackPanel x:Name="spEme22_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="3"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="tbkTpSpecialiséAii21_Fa"
-                               Text="AII21_FA"
-                               Grid.Column="0"
-                               Grid.Row="4"
-                               VerticalAlignment="Center" />
+                                <TextBlock x:Name="tbkTpCommunEme22_Fa"
+                                           Text="EME22_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="3"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
 
-                    <TextBox x:Name="txtTpSpecialiséAii21_Fa"
-                             Grid.Column="2"
-                             Grid.Row="4"
-                             Style="{StaticResource EffectifTextBoxBase}" />
+                                <CheckBox x:Name="chkTP14_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBlock x:Name="tbkTpSpecialiséAii22_Fa"
-                               Text="AII22_FA"
-                               Grid.Column="0"
-                               Grid.Row="5"
-                               VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP24_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
 
-                    <TextBox x:Name="txtTpSpecialiséAii22_Fa"
-                             Grid.Column="2"
-                             Grid.Row="5"
-                             Style="{StaticResource EffectifTextBoxBase}" />
-                </Grid>
-            </GroupBox>
+                                <CheckBox x:Name="chkTP34_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpCommunEme22_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="3"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii21_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpCommunAii21_Fa"
+                                           Text="AII21_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="4"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP15_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP25_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP35_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpCommunAii21_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="4"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii22_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpCommunAii22_Fa"
+                                       Text="AII22_FA"
+                                       Grid.Column="0"
+                                       Grid.Row="5"
+                                       Margin="5,0"
+                                       VerticalAlignment="Center" />
+                            <CheckBox x:Name="chkTP16_Fa"
+                                      Content="TP1"
+                                      Grid.Column="1"
+                                      Grid.Row="5"
+                                      Style="{StaticResource Effectif_Fa_CheckBox}" />
+
+                            <CheckBox x:Name="chkTP26_Fa"
+                                      Content="TP2"
+                                      Grid.Column="2"
+                                      Grid.Row="5"
+                                      Style="{StaticResource Effectif_Fa_CheckBox}" />
+
+                            <CheckBox x:Name="chkTP36_Fa"
+                                      Content="TP3"
+                                      Grid.Column="3"
+                                      Grid.Row="5"
+                                      Style="{StaticResource Effectif_Fa_CheckBox}" />
+
+                            <TextBox x:Name="txtTpCommunAii22_Fa"
+                                     Grid.Column="4"
+                                     Grid.Row="5"
+                                     Style="{StaticResource EffectifTextBoxBase}" />
+                                </Grid>
+                        </StackPanel>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox x:Name="grpRegroupement_TP_Fa"
+                          Header="Effectifs des groupes de TP"
+                          Grid.Row="1"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="txtTP1_Fa"
+                                   Text="TP1"
+                                   Grid.Column="0"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP1_officiel_Fa"
+                                 Grid.Column="1"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP2_Fa"
+                                   Text="TP2"
+                                   Grid.Column="2"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP2_officiel_Fa"
+                                 Grid.Column="3"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP3_Fa"
+                                   Text="TP3"
+                                   Grid.Column="4"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP3_officiel_Fa"
+                                 Grid.Column="5"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                    </Grid>
+                </GroupBox>
+            </Grid>
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="250" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <GroupBox x:Name="grpTPSpecialisedGroup_Fa"
+                          Header="Groupes TP spécialisés"
+                          Grid.Row="0"
+                          Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel x:Name="spEse21sp_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEse21_Fa"
+                                           Text="ESE21_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="0"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP11Sp_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP21Sp_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP31Sp_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="0"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEse21_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="0"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spEse22Sp_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="1"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEse22_Fa"
+                                           Text="ESE22_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="1"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP12Sp_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP22Sp_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP32Sp_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="1"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEse22_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="1"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spEme21Sp_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEme21_Fa"
+                                           Text="EME21_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="2"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP13Sp_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP23Sp_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP33Sp_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="2"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEme21_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="2"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spEme22Sp_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="3"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpEme22_Fa"
+                                           Text="EME22_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="3"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP14Sp_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP24Sp_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP34Sp_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="3"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpEme22_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="3"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii21Sp_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpAii21_Fa"
+                                           Text="AII21_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="4"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+
+                                <CheckBox x:Name="chkTP15Sp_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP25Sp_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP35Sp_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="4"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpAii21_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="4"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel x:Name="spAii22Sp_Fa"
+                                    Orientation="Horizontal"
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="4"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Visible">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="tbkTpSpAii22_Fa"
+                                           Text="AII22_FA"
+                                           Grid.Column="0"
+                                           Grid.Row="5"
+                                           Margin="5,0"
+                                           VerticalAlignment="Center" />
+                                <CheckBox x:Name="chkTP16Sp_Fa"
+                                          Content="TP1"
+                                          Grid.Column="1"
+                                          Grid.Row="5"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP26Sp_Fa"
+                                          Content="TP2"
+                                          Grid.Column="2"
+                                          Grid.Row="5"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <CheckBox x:Name="chkTP36Sp_Fa"
+                                          Content="TP3"
+                                          Grid.Column="3"
+                                          Grid.Row="5"
+                                          Style="{StaticResource Effectif_Sp_Fa_CheckBox}" />
+
+                                <TextBox x:Name="txtTpSpAii22_Fa"
+                                         Grid.Column="4"
+                                         Grid.Row="5"
+                                         Style="{StaticResource EffectifTextBoxBase}" />
+                            </Grid>
+                        </StackPanel>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox x:Name="grpRegroupement_TPSp_Fa"
+                          Header="Effectifs des groupes de TP"
+                          Grid.Row="1"
+                          Margin="5"
+                          VerticalAlignment="Center"
+                          Grid.Column="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock x:Name="txtTP1Sp_Fa"
+                                   Text="TP1"
+                                   Grid.Column="0"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP1Sp_officiel_Fa"
+                                 Grid.Column="1"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP2Sp_Fa"
+                                   Text="TP2"
+                                   Grid.Column="2"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP2Sp_officiel_Fa"
+                                 Grid.Column="3"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                        <TextBlock x:Name="txtTP3Sp_Fa"
+                                   Text="TP3"
+                                   Grid.Column="4"
+                                   Margin="5,0"
+                                   VerticalAlignment="Center" />
+
+                        <TextBox x:Name="txtTP3Sp_officiel_Fa"
+                                 Grid.Column="5"
+                                 Margin="5,0"
+                                 Height="25"
+                                 Width="60"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 HorizontalAlignment="Center" />
+
+                    </Grid>
+                </GroupBox>
+            </Grid>
         </Grid>
-
         <Grid Grid.Row="2"
               Grid.Column="0">
             <Grid.ColumnDefinitions>
@@ -998,6 +2200,5 @@
                         Margin="5" />
             </StackPanel>
         </Grid>
-
     </Grid>
 </Window>

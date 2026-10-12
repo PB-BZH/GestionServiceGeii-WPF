@@ -65,14 +65,14 @@ public partial class DialogueServiceGEII: Window {
   private static FichierDeSelection selection = new();
   private ClasseGénérique générique = new();
   private static readonly FormationGEII formationGEII = new();
-  private static ConfigurationEffectifs_GEII_1? _configurationEffectifs_GEII_1 { get; set; }
-  private static ConfigurationEffectifs_GEII_2? _configurationEffectifs_GEII_2 { get; set; }
+  private static ConfigurationEffectifs_GEII_1? ConfigurationEffectifs_GEII_1 { get; set; }
+  private static ConfigurationEffectifs_GEII_2? ConfigurationEffectifs_GEII_2 { get; set; }
   private static ConfigurationDesCours? _configurationDesCours { get; set; }
   private static ChoixTypeDeCours _choixTypeDeCours = new();
   private static readonly GestionDesGroupes _gestionDesGroupes = new();
-  private static DataSet _dataSetExcelSélection = new("FICHIER DE SELECTION");
-  private static DataSet _dataSetExcelService = new("FICHIER DE SERVICE");
-  private static DataTable _dataTableExcel = new("Table ExcelApp");
+  internal static DataSet DataSetExcelSélection { get; set; } = new("FICHIER DE SELECTION");
+  internal static DataSet DataSetExcelService { get; set; } = new("FICHIER DE SERVICE");
+  private static DataTable DataTableExcel { get; set; } = new("Table ExcelApp");
   private static ComboBox noms = new();
   private static string? choix;
   private static string? nomColonne;
@@ -84,14 +84,18 @@ public partial class DialogueServiceGEII: Window {
   internal static int nbGroupeTD_officiel_Geii2_FI;
   internal static string[] NomGroupeTD_Geii2_officiel_FI = new string[3];
   internal static string[] NomGroupeTP_Geii2_FI = new string[6];
+  internal static string[] NomGroupeTP_officiel_Geii2_FI = new string[6];
   internal static string[] NomGroupeTPSp_Geii2_FI = new string[6];
+  internal static string[] NomGroupeTPSp_officiel_Geii2_FI = new string[6];
 
   internal static string[] NomGroupeTD_Geii2_FA = new string[3];
   internal static string[] NomGroupeTD_Geii2_FI = new string[3];
   internal static int nbGroupeTD_officiel_Geii2_FA;
   internal static string[] NomGroupeTD_Geii2_officiel_FA = new string[3];
   internal static string[] NomGroupeTP_Geii2_FA = new string[6];
+  internal static string[] NomGroupeTP_officiel_Geii2_FA = new string[6];
   internal static string[] NomGroupeTPSp_Geii2_FA = new string[6];
+  internal static string[] NomGroupeTPSp_officiel_Geii2_FA = new string[6];
 
   private ServiceManagerProfile _profile = new();
   private string _currentProfilePath = string.Empty;
@@ -128,16 +132,6 @@ public partial class DialogueServiceGEII: Window {
   private ClasseGénérique Générique {
     get => générique;
     set => générique = value ?? générique;
-  }
-
-  internal static DataSet DataSetExcelSélection {
-    get => _dataSetExcelSélection;
-    set => _dataSetExcelSélection = value ?? _dataSetExcelService;
-  }
-
-  internal static DataSet DataSetExcelService {
-    get => _dataSetExcelService;
-    set => _dataSetExcelService = value ?? _dataSetExcelService;
   }
 
   private static ComboBox Noms {
@@ -345,7 +339,6 @@ public partial class DialogueServiceGEII: Window {
 
     mnuVueGestionServices.IsChecked = false;
     mnuVueFichesService.IsChecked = true;
-
     ChargerIntervenantsFichesService();
   }
 
@@ -393,15 +386,17 @@ public partial class DialogueServiceGEII: Window {
 
     FormationGEII.Geii_2_FI.NbEtudiants = _profile.Groups.Geii2_FI_StudentCount;
     FormationGEII.Geii_2_FI.NbGroupeTD_officiel = _profile.Groups.Geii2_FI_Td_officiel_GroupCount;
-    FormationGEII.Geii_2_FI.NbGroupeTP = _profile.Groups.Geii2_FI_TpGroupCount;
-    FormationGEII.Geii_2_FI.NbGroupeTPSp = _profile.Groups.Geii2_FI_TpSpGroupCount;
-    NomGroupeTD_Geii2_FI = _profile.Groups.Geii2_FI_TdGroupNames ?? [];
-    NomGroupeTP_Geii2_FI = _profile.Groups.Geii2_FI_TpGroupNames ?? [];
-    NomGroupeTPSp_Geii2_FI = _profile.Groups.Geii2_FI_TpSpGroupNames ?? [];
+    FormationGEII.Geii_2_FI.NbGroupeTP_officiel = _profile.Groups.Geii2_FI_Tp_officiel_GroupCount;
+    FormationGEII.Geii_2_FI.NbGroupeTPSp_officiel = _profile.Groups.Geii2_FI_TpSp_officiel_GroupCount;
+
+    NomGroupeTD_Geii2_officiel_FI = _profile.Groups.Geii2_FI_Td_officiel_GroupNames ?? [];
+    NomGroupeTP_officiel_Geii2_FI = _profile.Groups.Geii2_FI_Tp_officiel_GroupNames ?? [];
+    NomGroupeTPSp_officiel_Geii2_FI = _profile.Groups.Geii2_FI_TpSp_officiel_GroupNames ?? [];
+
     étatEffectif_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbEtudiants.ToString() + " étudiants : ";
     étatNbGroupeTD_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTD_officiel + " groupes de TD, ";
-    étatNbGroupeTP_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTP + " groupes de TP, ";
-    étatNbGroupeTPSp_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTPSp + " groupes de TP Sp";
+    étatNbGroupeTP_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTP_officiel + " groupes de TP, ";
+    étatNbGroupeTPSp_Geii2_FI.Text = FormationGEII.Geii_2_FI.NbGroupeTPSp_officiel + " groupes de TP Sp";
 
     étatTitreEffectif_Geii2_FI.Visibility
       = étatEffectif_Geii2_FI.Visibility
@@ -419,15 +414,17 @@ public partial class DialogueServiceGEII: Window {
 
     FormationGEII.Geii_2_FA.NbEtudiants = _profile.Groups.Geii2_FA_StudentCount;
     FormationGEII.Geii_2_FA.NbGroupeTD_officiel = _profile.Groups.Geii2_FA_Td_officiel_GroupCount;
-    FormationGEII.Geii_2_FA.NbGroupeTP = _profile.Groups.Geii2_FA_TpGroupCount;
-    FormationGEII.Geii_2_FA.NbGroupeTPSp = _profile.Groups.Geii2_FA_TpSpGroupCount;
-    NomGroupeTD_Geii2_FA = _profile.Groups.Geii2_FA_TdGroupNames ?? [];
-    NomGroupeTP_Geii2_FA = _profile.Groups.Geii2_FA_TpGroupNames ?? [];
-    NomGroupeTPSp_Geii2_FA = _profile.Groups.Geii2_FA_TpSpGroupNames ?? [];
+    FormationGEII.Geii_2_FA.NbGroupeTP_officiel = _profile.Groups.Geii2_FA_Tp_officiel_GroupCount;
+    FormationGEII.Geii_2_FA.NbGroupeTPSp_officiel = _profile.Groups.Geii2_FA_TpSp_officiel_GroupCount;
+
+    NomGroupeTD_Geii2_officiel_FA = _profile.Groups.Geii2_FA_Td_officiel_GroupNames ?? [];
+    NomGroupeTP_officiel_Geii2_FA = _profile.Groups.Geii2_FA_Tp_officiel_GroupNames ?? [];
+    NomGroupeTPSp_officiel_Geii2_FA = _profile.Groups.Geii2_FA_TpSp_officiel_GroupNames ?? [];
+
     étatEffectif_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbEtudiants.ToString() + " étudiants : ";
     étatNbGroupeTD_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTD_officiel + " groupes de TD, ";
-    étatNbGroupeTP_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTP + " groupes de TP, ";
-    étatNbGroupeTPSp_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTPSp + " groupes de TP Sp";
+    étatNbGroupeTP_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTP_officiel + " groupes de TP, ";
+    étatNbGroupeTPSp_Geii2_FA.Text = FormationGEII.Geii_2_FA.NbGroupeTPSp_officiel + " groupes de TP Sp";
 
     étatTitreEffectif_Geii2_FA.Visibility
       = étatEffectif_Geii2_FA.Visibility
@@ -462,7 +459,7 @@ public partial class DialogueServiceGEII: Window {
   public void AfficherListesDonnées(ComboBox liste,ComboBox critèreDeSelection = null!) {
     switch (liste.Name) {
       case "Semestre":
-        Semestre = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name);
+        Semestre = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,Module,Formation,Parcours);
         break;
       case "Parcours":
         Parcours = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,Semestre,Formation);
@@ -520,6 +517,53 @@ public partial class DialogueServiceGEII: Window {
     }
   }
 
+  private void ActualiserComboCodePedagogiqueDepuisModule() {
+    CodePedagogique.ItemsSource = null;
+    CodePedagogique.Items.Clear();
+
+    DataRow? ligne = RechercherModuleSelectionne();
+
+    if (ligne == null || !ligne.Table.Columns.Contains("CodePedagogique"))
+      return;
+
+    string code = ligne["CodePedagogique"]?.ToString()?.Trim() ?? string.Empty;
+
+    if (!string.IsNullOrWhiteSpace(code)) {
+      CodePedagogique.Items.Add(code);
+      CodePedagogique.SelectedIndex = 0;
+    }
+  }
+
+  private DataRow? RechercherModuleSelectionne() {
+    if (DataSetExcelSélection == null ||
+        !DataSetExcelSélection.Tables.Contains(ExcelSchemaNames.Tables.Module))
+      return null;
+
+    DataTable table = DataSetExcelSélection.Tables[ExcelSchemaNames.Tables.Module]!;
+
+    string[] colonnes = ["Semestre","Formation","Parcours","MODULE"];
+
+    if (colonnes.Any(colonne => !table.Columns.Contains(colonne)))
+      return null;
+
+    string moduleCourant = Module.SelectedItem is DataRowView ligneModule
+        ? ligneModule[ExcelSchemaNames.Columns.Module]?.ToString()?.Trim() ?? string.Empty
+        : Module.SelectedValue?.ToString()?.Trim() ?? Module.Text.Trim();
+
+    if (string.IsNullOrWhiteSpace(moduleCourant))
+      return null;
+
+    foreach (DataRow ligne in table.Rows) {
+      if (string.Equals(ligne["Semestre"]?.ToString()?.Trim(),Semestre.Text.Trim(),StringComparison.OrdinalIgnoreCase) &&
+          string.Equals(ligne["Formation"]?.ToString()?.Trim(),Formation.Text.Trim(),StringComparison.OrdinalIgnoreCase) &&
+          string.Equals(ligne["Parcours"]?.ToString()?.Trim(),Parcours.Text.Trim(),StringComparison.OrdinalIgnoreCase) &&
+          string.Equals(ligne["MODULE"]?.ToString()?.Trim(),moduleCourant,StringComparison.OrdinalIgnoreCase))
+        return ligne;
+    }
+
+    return null;
+  }
+
   private void ActualiserComboOseDepuisModule(string moduleFiltre) {
     if (_isRefreshingOse)
       return;
@@ -530,54 +574,24 @@ public partial class DialogueServiceGEII: Window {
       OSE.ItemsSource = null;
       OSE.Items.Clear();
 
-      string moduleCourant = moduleFiltre?.Trim() ?? string.Empty;
+      DataRow? ligne = RechercherModuleSelectionne();
 
-      if (string.IsNullOrWhiteSpace(moduleCourant) ||
-          DataSetExcelSélection == null ||
-          !DataSetExcelSélection.Tables.Contains(ExcelSchemaNames.Tables.Module))
+      if (ligne == null || !ligne.Table.Columns.Contains(ExcelSchemaNames.Columns.OSE))
         return;
 
-      DataTable tableModule = DataSetExcelSélection.Tables[ExcelSchemaNames.Tables.Module]!;
+      string codeOse = ligne[ExcelSchemaNames.Columns.OSE]?.ToString()?.Trim() ?? string.Empty;
 
-      string colonneModule = tableModule.Columns.Contains(ExcelSchemaNames.Columns.Module)
-          ? ExcelSchemaNames.Columns.Module
-          : "INTITULE";
-
-      string colonneOse = tableModule.Columns.Contains(ExcelSchemaNames.Columns.OSE)
-          ? ExcelSchemaNames.Columns.OSE
-          : "OSE";
-
-      if (!tableModule.Columns.Contains(colonneModule) || !tableModule.Columns.Contains(colonneOse))
+      if (string.IsNullOrWhiteSpace(codeOse) ||
+          codeOse == "0" ||
+          codeOse.Equals("#N/A",StringComparison.OrdinalIgnoreCase) ||
+          codeOse.Contains("#REF!",StringComparison.OrdinalIgnoreCase))
         return;
 
-      SortedSet<string> valeurs = new(StringComparer.OrdinalIgnoreCase);
-
-      foreach (DataRow row in tableModule.Rows) {
-        string module = row[colonneModule]?.ToString()?.Trim() ?? string.Empty;
-
-        if (!string.Equals(module,moduleCourant,StringComparison.OrdinalIgnoreCase))
-          continue;
-
-        string codeOse = row[colonneOse]?.ToString()?.Trim() ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(codeOse) ||
-            codeOse == "0" ||
-            codeOse.Equals("#N/A",StringComparison.OrdinalIgnoreCase) ||
-            codeOse.Contains("#REF!",StringComparison.OrdinalIgnoreCase))
-          continue;
-
-        valeurs.Add(codeOse);
-      }
-
-      foreach (string valeur in valeurs)
-        OSE.Items.Add(valeur);
-
-      OSE.IsEnabled = OSE.Items.Count > 0;
-
-      if (OSE.Items.Count > 0)
-        OSE.SelectedIndex = 0;
+      OSE.Items.Add(codeOse);
+      OSE.SelectedIndex = 0;
     }
     finally {
+      OSE.IsEnabled = OSE.Items.Count > 0;
       _isRefreshingOse = false;
     }
   }
@@ -687,11 +701,11 @@ public partial class DialogueServiceGEII: Window {
       _suspendViewRefresh = false;
     }
 
-    RequestRefreshModuleView();
-
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
     },DispatcherPriority.ContextIdle);
+
+    RequestRefreshModuleView();
   }
 
   private void Parcours_SelectionChanged(object sender,SelectionChangedEventArgs e) {
@@ -706,6 +720,11 @@ public partial class DialogueServiceGEII: Window {
     finally {
       _suspendViewRefresh = false;
     }
+
+    // Synchronisation des références du module sélectionné.
+    ActualiserComboCodePedagogiqueDepuisModule();
+    ActualiserComboOseDepuisModule(Module.Text.Trim());
+    ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
 
     ActualiserPanneauCours();
     RequestRefreshModuleView();
@@ -1004,7 +1023,7 @@ public partial class DialogueServiceGEII: Window {
     if (!_serviceWorkbookLoaded)
       return;
 
-    ClasseBaseDeDonnées.DataSetExcel = DataSetExcelService;
+    DataSetExcel = DataSetExcelService;
 
     LireDonnées(VisualisationDonnées,CB1,CB2,CB3,tableSelection);
     TotalType(VisualisationDonnées);
@@ -1044,44 +1063,88 @@ public partial class DialogueServiceGEII: Window {
     FormatageCouleurLignes(VisualisationDonnées);
   }
 
-  internal void ControleCouleurBoutonsTDetTP() {
-    ushort td = ushort.Parse(nbGroupeTd_Geii1.Content?.ToString() ?? "0");
-    ushort tdTotal = ushort.Parse(nbGroupeTdTotal_Geii1.Content?.ToString() ?? "0");
-    ushort tp = ushort.Parse(nbGroupeTp_Geii1.Content?.ToString() ?? "0");
-    ushort tpTotal = ushort.Parse(nbGroupeTpTotal_Geii1.Content?.ToString() ?? "0");
+  private void ActualiserVisibiliteGroupesTP() {
+    bool fi = Formation.Text == "FI";
+    bool fa = Formation.Text == "FA";
+    bool troncCommun = Parcours.Text == "Tronc commun";
+    bool specialite = Parcours.Text is "Parcours EME" or "Parcours ESE" or "Parcours AII";
+
+    grbTP_FI.Visibility = fi && troncCommun ? Visibility.Visible : Visibility.Collapsed;
+    grpTP_FA.Visibility = fa && troncCommun ? Visibility.Visible : Visibility.Collapsed;
+
+    grnTPSp_FI.Visibility = fi && specialite ? Visibility.Visible : Visibility.Collapsed;
+    grbTPSp_FA.Visibility = fa && specialite ? Visibility.Visible : Visibility.Collapsed;
+  }
+
+  internal void ControleCouleurBoutonsTDetTP(
+    Label nbGroupeTd,Label nbGroupeTdTotal,Label nbGroupeTp,Label nbGroupeTpTotal,
+    Button ajouterCm,Button ajouterTd,Button ajouterTp,Button supprimerCm,
+    Button supprimerTd,Button supprimerTp,Label? nbGroupeTpSp = null,Label? nbGroupeTpSpTotal = null,
+    Button? ajouterTpSp = null,Button? supprimerTpSp = null) {
+    ushort td = ushort.Parse(nbGroupeTd.Content?.ToString() ?? "0");
+    ushort tdTotal = ushort.Parse(nbGroupeTdTotal.Content?.ToString() ?? "0");
+    ushort tp = ushort.Parse(nbGroupeTp.Content?.ToString() ?? "0");
+    ushort tpTotal = ushort.Parse(nbGroupeTpTotal.Content?.ToString() ?? "0");
+
+    ActualiserVisibiliteGroupesTP();
 
     if (td != tdTotal) {
       if (td < tdTotal) {
-        boutonAjouterTD.Background = Brushes.Red;
-        boutonSupprimerTD.Background = Brushes.DarkSeaGreen;
+        ajouterTd.Background = Brushes.Red;
+        supprimerTd.Background = Brushes.DarkSeaGreen;
       }
       else {
-        boutonAjouterTD.Background = Brushes.DarkSeaGreen;
-        boutonSupprimerTD.Background = Brushes.Red;
+        ajouterTd.Background = Brushes.DarkSeaGreen;
+        supprimerTd.Background = Brushes.Red;
       }
     }
     else {
-      boutonAjouterTD.Background = Brushes.DarkSeaGreen;
-      boutonSupprimerTD.Background = Brushes.DarkSeaGreen;
+      ajouterTd.Background = Brushes.DarkSeaGreen;
+      supprimerTd.Background = Brushes.DarkSeaGreen;
     }
 
-    if (tp != tpTotal) {
-      if (tp < tpTotal) {
-        boutonAjouterTP.Background = Brushes.Red;
-        boutonSupprimerTP.Background = Brushes.DarkSeaGreen;
+    if (Parcours.Text == "Tronc commun") {
+      if (tp != tpTotal) {
+        if (tp < tpTotal) {
+          ajouterTp.Background = Brushes.Red;
+          supprimerTp.Background = Brushes.DarkSeaGreen;
+        }
+        else {
+          ajouterTp.Background = Brushes.DarkSeaGreen;
+          supprimerTp.Background = Brushes.Red;
+        }
       }
       else {
-        boutonAjouterTP.Background = Brushes.DarkSeaGreen;
-        boutonSupprimerTP.Background = Brushes.Red;
+        ajouterTp.Background = Brushes.DarkSeaGreen;
+        supprimerTp.Background = Brushes.DarkSeaGreen;
       }
     }
-    else {
-      boutonAjouterTP.Background = Brushes.DarkSeaGreen;
-      boutonSupprimerTP.Background = Brushes.DarkSeaGreen;
+    if (Parcours.Text == "Parcours EME" || Parcours.Text == "Parcours ESE" || Parcours.Text == "Parcours AII") {
+      if (nbGroupeTpSp != null && nbGroupeTpSpTotal != null &&
+          ajouterTpSp != null && supprimerTpSp != null) {
+
+        ushort tpSp = ushort.Parse(nbGroupeTpSp.Content?.ToString() ?? "0");
+        ushort tpSpTotal = ushort.Parse(nbGroupeTpSpTotal.Content?.ToString() ?? "0");
+
+        if (tpSp != tpSpTotal) {
+          if (tpSp < tpSpTotal) {
+            ajouterTpSp.Background = Brushes.Red;
+            supprimerTpSp.Background = Brushes.DarkSeaGreen;
+          }
+          else {
+            ajouterTpSp.Background = Brushes.DarkSeaGreen;
+            supprimerTpSp.Background = Brushes.Red;
+          }
+        }
+        else {
+          ajouterTpSp.Background = Brushes.DarkSeaGreen;
+          supprimerTpSp.Background = Brushes.DarkSeaGreen;
+        }
+      }
     }
 
-    boutonAjouterCM.Background = Brushes.DarkSeaGreen;
-    boutonSupprimerCM.Background = Brushes.DarkSeaGreen;
+    ajouterCm.Background = Brushes.DarkSeaGreen;
+    supprimerCm.Background = Brushes.DarkSeaGreen;
   }
 
   public String RechercheNomModule() {
@@ -1089,19 +1152,14 @@ public partial class DialogueServiceGEII: Window {
   }
 
   public void AfficheFicheModule() {
-    DataRowView? ligneCourante = VisualisationDonnées.SelectedItem as DataRowView;
+    DataRow? ligneModule = RechercherModuleSelectionne();
 
-    if (ligneCourante == null)
+    if (ligneModule == null)
       return;
 
-    string module = ligneCourante[ExcelSchemaNames.Columns.Module]?.ToString()?.Trim() ?? string.Empty;
-    string codeOse = ligneCourante[ExcelSchemaNames.Columns.OSE]?.ToString()?.Trim() ?? string.Empty;
-    string libelleCourt = ligneCourante[ExcelSchemaNames.Columns.LibelleCourt]?.ToString()?.Trim() ?? string.Empty;
-
-    string codeCourtModule = ExtraireCodeCourtModuleDepuisLibelleCourt(libelleCourt);
-
-    if (string.IsNullOrWhiteSpace(codeOse))
-      codeOse = ConvertirCodeCourtEnCodeOse(codeCourtModule);
+    string module = ligneModule[ExcelSchemaNames.Columns.Module]?.ToString()?.Trim() ?? string.Empty;
+    string codeOse = ligneModule[ExcelSchemaNames.Columns.OSE]?.ToString()?.Trim() ?? string.Empty;
+    string codeCourtModule = ligneModule["CodePedagogique"]?.ToString()?.Trim() ?? string.Empty;
 
     TexteMatière.Content = module;
     TexteCodeOse.Content = codeOse;
@@ -1115,38 +1173,65 @@ public partial class DialogueServiceGEII: Window {
     nbGroupeTpTotal_Geii1.Content = FormationGEII.Geii_1_FI.NbGroupeTP.ToString();
     nbEtudiants_Geii1.Content = FormationGEII.Geii_1_FI.NbEtudiants.ToString();
 
-    int nbTdModuleFI = CompterGroupesDistinctsModule("FI","TD");
-    int nbTpModuleFI = CompterGroupesDistinctsModule("FI","TP");
-    int nbTdModuleFA = CompterGroupesDistinctsModule("FA","TD");
-    int nbTpModuleFA = CompterGroupesDistinctsModule("FA","TP");
-
     nbGroupeTd_Geii2_FI.Content = CompteurTD.ToString();
     nbGroupeTp_Geii2_FI.Content = CompteurTP.ToString();
-    nbGroupeTdTotal_Geii2_FI.Content = nbTdModuleFI.ToString();
-    nbGroupeTpTotal_Geii2_FI.Content = nbTpModuleFI.ToString();
+    nbGroupeTdTotal_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbGroupeTD_officiel.ToString();
+    nbGroupeTpTotal_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbGroupeTP_officiel.ToString();
+    nbGroupeTpSpTotal_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbGroupeTPSp_officiel.ToString();
     nbEtudiants_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbEtudiants.ToString();
 
     nbGroupeTd_Geii2_FA.Content = CompteurTD.ToString();
     nbGroupeTp_Geii2_FA.Content = CompteurTP.ToString();
-    nbGroupeTdTotal_Geii2_FA.Content = nbTdModuleFA.ToString();
-    nbGroupeTpTotal_Geii2_FA.Content = nbTpModuleFA.ToString();
+    nbGroupeTdTotal_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbGroupeTD_officiel.ToString();
+    nbGroupeTpTotal_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbGroupeTP_officiel.ToString();
+    nbGroupeTpSpTotal_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbGroupeTPSp_officiel.ToString();
     nbEtudiants_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbEtudiants.ToString();
 
-    ControleCouleurBoutonsTDetTP();
+    ControleCouleurBoutonsTDetTP(
+      nbGroupeTd_Geii1,
+      nbGroupeTdTotal_Geii1,
+      nbGroupeTp_Geii1,
+      nbGroupeTpTotal_Geii1,
+      boutonAjouterCM,
+      boutonAjouterTD,
+      boutonAjouterTP,
+      boutonSupprimerCM,
+      boutonSupprimerTD,
+      boutonSupprimerTP);
+
+    ControleCouleurBoutonsTDetTP(
+      nbGroupeTd_Geii2_FA,
+      nbGroupeTdTotal_Geii2_FA,
+      nbGroupeTp_Geii2_FA,
+      nbGroupeTpTotal_Geii2_FA,
+      boutonAjouterCM_Geii2_FA,
+      boutonAjouterTD_Geii2_FA,
+      boutonAjouterTP_Geii2_FA,
+      boutonSupprimerCM_Geii2_FA,
+      boutonSupprimerTD_Geii2_FA,
+      boutonSupprimerTP_Geii2_FA,
+      nbGroupeTpSp_Geii2_FA,
+      nbGroupeTpSpTotal_Geii2_FA,
+      boutonAjouterTPSp_Geii2_FA,
+      boutonSupprimerTPSp_Geii2_FA);
+
+    ControleCouleurBoutonsTDetTP(
+      nbGroupeTd_Geii2_FI,
+      nbGroupeTdTotal_Geii2_FI,
+      nbGroupeTp_Geii2_FI,
+      nbGroupeTpTotal_Geii2_FI,
+      boutonAjouterCM_Geii2_FI,
+      boutonAjouterTD_Geii2_FI,
+      boutonAjouterTP_Geii2_FI,
+      boutonSupprimerCM_Geii2_FI,
+      boutonSupprimerTD_Geii2_FI,
+      boutonSupprimerTP_Geii2_FI,
+      nbGroupeTpSp_Geii2_FI,
+      nbGroupeTpSpTotal_Geii2_FI,
+      boutonAjouterTPSp_Geii2_FI,
+      boutonSupprimerTPSp_Geii2_FI);
 
     BoutonsDeModification.Visibility = Visibility.Visible;
-  }
-
-  private int CompterGroupesDistinctsModule(string formation,string cours) {
-    return VisualisationDonnées.Items
-        .OfType<DataRowView>()
-        .Where(row =>
-            string.Equals(GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Formation),formation,StringComparison.OrdinalIgnoreCase) &&
-            string.Equals(GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Cours),cours,StringComparison.OrdinalIgnoreCase))
-        .Select(row => GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Groupe))
-        .Where(groupe => !string.IsNullOrWhiteSpace(groupe) && groupe != "0")
-        .Distinct(StringComparer.OrdinalIgnoreCase)
-        .Count();
   }
 
   private void HorairesModule() {
@@ -1172,42 +1257,13 @@ public partial class DialogueServiceGEII: Window {
     if (string.IsNullOrWhiteSpace(Module.Text))
       return;
 
-    Debug.WriteLine("===== FILTRE VUE MODULE =====");
-    Debug.WriteLine("Semestre = [" + Semestre.Text + "]");
-    Debug.WriteLine("Module   = [" + Module.Text + "]");
-    Debug.WriteLine("Formation= [" + Formation.Text + "]");
-    Debug.WriteLine("OSE      = [" + OSE.Text + "]");
+    DataSetExcel = DataSetExcelService;
 
-    ClasseBaseDeDonnées.DataSetExcel = DataSetExcelService;
-
-    AfFicheMatière(Semestre,Module,Formation,"");
-
+    AfFicheMatière(Semestre,Formation,Module,OSE,"");
     FormatageCouleurLignes(VisualisationDonnées);
     HorairesModule();
     AfficheFicheModule();
   }
-
-  //private void RestaurerGroupesDepuisProfil() {
-  //  if (_profile == null || _profile.Groups == null)
-  //    return;
-
-  //  if (!_profile.Groups.Geii1_IsConfigured)
-  //    return;
-
-  //  FormationGEII.Geii_1_FI.NbEtudiants = _profile.Groups.Geii1_StudentCount;
-  //  FormationGEII.Geii_1_FI.NbGroupeTD = _profile.Groups.Geii1_TdGroupCount;
-  //  FormationGEII.Geii_1_FI.NbGroupeTP = _profile.Groups.Geii1_TpGroupCount;
-  //  NomGroupeTD_Geii1 = _profile.Groups.Geii1_TdGroupNames ?? [];
-  //  NomGroupeTP_Geii1 = _profile.Groups.Geii1_TpGroupNames ?? [];
-  //  étatEffectif_Geii1.Text = FormationGEII.Geii_1_FI.NbEtudiants.ToString() + " étudiants : ";
-  //  étatNbGroupeTD_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTD + " groupes de TD, ";
-  //  étatNbGroupeTP_Geii1.Text = FormationGEII.Geii_1_FI.NbGroupeTP + " groupes de TP\t";
-  //  étatTitreEffectif_Geii1.Visibility
-  //    = étatEffectif_Geii1.Visibility
-  //    = étatNbGroupeTD_Geii1.Visibility
-  //    = étatNbGroupeTP_Geii1.Visibility
-  //    = Visibility.Collapsed;
-  //}
 
   private void RequestRefreshModuleView() {
     if (_refreshModuleViewTimer == null)
@@ -1403,7 +1459,7 @@ public partial class DialogueServiceGEII: Window {
     Hide();
 
     ChoixTypeDeCours choix = new();
-    choix.InitialiserContexteGroupes(table,groupeCourant);
+    choix.InitialiserContexteGroupes(table,groupeCourant,Formation.Text,Parcours.Text);
 
     if (choix.ShowDialog() == true) {
       nouveauTypeCours = choix.TypeDeCoursSelectionne;
@@ -1543,7 +1599,7 @@ public partial class DialogueServiceGEII: Window {
             }
 
             groupesTD = NomGroupeTD_Geii2_officiel_FI!;
-            groupesTP = NomGroupeTP_Geii2_FI!;
+            groupesTP = NomGroupeTPSp_officiel_Geii2_FI!;
           }
           else if ((Semestre.Text == "S3" || Semestre.Text == "S4") && Formation.Text == "FA") {
             if (NomGroupeTD_Geii2_officiel_FA == null || NomGroupeTD_Geii2_officiel_FA.Length == 0 || NomGroupeTD_Geii2_officiel_FA[0] == null) {
@@ -1553,7 +1609,7 @@ public partial class DialogueServiceGEII: Window {
             }
 
             groupesTD = NomGroupeTD_Geii2_officiel_FA!;
-            groupesTP = NomGroupeTP_Geii2_FA!;
+            groupesTP = NomGroupeTP_officiel_Geii2_FA!;
           }
 
           groupeCourant = GetCellValue(table,CelluleCible) ?? string.Empty;
@@ -2254,7 +2310,10 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void MenuOuvrirFichier_Click(object sender,RoutedEventArgs e) {
-
+    FichierDeService.Service = new ClasseExcel();
+    FichierDeService.Service.OuvrirFichierExcel("Fichier de Service",true);
+    if (FichierDeService.Service.FichierOuvert == true)
+      AfficherListesDonnées(FeuilleClasseur);
   }
 
   private void MenuFichierEnregistrer_Click(object sender,RoutedEventArgs e) {
@@ -2355,6 +2414,23 @@ public partial class DialogueServiceGEII: Window {
     }
   }
 
+  private void MenuEffectifGeii_1() {
+    string formation = "GEII 1";
+    ConfigurationEffectifs_GEII_1 = new();
+    Hide();
+    ConfigurationEffectifs_GEII_1.nomDeLaFormation.Content = $"Répartition prévisionnelle des effectifs en {formation}";
+    ConfigurationEffectifs_GEII_1.ShowDialog();
+
+    NomGroupeTD_Geii1 = ConfigurationEffectifs_GEII_1.NomGroupeTD;
+    NomGroupeTP_Geii1 = ConfigurationEffectifs_GEII_1.NomGroupeTP;
+    EnregistrerEffectifsGeii1_DansProfil();
+
+    if (!string.IsNullOrWhiteSpace(FichierDeService.Service.CheminFichier) && File.Exists(FichierDeService.Service.CheminFichier)) {
+      AfficheFicheModule();
+    }
+    Show();
+  }
+
   private void EnregistrerEffectifsGeii2_FI_DansProfil() {
     if (_profile == null)
       return;
@@ -2368,10 +2444,13 @@ public partial class DialogueServiceGEII: Window {
     _profile.Groups.Geii2_FI_Td_officiel_GroupCount = FormationGEII.Geii_2_FI.NbGroupeTD_officiel;
     _profile.Groups.Geii2_FI_TpGroupCount = FormationGEII.Geii_2_FI.NbGroupeTP;
     _profile.Groups.Geii2_FI_TpSpGroupCount = FormationGEII.Geii_2_FI.NbGroupeTPSp;
-    _profile.Groups.Geii2_FI_TdGroupNames = NomGroupeTD_Geii2_FI;
     _profile.Groups.Geii2_FI_Td_officiel_GroupNames = NomGroupeTD_Geii2_officiel_FI;
-    _profile.Groups.Geii2_FI_TpGroupNames = NomGroupeTP_Geii2_FI;
-    _profile.Groups.Geii2_FI_TpSpGroupNames = NomGroupeTPSp_Geii2_FI;
+
+    _profile.Groups.Geii2_FI_Tp_officiel_GroupNames = NomGroupeTP_officiel_Geii2_FI?.ToArray() ?? [];
+    _profile.Groups.Geii2_FI_Tp_officiel_GroupCount = _profile.Groups.Geii2_FI_Tp_officiel_GroupNames.Count(n => !string.IsNullOrWhiteSpace(n));
+
+    _profile.Groups.Geii2_FI_TpSp_officiel_GroupNames = NomGroupeTPSp_officiel_Geii2_FI?.ToArray() ?? [];
+    _profile.Groups.Geii2_FI_TpSp_officiel_GroupCount = _profile.Groups.Geii2_FI_TpSp_officiel_GroupNames.Count(n => !string.IsNullOrWhiteSpace(n));
 
     if (!string.IsNullOrWhiteSpace(_currentProfilePath))
       ServiceProfileSerializer.Save(_currentProfilePath,_profile);
@@ -2390,30 +2469,16 @@ public partial class DialogueServiceGEII: Window {
     _profile.Groups.Geii2_FA_Td_officiel_GroupCount = FormationGEII.Geii_2_FA.NbGroupeTD_officiel;
     _profile.Groups.Geii2_FA_TpGroupCount = FormationGEII.Geii_2_FA.NbGroupeTP;
     _profile.Groups.Geii2_FA_TpSpGroupCount = FormationGEII.Geii_2_FA.NbGroupeTPSp;
-    _profile.Groups.Geii2_FA_TdGroupNames = NomGroupeTD_Geii2_FA;
     _profile.Groups.Geii2_FA_Td_officiel_GroupNames = NomGroupeTD_Geii2_officiel_FA;
-    _profile.Groups.Geii2_FA_TpGroupNames = NomGroupeTP_Geii2_FA;
-    _profile.Groups.Geii2_FA_TpSpGroupNames = NomGroupeTPSp_Geii2_FA;
+
+    _profile.Groups.Geii2_FA_Tp_officiel_GroupNames = NomGroupeTP_officiel_Geii2_FA?.ToArray() ?? [];
+    _profile.Groups.Geii2_FA_Tp_officiel_GroupCount = _profile.Groups.Geii2_FA_Tp_officiel_GroupNames.Count(n => !string.IsNullOrWhiteSpace(n));
+
+    _profile.Groups.Geii2_FA_TpSp_officiel_GroupNames = NomGroupeTPSp_officiel_Geii2_FA?.ToArray() ?? [];
+    _profile.Groups.Geii2_FA_TpSp_officiel_GroupCount = _profile.Groups.Geii2_FA_TpSp_officiel_GroupNames.Count(n => !string.IsNullOrWhiteSpace(n));
 
     if (!string.IsNullOrWhiteSpace(_currentProfilePath))
       ServiceProfileSerializer.Save(_currentProfilePath,_profile);
-  }
-
-  private void MenuEffectifGeii_1() {
-    string formation = "GEII 1";
-    _configurationEffectifs_GEII_1 = new();
-    Hide();
-    _configurationEffectifs_GEII_1.nomDeLaFormation.Content = $"Répartition prévisionnelle des effectifs en {formation}";
-    _configurationEffectifs_GEII_1.ShowDialog();
-
-    NomGroupeTD_Geii1 = _configurationEffectifs_GEII_1.NomGroupeTD;
-    NomGroupeTP_Geii1 = _configurationEffectifs_GEII_1.NomGroupeTP;
-    EnregistrerEffectifsGeii1_DansProfil();
-
-    if (!string.IsNullOrWhiteSpace(FichierDeService.Service.CheminFichier) && File.Exists(FichierDeService.Service.CheminFichier)) {
-      AfficheFicheModule();
-    }
-    Show();
   }
 
   private void MenuEffectifGeii_2(ServiceManagerProfile profile) {
@@ -2423,16 +2488,20 @@ public partial class DialogueServiceGEII: Window {
     window.ShowDialog();
 
     nbGroupeTD_officiel_Geii2_FI = window.nbGroupeTD_officiel_FI;
+
     NomGroupeTD_Geii2_FI = window.NomGroupeTD_FI;
     NomGroupeTD_Geii2_officiel_FI = window.NomGroupeTD_officiel_FI;
     NomGroupeTP_Geii2_FI = window.NomGroupeTP_FI;
+    NomGroupeTP_officiel_Geii2_FI = window.NomGroupeTP_officiel_FI;
     NomGroupeTPSp_Geii2_FI = window.NomGroupeTPSp_FI;
+    NomGroupeTPSp_officiel_Geii2_FI = window.NomGroupeTPSp_officiel_FI;
 
-    nbGroupeTD_officiel_Geii2_FA = window.nbGroupeTD_officiel_FA;
     NomGroupeTD_Geii2_FA = window.NomGroupeTD_FA;
     NomGroupeTD_Geii2_officiel_FA = window.NomGroupeTD_officiel_FA;
     NomGroupeTP_Geii2_FA = window.NomGroupeTP_FA;
+    NomGroupeTP_officiel_Geii2_FA = window.NomGroupeTP_officiel_FA;
     NomGroupeTPSp_Geii2_FA = window.NomGroupeTPSp_FA;
+    NomGroupeTPSp_officiel_Geii2_FA = window.NomGroupeTPSp_officiel_FA;
 
     EnregistrerEffectifsGeii2_FI_DansProfil();
     EnregistrerEffectifsGeii2_FA_DansProfil();
@@ -2444,16 +2513,16 @@ public partial class DialogueServiceGEII: Window {
     Show();
   }
 
+  private void MenuEffectifGeii_2_Click(object sender,RoutedEventArgs e) {
+    MenuEffectifGeii_2(_profile);
+  }
+
   private void AfficherLesCritèresDeSélection_Click(object sender,RoutedEventArgs e) {
     AfficherLesCritèresSélection();
   }
 
   private void MenuEffectifGeii_1_Click(object sender,RoutedEventArgs e) {
     MenuEffectifGeii_1();
-  }
-
-  private void MenuEffectifGeii_2_Click(object sender,RoutedEventArgs e) {
-    MenuEffectifGeii_2(_profile);
   }
 
   private void mnuGestionDesIntervenants_Click(object sender,RoutedEventArgs e) {
@@ -2469,33 +2538,7 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void mnuCleanCache_Click(object sender,RoutedEventArgs e) {
-    MessageBoxResult result =
-        MessageBox.Show(
-            this,
-            "Voulez-vous vraiment vider le cache du fichier de service ?" +
-            Environment.NewLine +
-            Environment.NewLine +
-            "Les données actuellement affichées ne seront pas supprimées." +
-            Environment.NewLine +
-            "Le cache sera reconstruit au prochain chargement du fichier Excel.",
-            "Vider le cache service",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question);
-
-    if (result != MessageBoxResult.Yes)
-      return;
-
     int deletedFiles = ServiceWorkbookDiskCache.InvalidateServiceWorkbookCache();
-
-    MessageBox.Show(
-        this,
-        deletedFiles + " fichier(s) de cache supprimé(s)." +
-        Environment.NewLine +
-        Environment.NewLine +
-        "Le cache sera reconstruit au prochain chargement du fichier de service.",
-        "Cache service",
-        MessageBoxButton.OK,
-        MessageBoxImage.Information);
   }
 
   private static int TrouverIndexColonneDataGrid(DataGrid table,string nomColonne) {
@@ -2898,14 +2941,21 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void Module_SelectionChanged(object sender,SelectionChangedEventArgs e) {
+    Debug.WriteLine($"Module_SelectionChanged : {Module.Text} | Suspendu = {_suspendViewRefresh}");
+
     if (_suspendViewRefresh)
       return;
 
     ActualiserComboOseDepuisModule(Module.Text.Trim());
+    ActualiserComboCodePedagogiqueDepuisModule();
     ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
 
     if (!_isInitializingView)
-      RequestRefreshModuleView();
+      Dispatcher.BeginInvoke(() => {
+        ActualiserPanneauCours();
+      },DispatcherPriority.ContextIdle);
+
+    RequestRefreshModuleView();
   }
 
   private void btnFichierRéinitialiserEnvironnement_Click(object sender,RoutedEventArgs e) {

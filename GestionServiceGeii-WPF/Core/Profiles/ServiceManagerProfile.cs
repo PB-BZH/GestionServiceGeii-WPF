@@ -26,7 +26,6 @@
 ║  Nom de fichier : ServiceManagerProfile.cs
 ╚════════════════════════════════════════════════════════════════════════════════╝
 */
-using System.Drawing;
 using GestionServiceGeii.Core.Enums;
 using Newtonsoft.Json;
 
@@ -74,7 +73,7 @@ namespace GestionServiceGeii.Core.Profiles {
     public string UpgradeCode { get; set; } = "";
     public string IconPath { get; set; } = "";
     [JsonIgnore]
-    public Image? LogoImage { get; set; } = GestionServiceGeii.Properties.Resources.Application;
+    public System.Drawing.Image? LogoImage { get; set; } = GestionServiceGeii.Properties.Resources.Application;
     public string DownloadPageUrl { get; set; } = "https://www.pb-bzh-concept.fr";
     public string PrivacyPageUrl { get; set; } = "https://www.pb-bzh-concept.fr/privacy.php";
     public string Copyright { get; set; } = "© Copyright PB BZH Concept 2026";
@@ -99,24 +98,58 @@ namespace GestionServiceGeii.Core.Profiles {
     public int Geii2_FI_StudentCount { get; set; }
     public int Geii2_FI_TdGroupCount { get; set; }
     public int Geii2_FI_Td_officiel_GroupCount { get; set; }
+    public int[] TotalGoupe_Geii2_Td_FI { get; set; } = [3];
+    public int[] TotalGroupe_Geii2_Td_FI_officiel { get; set; } = [3];
+    public int[] TotalGroupe_Geii2_Tp_FI { get; set; } = [6];
+    public int[] TotalGroupe_Geii2_Tp_FI_officiel { get; set; } = [3];
+    public int[] TotalGroupe_Geii2_TpSp_FI { get; set; } = [6];
+    public int[] TotalGroupe_Geii2_TpSp_FI_officiel { get; set; } = [3];
     public int Geii2_FI_TpGroupCount { get; set; }
+    public int Geii2_FI_Tp_officiel_GroupCount { get; set; }
     public int Geii2_FI_TpSpGroupCount { get; set; }
-    public string[] Geii2_FI_TdGroupNames { get; set; } = [];
+    public int Geii2_FI_TpSp_officiel_GroupCount { get; set; }
     public string[] Geii2_FI_Td_officiel_GroupNames { get; set; } = [];
-    public string[] Geii2_FI_TpGroupNames { get; set; } = [];
-    public string[] Geii2_FI_TpSpGroupNames { get; set; } = [];
+    public string[] Geii2_FI_Tp_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FI_TpSp_officiel_GroupNames { get; set; } = [];
 
     public bool Geii2_FA_IsConfigured { get; set; } = false;
     public string Geii2_FA_FormationName { get; set; } = "GEII 2 FA";
     public int Geii2_FA_StudentCount { get; set; }
     public int Geii2_FA_TdGroupCount { get; set; }
     public int Geii2_FA_Td_officiel_GroupCount { get; set; }
+    public int[] TotalGoupe_Geii2_Td_FA { get; set; } = [3];
+    public int[] TotalGroupe_Geii2_Td_FA_officiel { get; set; } = [3];
+    public int[] TotalGroupe_Geii2_Tp_FA { get; set; } = [6];
+    public int[] TotalGroupe_Geii2_Tp_FA_officiel { get; set; } = [3];
+    public int[] TotalGroupe_Geii2_TpSp_FA { get; set; } = [6];
+    public int[] TotalGroupe_Geii2_TpSp_FA_officiel { get; set; } = [3];
     public int Geii2_FA_TpGroupCount { get; set; }
+    public int Geii2_FA_Tp_officiel_GroupCount { get; set; }
     public int Geii2_FA_TpSpGroupCount { get; set; }
-    public string[] Geii2_FA_TdGroupNames { get; set; } = [];
+    public int Geii2_FA_TpSp_officiel_GroupCount { get; set; }
     public string[] Geii2_FA_Td_officiel_GroupNames { get; set; } = [];
-    public string[] Geii2_FA_TpGroupNames { get; set; } = [];
-    public string[] Geii2_FA_TpSpGroupNames { get; set; } = [];
+    public string[] Geii2_FA_Tp_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FA_TpSp_officiel_GroupNames { get; set; } = [];
+
+    public bool[] Geii2_FI_Checks { get; set; } = new bool[9];
+    public bool[] Geii2_FA_Checks { get; set; } = new bool[9];
+    public bool[] Geii2_FI_Td_Checks { get; set; } = new bool[9];
+    public bool[] Geii2_FA_Td_Checks { get; set; } = new bool[9];
+
+    public bool[] Geii2_FI_Tp_Checks { get; set; } = new bool[18];
+    public bool[] Geii2_FA_Tp_Checks { get; set; } = new bool[18];
+
+    public bool[] Geii2_FI_TpSp_Checks { get; set; } = new bool[18];
+    public bool[] Geii2_FA_TpSp_Checks { get; set; } = new bool[18];
+
+    public int[] Geii2_FI_TD_Effectifs { get; set; } = new int[3];
+    public int[] Geii2_FA_TD_Effectifs { get; set; } = new int[3];
+
+    public int[] Geii2_FI_Tp_Effectifs { get; set; } = new int[6];
+    public int[] Geii2_FA_Tp_Effectifs { get; set; } = new int[6];
+
+    public int[] Geii2_FI_TpSp_Effectifs { get; set; } = new int[6];
+    public int[] Geii2_FA_TpSp_Effectifs { get; set; } = new int[6];
   }
 
   public sealed class ServiceFilesOptions {
