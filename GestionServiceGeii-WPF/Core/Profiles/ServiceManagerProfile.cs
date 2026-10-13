@@ -42,6 +42,7 @@ namespace GestionServiceGeii.Core.Profiles {
     public UpdateManifest UpdateManifest { get; set; } = new();
     public SaveState SaveState { get; set; } = new();
     public SaveWindowState Window { get; set; } = new();
+    public List<MutualisationCours> Mutualisations { get; set; } = new();
   }
 
   public sealed class SaveState {
@@ -110,8 +111,11 @@ namespace GestionServiceGeii.Core.Profiles {
     public int Geii2_FI_TpSpGroupCount { get; set; }
     public int Geii2_FI_TpSp_officiel_GroupCount { get; set; }
     public string[] Geii2_FI_Td_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FI_Td_GroupNames { get; set; } = [];
     public string[] Geii2_FI_Tp_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FI_Tp_GroupNames { get; set; } = [];
     public string[] Geii2_FI_TpSp_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FI_TpSp_GroupNames { get; set; } = [];
 
     public bool Geii2_FA_IsConfigured { get; set; } = false;
     public string Geii2_FA_FormationName { get; set; } = "GEII 2 FA";
@@ -128,8 +132,11 @@ namespace GestionServiceGeii.Core.Profiles {
     public int Geii2_FA_Tp_officiel_GroupCount { get; set; }
     public int Geii2_FA_TpSpGroupCount { get; set; }
     public int Geii2_FA_TpSp_officiel_GroupCount { get; set; }
+    public string[] Geii2_FA_Td_GroupNames { get; set; } = [];
     public string[] Geii2_FA_Td_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FA_Tp_GroupNames { get; set; } = [];
     public string[] Geii2_FA_Tp_officiel_GroupNames { get; set; } = [];
+    public string[] Geii2_FA_TpSp_GroupNames { get; set; } = [];
     public string[] Geii2_FA_TpSp_officiel_GroupNames { get; set; } = [];
 
     public bool[] Geii2_FI_Checks { get; set; } = new bool[9];

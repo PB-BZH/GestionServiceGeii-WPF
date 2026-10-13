@@ -81,7 +81,7 @@ public partial class DialogueServiceGEII: Window {
   internal static string[] NomGroupeTD_Geii1 = new string[4];
   internal static string[] NomGroupeTP_Geii1 = new string[8];
 
-  internal static string[] NomGroupeTD_Geii2_o_FI = new string[3];
+  internal static string[] NomGroupeTD_Geii2_FI = new string[3];
   internal static int nbGroupeTD_officiel_Geii2_FI;
   internal static string[] NomGroupeTD_Geii2_officiel_FI = new string[3];
   internal static string[] NomGroupeTP_Geii2_FI = new string[6];
@@ -90,7 +90,6 @@ public partial class DialogueServiceGEII: Window {
   internal static string[] NomGroupeTPSp_officiel_Geii2_FI = new string[6];
 
   internal static string[] NomGroupeTD_Geii2_FA = new string[3];
-  internal static string[] NomGroupeTD_Geii2_FI = new string[3];
   internal static int nbGroupeTD_officiel_Geii2_FA;
   internal static string[] NomGroupeTD_Geii2_officiel_FA = new string[3];
   internal static string[] NomGroupeTP_Geii2_FA = new string[6];
@@ -118,6 +117,9 @@ public partial class DialogueServiceGEII: Window {
   private readonly Dictionary<string,ClasseBaseDeDonnées.ExcelSourceRowRewrite> _pendingSourceRowRewrites = new(StringComparer.OrdinalIgnoreCase);
   private string _ancienCoursAvantModification = string.Empty;
   private string _ancienGroupeAvantModification = string.Empty;
+  private GestionMutualisations? _gestionMutualisations;
+  private readonly MutualisationCours _mutualisation;
+  private bool _isRestoringMutualisation;
 
 
   private string AncienneDonnée {
@@ -155,9 +157,9 @@ public partial class DialogueServiceGEII: Window {
     set => indexLigne_vue = value;
   }
 
-  protected Grid BoutonsDeModification {
-    get => boutonsDeModification;
-    set => boutonsDeModification = value ?? boutonsDeModification;
+  protected Grid DétailMatière {
+    get => détailMatière;
+    set => détailMatière = value ?? détailMatière;
   }
 
   private Label TexteMatière {
@@ -192,6 +194,7 @@ public partial class DialogueServiceGEII: Window {
 
   public DialogueServiceGEII() {
     InitializeComponent();
+    InitialiserEvenementsMutualisation();
     ThemeManager.SetTheme(AppTheme.Dark);
     InititialiseFormatEntetes();
     FormatageCouleurLignes(VisualisationDonnées);
@@ -200,9 +203,8 @@ public partial class DialogueServiceGEII: Window {
     _refreshModuleViewTimer.Tick += RefreshModuleViewTimer_Tick;
     _applicationSettings = ApplicationSettingsService.Load();
     mnuAutoOpenLastProfileOnStartup.IsChecked = _applicationSettings.AutoOpenLastProfileOnStartup;
-
     ApplyProfileToUi();
-
+    ControleCouleurTabItem();
     ContentRendered += DialogueServiceGEII_Shown;
   }
 
@@ -449,7 +451,8 @@ public partial class DialogueServiceGEII: Window {
       = Visibility.Visible;
   }
 
-  private void RestaurerEffectifsGeii2_FA_DepuisProfil() {
+  private void
+    RestaurerEffectifsGeii2_FA_DepuisProfil() {
     if (_profile == null || _profile.Groups == null)
       return;
 
@@ -770,7 +773,10 @@ public partial class DialogueServiceGEII: Window {
     ActualiserComboOseDepuisModule(Module.Text.Trim());
     ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
 
-    ActualiserPanneauCours();
+    Dispatcher.BeginInvoke(() => {
+      ActualiserPanneauCours();
+    },DispatcherPriority.ContextIdle);
+
     RequestRefreshModuleView();
   }
 
@@ -853,7 +859,7 @@ public partial class DialogueServiceGEII: Window {
       //Titulaires.DataSource = null;
       //Vacataires.DataSource = null;
       //Commentaires.DataSource = null;
-      //boutonsDeModification.Visible = false;
+      //détailMatière.Visible = false;
 
       //DataSetExcelSélection = null!;
       //DataSetExcelService = null!;
@@ -1114,10 +1120,31 @@ public partial class DialogueServiceGEII: Window {
     bool specialite = Parcours.Text is "Parcours EME" or "Parcours ESE" or "Parcours AII";
 
     grbTP_FI.Visibility = fi && troncCommun ? Visibility.Visible : Visibility.Collapsed;
-    grpTP_FA.Visibility = fa && troncCommun ? Visibility.Visible : Visibility.Collapsed;
+    grbTP_FA.Visibility = fa && troncCommun ? Visibility.Visible : Visibility.Collapsed;
 
-    grnTPSp_FI.Visibility = fi && specialite ? Visibility.Visible : Visibility.Collapsed;
+    grbTPSp_FI.Visibility = fi && specialite ? Visibility.Visible : Visibility.Collapsed;
     grbTPSp_FA.Visibility = fa && specialite ? Visibility.Visible : Visibility.Collapsed;
+  }
+
+  internal void ControleCouleurTabItem() {
+    List<TabItem> listeTD = new() { titmTd1,titmTd2,titmTd3 };
+    List<TabItem> listeTP = new() { titmTp1,titmTp2,titmTp3 };
+
+    titmCM.Background = titmCM.IsSelected ? Brushes.Orange : Brushes.LightBlue;
+    titmCM.Foreground = Brushes.Black;
+
+    foreach (TabItem tabTd in listeTD) {
+      tabTd.Background = tabTd.IsSelected ? Brushes.Orange : Brushes.LightGreen;
+      tabTd.Foreground = Brushes.Black;
+    }
+
+    foreach (TabItem tabTp in listeTP) {
+      tabTp.Background = tabTp.IsSelected ? Brushes.Orange : Brushes.LightGray;
+      tabTp.Foreground = Brushes.Black;
+    }
+
+    btnSave.Background = Brushes.LightGreen;
+    btnSave.Foreground = Brushes.Black;
   }
 
   internal void ControleCouleurBoutonsTDetTP(
@@ -1275,7 +1302,7 @@ public partial class DialogueServiceGEII: Window {
       boutonAjouterTPSp_Geii2_FI,
       boutonSupprimerTPSp_Geii2_FI);
 
-    BoutonsDeModification.Visibility = Visibility.Visible;
+    DétailMatière.Visibility = Visibility.Visible;
   }
 
   private void HorairesModule() {
@@ -1356,6 +1383,11 @@ public partial class DialogueServiceGEII: Window {
     }
     finally {
       _isInitializingView = false;
+
+      if (Module.Text.Trim().Length > 0 &&
+          Formation.Text.Trim().Length > 0 &&
+          Semestre.Text.Trim().Length > 0)
+        InitialiserGestionMutualisations();
     }
   }
 
@@ -3003,13 +3035,16 @@ public partial class DialogueServiceGEII: Window {
       _suspendViewRefresh = false;
     }
 
-    ActualiserPanneauCours();
+    Dispatcher.BeginInvoke(() => {
+      ActualiserPanneauCours();
+    },DispatcherPriority.ContextIdle);
     RequestRefreshModuleView();
   }
 
   private void Module_SelectionChanged(object sender,SelectionChangedEventArgs e) {
-    if (_suspendViewRefresh)
+    if (_suspendViewRefresh) {
       return;
+    }
 
     ActualiserComboOseDepuisModule(Module.Text.Trim());
     ActualiserComboCodePedagogiqueDepuisModule();
@@ -3381,4 +3416,118 @@ public partial class DialogueServiceGEII: Window {
     return true;
   }
 
+  private void BoutonBasculerPanneau_Click(object sender,RoutedEventArgs e) {
+    BasculerPanneaux();
+  }
+
+  private void BasculerPanneaux() {
+    ControleCouleurTabItem();
+    bool afficherMutualisation = splMutualisation.Visibility != Visibility.Visible;
+
+    splMutualisation.Visibility = afficherMutualisation ? Visibility.Visible : Visibility.Collapsed;
+
+    splCoursGeii1.Visibility = Visibility.Collapsed;
+    splCoursGeii2_FI.Visibility = Visibility.Collapsed;
+    splCoursGeii2_FA.Visibility = Visibility.Collapsed;
+
+    if (!afficherMutualisation)
+      ActualiserPanneauCours();
+
+    btnBasculerPanneau.Content = afficherMutualisation ? "Répartition des cours" : "Mutualisation";
+  }
+
+  private void tbcCours_SelectionChanged(object sender,SelectionChangedEventArgs e) {
+    if (!ReferenceEquals(e.OriginalSource,tbcCours))
+      return;
+
+    ControleCouleurTabItem();
+  }
+
+  private void InitialiserEvenementsMutualisation() {
+    List<TabItem> onglets = new() { titmTd1,titmTd2,titmTd3,titmTp1,titmTp2,titmTp3 };
+
+    foreach (TabItem onglet in onglets) {
+      onglet.AddHandler(CheckBox.CheckedEvent,new RoutedEventHandler(GroupeMutualisation_Changed));
+      onglet.AddHandler(CheckBox.UncheckedEvent,new RoutedEventHandler(GroupeMutualisation_Changed));
+    }
+  }
+
+  private void InitialiserGestionMutualisations() {
+    if (string.IsNullOrWhiteSpace(Module.Text) ||
+        string.IsNullOrWhiteSpace(Formation.Text) ||
+        string.IsNullOrWhiteSpace(Semestre.Text))
+      return;
+
+    _gestionMutualisations = new GestionMutualisations(
+      Module.Text.Trim(),
+      Formation.Text.Trim(),
+      Semestre.Text.Trim()
+    );
+  }
+
+  private void GroupeMutualisation_Changed(object sender,RoutedEventArgs e) {
+    if (_isRestoringMutualisation)
+      return;
+
+    if (_gestionMutualisations == null || e.OriginalSource is not CheckBox caseGroupe)
+      return;
+
+    if (sender is not TabItem tabItem)
+      return;
+
+    string onglet = tabItem.Header?.ToString() ?? string.Empty;
+
+    string groupe = caseGroupe.Content?.ToString() ?? string.Empty;
+
+    if (caseGroupe.IsChecked == true)
+      _gestionMutualisations.AjouterGroupe(onglet,groupe);
+    else
+      _gestionMutualisations.RetirerGroupe(onglet,groupe);
+  }
+
+  private void EnregistrerMutualisationsDansProfil() {
+    if (_profile == null || _gestionMutualisations == null)
+      return;
+
+    if (string.IsNullOrWhiteSpace(_currentProfilePath))
+      return;
+
+    MutualisationCours mutualisation = _gestionMutualisations.ObtenirMutualisation();
+
+    mutualisation.Module = Module.Text.Trim();
+    mutualisation.Formation = Formation.Text.Trim();
+    mutualisation.Semestre = Semestre.Text.Trim();
+    mutualisation.Parcours = Parcours.Text.Trim();
+
+    _profile.Mutualisations ??= new List<MutualisationCours>();
+
+    int index = _profile.Mutualisations.FindIndex(m =>
+      m.Module == mutualisation.Module &&
+      m.Formation == mutualisation.Formation &&
+      m.Semestre == mutualisation.Semestre &&
+      m.Parcours == mutualisation.Parcours);
+
+    if (index >= 0)
+      _profile.Mutualisations[index] = mutualisation;
+    else
+      _profile.Mutualisations.Add(mutualisation);
+
+    ServiceProfileSerializer.Save(_currentProfilePath,_profile);
+  }
+
+  public MutualisationCours ObtenirMutualisation() {
+    return new MutualisationCours {
+      Module = _mutualisation.Module,
+      Formation = _mutualisation.Formation,
+      Semestre = _mutualisation.Semestre,
+      Parcours = _mutualisation.Parcours,
+      Groupes = _mutualisation.Groupes.ToDictionary(
+        groupe => groupe.Key,
+        groupe => new List<string>(groupe.Value))
+    };
+  }
+
+  private void btnSave_Click(object sender,RoutedEventArgs e) {
+    EnregistrerMutualisationsDansProfil();
+  }
 }

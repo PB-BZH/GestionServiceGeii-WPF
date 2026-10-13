@@ -38,7 +38,7 @@
         MinHeight="730"
         MinWidth="1300"
         Closing="DialogueServiceGEII_Closing"
-        Height="730">
+        Height="756">
 
     <Window.Resources>
 
@@ -363,9 +363,11 @@
                         </Grid>
                     </Grid>
                     <!--Partie droite-->
-                    <Grid x:Name="boutonsDeModification"
+                    <Grid x:Name="détailMatière"
                           Grid.Column="1"
-                          Margin="10,0,10,0">
+                          Margin="10,0,10,0"
+                          Visibility="Collapsed"
+                          d:Visibility="Visible">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="5" />
@@ -622,7 +624,7 @@
                         <StackPanel x:Name="splCoursGeii2_FI"
                                     Grid.Row="2"
                                     Visibility="Collapsed"
-                                    d:Visibility="Visible"
+                                    d:Visibility="Collapsed"
                                     Orientation="Vertical">
                             <Label Content="GEII 2 - Formation initiale"
                                    FontWeight="Bold"
@@ -712,7 +714,7 @@
                                             Height="25" />
                                 </Grid>
                             </GroupBox>
-                            <StackPanel x:Name="sp_TP_FA"
+                            <StackPanel x:Name="sp_TP_FI"
                                         Orientation="Vertical">
                                 <GroupBox x:Name="grbTP_FI"
                                           Header="TP"
@@ -761,7 +763,7 @@
                                                 Height="25" />
                                     </Grid>
                                 </GroupBox>
-                                <GroupBox x:Name="grnTPSp_FI"
+                                <GroupBox x:Name="grbTPSp_FI"
                                           Header="TP Spécialisés"
                                           Margin="0,2.5,0,0"
                                           FontWeight="Bold"
@@ -903,9 +905,9 @@
                                             Height="25" />
                                 </Grid>
                             </GroupBox>
-                            <StackPanel x:Name="sp_TPsp_FA"
+                            <StackPanel x:Name="sp_TP_FA"
                                         Orientation="Vertical">
-                                <GroupBox x:Name="grpTP_FA"
+                                <GroupBox x:Name="grbTP_FA"
                                           Header="TP"
                                           Margin="0,2.5,0,0"
                                           FontWeight="Bold"
@@ -1001,6 +1003,594 @@
                                 </GroupBox>
                             </StackPanel>
                         </StackPanel>
+                        <Grid x:Name="splMutualisation"
+                              Grid.Column="1"
+                              Grid.Row="2"
+                              Visibility="Collapsed"
+                              d:Visibility="Visible">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="Mutualisation des cours CM, TD et TP"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           Width="Auto"
+                                           Margin="10,0"
+                                           Padding="10,0"
+                                           FontFamily="Segoe UI"
+                                           FontSize="16"
+                                           FontWeight="Bold" />
+                            </StackPanel>
+                            <TabControl x:Name="tbcCours"
+                                        Grid.Column="1"
+                                        Grid.Row="1"
+                                        SelectionChanged="tbcCours_SelectionChanged">
+
+                                <TabControl.Resources>
+                                    <Style TargetType="{x:Type TabItem}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type TabItem}">
+                                                    <Border x:Name="BordureOnglet"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="Gray"
+                                                            BorderThickness="1"
+                                                            Padding="12,6">
+                                                        <ContentPresenter ContentSource="Header"
+                                                                          HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TabControl.Resources>
+
+                                <TabItem x:Name="titmCM"
+                                         Header="CM"
+                                         Width="60"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                            <RowDefinition Height="40" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Orientation="Horizontal"
+                                                        Grid.ColumnSpan="3">
+                                                <Label x:Name="lblCm"
+                                                       Margin="5,0"
+                                                       Content="CM"
+                                                       VerticalAlignment="Center" />
+                                                <CheckBox x:Name="chkCm__Fi"
+                                                          Margin="5,0"
+                                                          Content="Cm__Fi"
+                                                          VerticalAlignment="Center" />
+                                                <CheckBox x:Name="chkCm__Fa"
+                                                          Margin="5,0,0,0"
+                                                          Content="CM__Fa"
+                                                          VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Row="2"
+                                              HorizontalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="10" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="Effectif CM : "
+                                                       Grid.Column="0"
+                                                       VerticalAlignment="Center" />
+
+                                            <TextBox x:Name="txtEffectifRegrCM"
+                                                     Grid.Column="2"
+                                                     Height="25"
+                                                     HorizontalContentAlignment="Center"
+                                                     VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem x:Name="titmTd1"
+                                         Header="TD1"
+                                         Width="60"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid>
+
+                                            </Grid>
+                                            <ListBox Grid.Column="0">
+                                                <Label x:Name="lblTd1ESE21"
+                                                       Content="TD ESE" />
+                                                <CheckBox x:Name="chkTd1ESE21_Fi"
+                                                          Content="ESE21__Fi" />
+                                                <CheckBox x:Name="chkTd1ESE22_Fi"
+                                                          Content="ESE22__Fi" />
+                                                <CheckBox x:Name="chkTd1ESE21_Fa"
+                                                          Content="ESE21__Fa" />
+                                                <CheckBox x:Name="chkTd1ESE22_Fa"
+                                                          Content="ESE22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="1">
+                                                <Label x:Name="lblTd1EME21"
+                                                       Content="TD EME" />
+                                                <CheckBox x:Name="chkTd1EME21_Fi"
+                                                          Content="EME21__Fi" />
+                                                <CheckBox x:Name="chkTd1EME22_Fi"
+                                                          Content="EME22__Fi" />
+                                                <CheckBox x:Name="chkTd1EME21_Fa"
+                                                          Content="EME21__Fa" />
+                                                <CheckBox x:Name="chkTd1EME22_Fa"
+                                                          Content="EME22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="2">
+                                                <Label x:Name="lblTd1AII21"
+                                                       Content="TD AII" />
+                                                <CheckBox x:Name="chkTd1AII21_Fi"
+                                                          Content="AII21__Fi" />
+                                                <CheckBox x:Name="chkTd1AII22_Fi"
+                                                          Content="AII22__Fi" />
+                                                <CheckBox x:Name="chkTd1AII21_Fa"
+                                                          Content="AII21__Fa" />
+                                                <CheckBox x:Name="chkTd1AII22_Fa"
+                                                          Content="AII22__Fa" />
+                                            </ListBox>
+                                            <Grid Grid.Column="3"
+                                                  VerticalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="10" />
+                                                    <RowDefinition Height="32" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="Effectif TD1 : "
+                                                           Grid.Row="0"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBox x:Name="txtEffectifRegrTD1"
+                                                         Grid.Row="2"
+                                                         Height="25"
+                                                         Width="60"
+                                                         HorizontalContentAlignment="Center"
+                                                         VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem x:Name="titmTd2"
+                                         Header="TD2"
+                                         Width="60"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid>
+
+                                            </Grid>
+                                            <ListBox Grid.Column="0">
+                                                <Label x:Name="lblTd2ESE21"
+                                                       Content="TD ESE" />
+                                                <CheckBox x:Name="chkTd2ESE21_Fi"
+                                                          Content="ESE21__Fi" />
+                                                <CheckBox x:Name="chkTd2ESE22_Fi"
+                                                          Content="ESE22__Fi" />
+                                                <CheckBox x:Name="chkTd2ESE21_Fa"
+                                                          Content="ESE21__Fa" />
+                                                <CheckBox x:Name="chkTd2ESE22_Fa"
+                                                          Content="ESE22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="1">
+                                                <Label x:Name="lblTd2EME21"
+                                                       Content="TD EME" />
+                                                <CheckBox x:Name="chkTd2EME21_Fi"
+                                                          Content="EME21__Fi" />
+                                                <CheckBox x:Name="chkTd2EME22_Fi"
+                                                          Content="EME22__Fi" />
+                                                <CheckBox x:Name="chkTd2EME21_Fa"
+                                                          Content="EME21__Fa" />
+                                                <CheckBox x:Name="chkTd2EME22_Fa"
+                                                          Content="EME22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="2">
+                                                <Label x:Name="lblTd2AII21"
+                                                       Content="TD AII" />
+                                                <CheckBox x:Name="chkTd2AII21_Fi"
+                                                          Content="AII21__Fi" />
+                                                <CheckBox x:Name="chkTd2AII22_Fi"
+                                                          Content="AII22__Fi" />
+                                                <CheckBox x:Name="chkTd2AII21_Fa"
+                                                          Content="AII21__Fa" />
+                                                <CheckBox x:Name="chkTd2AII22_Fa"
+                                                          Content="AII22__Fa" />
+                                            </ListBox>
+                                            <Grid Grid.Column="3"
+                                                  VerticalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="10" />
+                                                    <RowDefinition Height="32" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="Effectif TD2 : "
+                                                           Grid.Row="0"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBox x:Name="txtEffectifRegrTD2"
+                                                         Grid.Row="2"
+                                                         Height="25"
+                                                         Width="60"
+                                                         HorizontalContentAlignment="Center"
+                                                         VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem x:Name="titmTd3"
+                                         Header="TD3"
+                                         Width="60"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid>
+
+                                            </Grid>
+                                            <ListBox Grid.Column="0">
+                                                <Label x:Name="lblTd3ESE21"
+                                                       Content="TD ESE" />
+                                                <CheckBox x:Name="chkTd3ESE21_Fi"
+                                                          Content="ESE21__Fi" />
+                                                <CheckBox x:Name="chkTd3ESE22_Fi"
+                                                          Content="ESE22_Fi" />
+                                                <CheckBox x:Name="chkTd3ESE21_Fa"
+                                                          Content="ESE21__Fa" />
+                                                <CheckBox x:Name="chkTd3ESE22_Fa"
+                                                          Content="ESE22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="1">
+                                                <Label x:Name="lblTd3EME21"
+                                                       Content="TD EME" />
+                                                <CheckBox x:Name="chkTd3EME21_Fi"
+                                                          Content="EME21__Fi" />
+                                                <CheckBox x:Name="chkTd3EME22_Fi"
+                                                          Content="EME22__Fi" />
+                                                <CheckBox x:Name="chkTd3EME21_Fa"
+                                                          Content="EME21__Fa" />
+                                                <CheckBox x:Name="chkTd3EME22_Fa"
+                                                          Content="EME22_Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="2">
+                                                <Label x:Name="lblTd3AII21"
+                                                       Content="TD AII" />
+                                                <CheckBox x:Name="chkTd3AII21_Fi"
+                                                          Content="AII21__Fi" />
+                                                <CheckBox x:Name="chkTd3AII22_Fi"
+                                                          Content="AII22__Fi" />
+                                                <CheckBox x:Name="chkTd3AII21_Fa"
+                                                          Content="AII21__Fa" />
+                                                <CheckBox x:Name="chkTd3AII22_Fa"
+                                                          Content="AII22__Fa" />
+                                            </ListBox>
+                                            <Grid Grid.Column="3"
+                                                  VerticalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="10" />
+                                                    <RowDefinition Height="32" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="Effectif TD3 : "
+                                                           Grid.Row="0"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBox x:Name="txtEffectifRegrTD3"
+                                                         Grid.Row="2"
+                                                         Height="25"
+                                                         Width="60"
+                                                         HorizontalContentAlignment="Center"
+                                                         VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem x:Name="titmTp1"
+                                         Header="TP1"
+                                         Width="60"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid>
+
+                                            </Grid>
+                                            <ListBox Grid.Column="0">
+                                                <Label x:Name="lblTp1ESE21"
+                                                       Content="TP ESE" />
+                                                <CheckBox x:Name="chkTp1ESE21_Fi"
+                                                          Content="ESE21__Fi" />
+                                                <CheckBox x:Name="chkTp1ESE22_Fi"
+                                                          Content="ESE22__Fi" />
+                                                <CheckBox x:Name="chkTp1ESE21_Fa"
+                                                          Content="ESE21__Fa" />
+                                                <CheckBox x:Name="chkTp1ESE22_Fa"
+                                                          Content="ESE22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="1">
+                                                <Label x:Name="lblTp1EME21"
+                                                       Content="TP EME" />
+                                                <CheckBox x:Name="chkTp1EME21_Fi"
+                                                          Content="EME21__Fi" />
+                                                <CheckBox x:Name="chkTp1EME22_Fi"
+                                                          Content="EME22__Fi" />
+                                                <CheckBox x:Name="chkTp1EME21_Fa"
+                                                          Content="EME21__Fa" />
+                                                <CheckBox x:Name="chkTp1EME22_Fa"
+                                                          Content="EME22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="2">
+                                                <Label x:Name="lblTp1AII21"
+                                                       Content="TP AII" />
+                                                <CheckBox x:Name="chkTp1AII21_Fi"
+                                                          Content="AII21__Fi" />
+                                                <CheckBox x:Name="chkTp1AII22_Fi"
+                                                          Content="AII22__Fi" />
+                                                <CheckBox x:Name="chkTp1AII21_Fa"
+                                                          Content="AII21__Fa" />
+                                                <CheckBox x:Name="chkTp1AII22_Fa"
+                                                          Content="AII22__Fa" />
+                                            </ListBox>
+                                            <Grid Grid.Column="3"
+                                                  VerticalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="10" />
+                                                    <RowDefinition Height="32" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="Effectif TP1 : "
+                                                           Grid.Row="0"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBox x:Name="txtEffectifRegrTP1"
+                                                         Grid.Row="2"
+                                                         Height="25"
+                                                         Width="60"
+                                                         HorizontalContentAlignment="Center"
+                                                         VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem x:Name="titmTp2"
+                                         Header="TP2"
+                                         Width="60"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid>
+
+                                            </Grid>
+                                            <ListBox Grid.Column="0">
+                                                <Label x:Name="lblTp2ESE21"
+                                                       Content="TP ESE" />
+                                                <CheckBox x:Name="chkTp2ESE21_Fi"
+                                                          Content="ESE21__Fi" />
+                                                <CheckBox x:Name="chkTp2ESE22_Fi"
+                                                          Content="ESE22__Fi" />
+                                                <CheckBox x:Name="chkTp2ESE21_Fa"
+                                                          Content="ESE21__Fa" />
+                                                <CheckBox x:Name="chkTp2ESE22_Fa"
+                                                          Content="ESE22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="1">
+                                                <Label x:Name="lblTp2EME21"
+                                                       Content="TD EME" />
+                                                <CheckBox x:Name="chkTp2EME21_Fi"
+                                                          Content="EME21__Fi" />
+                                                <CheckBox x:Name="chkTp2EME22_Fi"
+                                                          Content="EME22__Fi" />
+                                                <CheckBox x:Name="chkTp2EME21_Fa"
+                                                          Content="EME21__Fa" />
+                                                <CheckBox x:Name="chkTp2EME22_Fa"
+                                                          Content="EME22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="2">
+                                                <Label x:Name="lblTp2AII21"
+                                                       Content="TD AII" />
+                                                <CheckBox x:Name="chkTp2AII21_Fi"
+                                                          Content="AII21__Fi" />
+                                                <CheckBox x:Name="chkTp2AII22_Fi"
+                                                          Content="AII22__Fi" />
+                                                <CheckBox x:Name="chkTp2AII21_Fa"
+                                                          Content="AII21__Fa" />
+                                                <CheckBox x:Name="chkTp2AII22_Fa"
+                                                          Content="AII22__Fa" />
+                                            </ListBox>
+                                            <Grid Grid.Column="3"
+                                                  VerticalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="10" />
+                                                    <RowDefinition Height="32" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="Effectif TP2 : "
+                                                           Grid.Row="0"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBox x:Name="txtEffectifRegrTP2"
+                                                         Grid.Row="2"
+                                                         Height="25"
+                                                         Width="60"
+                                                         HorizontalContentAlignment="Center"
+                                                         VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem x:Name="titmTp3"
+                                         Header="TP3"
+                                         Width="60"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid>
+
+                                            </Grid>
+                                            <ListBox Grid.Column="0">
+                                                <Label x:Name="lblTp3ESE21"
+                                                       Content="TP ESE" />
+                                                <CheckBox x:Name="chkTp3ESE21_Fi"
+                                                          Content="ESE21__Fi" />
+                                                <CheckBox x:Name="chkTp3ESE22_Fi"
+                                                          Content="ESE22__Fi" />
+                                                <CheckBox x:Name="chkTp3ESE21_Fa"
+                                                          Content="ESE21__Fa" />
+                                                <CheckBox x:Name="chkTp3ESE22_Fa"
+                                                          Content="ESE22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="1">
+                                                <Label x:Name="lblTp3EME21"
+                                                       Content="TD EME" />
+                                                <CheckBox x:Name="chkTp3EME21_Fi"
+                                                          Content="EME21__Fi" />
+                                                <CheckBox x:Name="chkTp3EME22_Fi"
+                                                          Content="EME22__Fi" />
+                                                <CheckBox x:Name="chkTp3EME21_Fa"
+                                                          Content="EME21__Fa" />
+                                                <CheckBox x:Name="chkTp3EME22_Fa"
+                                                          Content="EME22__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="2">
+                                                <Label x:Name="lblTp3AII21"
+                                                       Content="TD AII" />
+                                                <CheckBox x:Name="chkTp3AII21_Fi"
+                                                          Content="AII21__Fi" />
+                                                <CheckBox x:Name="chkTp3AII22_Fi"
+                                                          Content="AII22__Fi" />
+                                                <CheckBox x:Name="chkTp3AII21_Fa"
+                                                          Content="AII21__Fa" />
+                                                <CheckBox x:Name="chkTp3AII22_Fa"
+                                                          Content="AII22__Fa" />
+                                            </ListBox>
+                                            <Grid Grid.Column="3"
+                                                  VerticalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="10" />
+                                                    <RowDefinition Height="32" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="Effectif TP3 : "
+                                                           Grid.Row="0"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBox x:Name="txtEffectifRegrTP3"
+                                                         Grid.Row="2"
+                                                         Height="25"
+                                                         Width="60"
+                                                         HorizontalContentAlignment="Center"
+                                                         VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                            </TabControl>
+                            <Button x:Name="btnSave"
+                                    Content="Valider"
+                                    Grid.Row="3"
+                                    Height="25"
+                                    Width="100"
+                                    Click="btnSave_Click"
+                                    HorizontalAlignment="Center" />
+                        </Grid>
+
                     </Grid>
                 </Grid>
                 <Grid Grid.Row="1">
@@ -1117,7 +1707,7 @@
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="10" />
                             <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="10" />
@@ -1128,6 +1718,7 @@
                                 Grid.Column="0"
                                 Grid.Row="0"
                                 Content="Module complet"
+                                Height="25"
                                 Click="AfficheModuleComplet_Click"
                                 FontWeight="Bold" />
 
@@ -1147,11 +1738,11 @@
                                 FontWeight="Bold"
                                 Height="25" />
 
-                        <Button x:Name="boutonAnnuler"
+                        <Button x:Name="btnBasculerPanneau"
                                 Grid.Column="2"
                                 Grid.Row="1"
-                                Content="Annuler"
-                                Click="BoutonAnnuler_Click"
+                                Content="Mutualisation"
+                                Click="BoutonBasculerPanneau_Click"
                                 FontWeight="Bold"
                                 Height="25" />
 
