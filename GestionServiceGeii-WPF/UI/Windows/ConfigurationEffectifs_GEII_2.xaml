@@ -106,7 +106,7 @@
                    FontWeight="Bold" />
         <Grid x:Name="pnlFi"
               Visibility="Collapsed"
-              d:Visibility="Collapsed"
+              d:Visibility="Visible"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -1130,7 +1130,7 @@
         </Grid>
         <Grid x:Name="pnlFa"
               Visibility="Collapsed"
-              d:Visibility="Visible"
+              d:Visibility="Collapsed"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

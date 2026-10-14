@@ -27,52 +27,24 @@
     "Geii1_TpSpGroupNames": [],
     "Geii2_FI_IsConfigured": true,
     "Geii2_FI_FormationName": "GEII 2 FI",
-    "Geii2_FI_StudentCount": 15,
+    "Geii2_FI_StudentCount": 43,
     "Geii2_FI_TdGroupCount": 3,
-    "Geii2_FI_Td_officiel_GroupCount": 2,
-    "TotalGoupe_Geii2_Td_FI": [
-      3
-    ],
-    "TotalGroupe_Geii2_Td_FI_officiel": [
-      15,
-      28,
-      0
-    ],
-    "TotalGroupe_Geii2_Tp_FI": [
-      6
-    ],
-    "TotalGroupe_Geii2_Tp_FI_officiel": [
-      16,
-      27,
-      0
-    ],
-    "TotalGroupe_Geii2_TpSp_FI": [
-      6
-    ],
-    "TotalGroupe_Geii2_TpSp_FI_officiel": [
-      5,
-      14,
-      14
-    ],
     "Geii2_FI_TpGroupCount": 5,
-    "Geii2_FI_Tp_officiel_GroupCount": 2,
     "Geii2_FI_TpSpGroupCount": 5,
+    "Geii2_FI_Td_officiel_GroupCount": 2,
+    "Geii2_FI_Tp_officiel_GroupCount": 3,
     "Geii2_FI_TpSp_officiel_GroupCount": 3,
-    "Geii2_FI_Td_officiel_GroupNames": [
-      "TD1",
-      "TD2",
-      null
-    ],
     "Geii2_FI_Td_GroupNames": [
       "ESE__Fi",
       "EME__Fi",
       "AII__Fi"
     ],
-    "Geii2_FI_Tp_officiel_GroupNames": [
-      "TP1",
-      "TP2",
-      null
+    "Geii2_FI_TD_Effectifs": [
+      15,
+      15,
+      13
     ],
+    "TotalGoupe_Geii2_Td_FI": [],
     "Geii2_FI_Tp_GroupNames": [
       "ESE21_Fi",
       "ESE22_Fi",
@@ -81,11 +53,15 @@
       "AII21_Fi",
       null
     ],
-    "Geii2_FI_TpSp_officiel_GroupNames": [
-      "TP1",
-      "TP2",
-      "TP3"
+    "Geii2_FI_Tp_Effectifs": [
+      11,
+      5,
+      10,
+      4,
+      13,
+      0
     ],
+    "TotalGroupe_Geii2_Tp_FI": [],
     "Geii2_FI_TpSp_GroupNames": [
       "ESE21_Fi",
       "ESE22_Fi",
@@ -94,74 +70,125 @@
       "AII21_Fi",
       null
     ],
+    "Geii2_FI_TpSp_Effectifs": [
+      10,
+      5,
+      10,
+      4,
+      14,
+      0
+    ],
+    "Geii2_FI_Td_officiel_GroupNames": [
+      "TD1",
+      "TD2",
+      null
+    ],
+    "TotalGroupe_Geii2_Td_FI_officiel": [
+      15,
+      28,
+      0
+    ],
+    "Geii2_FI_Tp_officiel_GroupNames": [
+      "TP1",
+      "TP2",
+      "TP3"
+    ],
+    "TotalGroupe_Geii2_Tp_FI_officiel": [
+      16,
+      14,
+      13
+    ],
+    "Geii2_FI_TpSp_officiel_GroupNames": [
+      "TP1",
+      "TP2",
+      "TP3"
+    ],
+    "TotalGroupe_Geii2_TpSp_FI_officiel": [
+      15,
+      14,
+      14
+    ],
     "Geii2_FA_IsConfigured": true,
     "Geii2_FA_FormationName": "GEII 2 FA",
-    "Geii2_FA_StudentCount": 15,
+    "Geii2_FA_StudentCount": 12,
     "Geii2_FA_TdGroupCount": 2,
-    "Geii2_FA_Td_officiel_GroupCount": 1,
-    "TotalGoupe_Geii2_Td_FA": [
-      3
-    ],
-    "TotalGroupe_Geii2_Td_FA_officiel": [
-      12,
-      0,
-      0
-    ],
-    "TotalGroupe_Geii2_Tp_FA": [
-      6
-    ],
-    "TotalGroupe_Geii2_Tp_FA_officiel": [
-      16,
-      27,
-      0
-    ],
-    "TotalGroupe_Geii2_TpSp_FA": [
-      6
-    ],
-    "TotalGroupe_Geii2_TpSp_FA_officiel": [
-      5,
-      7,
-      0
-    ],
     "Geii2_FA_TpGroupCount": 2,
-    "Geii2_FA_Tp_officiel_GroupCount": 1,
     "Geii2_FA_TpSpGroupCount": 2,
+    "Geii2_FA_Td_officiel_GroupCount": 1,
+    "Geii2_FA_Tp_officiel_GroupCount": 1,
     "Geii2_FA_TpSp_officiel_GroupCount": 2,
     "Geii2_FA_Td_GroupNames": [
       "ESE__FA",
       "EME__FA",
       null
     ],
+    "Geii2_FA_TD_Effectifs": [
+      5,
+      7,
+      0
+    ],
+    "TotalGoupe_Geii2_Td_FA": [],
+    "Geii2_FA_Tp_GroupNames": [
+      "ESE21_FA",
+      null,
+      "EME21_FA",
+      null,
+      null,
+      null
+    ],
+    "Geii2_FA_Tp_Effectifs": [
+      5,
+      0,
+      7,
+      0,
+      0,
+      0
+    ],
+    "Geii2_FA_TpSp_GroupNames": [
+      "ESE21_FA",
+      null,
+      "EME21_FA",
+      null,
+      null,
+      null
+    ],
+    "Geii2_FA_TpSp_Effectifs": [
+      5,
+      0,
+      7,
+      0,
+      0,
+      0
+    ],
     "Geii2_FA_Td_officiel_GroupNames": [
       "TD1",
       null,
       null
     ],
-    "Geii2_FA_Tp_GroupNames": [
-      "ESE21_FA",
-      "EME21_FA",
-      null,
-      null,
-      null,
-      null
+    "TotalGroupe_Geii2_Td_FA_officiel": [
+      12,
+      0,
+      0
     ],
     "Geii2_FA_Tp_officiel_GroupNames": [
       "TP1",
       null,
       null
     ],
-    "Geii2_FA_TpSp_GroupNames": [
-      "ESE21_FA",
-      "EME21_FA",
-      null,
-      null,
-      null,
-      null
+    "TotalGroupe_Geii2_Tp_FA_officiel": [
+      16,
+      14,
+      13
     ],
     "Geii2_FA_TpSp_officiel_GroupNames": [
       "TP1",
       "TP2",
       null
+    ],
+    "TotalGroupe_Geii2_TpSp_FA_officiel": [
+      5,
+      7,
+      0
     ],
     "Geii2_FI_Checks": [
       true,
@@ -206,13 +233,13 @@
       false,
       true,
       true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
       true,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
       false
     ],
     "Geii2_FA_Tp_Checks": [
@@ -274,48 +301,6 @@
       false,
       false,
       false
-    ],
-    "Geii2_FI_TD_Effectifs": [
-      15,
-      15,
-      13
-    ],
-    "Geii2_FA_TD_Effectifs": [
-      5,
-      7,
-      0
-    ],
-    "Geii2_FI_Tp_Effectifs": [
-      11,
-      5,
-      10,
-      4,
-      13,
-      0
-    ],
-    "Geii2_FA_Tp_Effectifs": [
-      5,
-      0,
-      7,
-      0,
-      0,
-      0
-    ],
-    "Geii2_FI_TpSp_Effectifs": [
-      0,
-      5,
-      10,
-      4,
-      14,
-      0
-    ],
-    "Geii2_FA_TpSp_Effectifs": [
-      5,
-      0,
-      7,
-      0,
-      0,
-      0
     ]
   },
   "Files": {
@@ -371,13 +356,13 @@
   "SaveState": {
     "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "PAPP3",
+    "CurrentModule": "RESEAU3",
     "CurrentCourse": "CM",
     "CurrentParcours": "Parcours EME"
   },
   "Window": {
-    "Left": 161.0,
-    "Top": 79.0,
+    "Left": 192.0,
+    "Top": 117.0,
     "Width": 1433.0,
     "Height": 784.0,
     "State": 0
@@ -396,18 +381,26 @@
         "TD1": [
           "ESE21__Fi",
           "ESE22__Fi",
+          "ESE21__Fa",
+          "EME21__Fi",
+          "EME22__Fi",
           "EME21__Fa",
-          "EME22__Fa"
+          "AII21__Fi"
         ],
         "TD2": [],
         "TD3": [],
         "TP1": [
           "ESE21__Fi",
-          "ESE22__Fi"
+          "ESE22__Fi",
+          "ESE22__Fa",
+          "ESE21__Fa"
         ],
         "TP2": [
-          "AII21__Fi",
-          "AII22__Fi"
+          "AII22__Fi",
+          "EME21__Fi",
+          "EME22__Fi",
+          "EME21__Fa",
+          "AII21__Fi"
         ],
         "TP3": []
       },
@@ -439,7 +432,13 @@
         ],
         "TP1": [],
         "TP2": [],
-        "TP3": []
+        "TP3": [
+          "ESE22__Fi",
+          "ESE21__Fa",
+          "EME21__Fi",
+          "EME22__Fi",
+          "AII21__Fi"
+        ]
       },
       "Effectifs": {}
     }

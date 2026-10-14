@@ -307,6 +307,12 @@ public partial class DialogueServiceGEII: Window {
       ActualiserComboOseDepuisModule(Module.Text.Trim());
 
       RestaurerMutualisationsDepuisProfil();
+
+      List<TabItem> onglets = new() { titmTp1,titmTp2,titmTp3 };
+
+      foreach (TabItem onglet in onglets) {
+        MasquerGroupesSansEffectif(onglet);
+      }
     }
     finally {
       _suspendViewRefresh = ancienneSuspension;
@@ -3491,6 +3497,9 @@ public partial class DialogueServiceGEII: Window {
       _gestionMutualisations.AjouterGroupe(onglet,groupe);
     else
       _gestionMutualisations.RetirerGroupe(onglet,groupe);
+
+    if (sender is TabItem ongletItem && ongletItem.Name is "titmTp1" or "titmTp2" or "titmTp3")
+      ActualiserEffectifsMutualisesTP();
   }
 
   private void EnregistrerMutualisationsDansProfil() {
@@ -3540,10 +3549,6 @@ public partial class DialogueServiceGEII: Window {
       Semestre.Text.Trim());
 
     _gestionMutualisations.ChargerGroupes(mutualisation);
-
-    Debug.WriteLine(
-      $"[RESTAURATION] Module='{Module.Text.Trim()}' | " +
-      $"Mutualisation trouvée={mutualisation != null}");
 
     Dictionary<string,CheckBox[]> casesParOnglet = new() {
       ["CM"] = new CheckBox[] { chkCm__Fi,chkCm__Fa },
@@ -3604,16 +3609,112 @@ public partial class DialogueServiceGEII: Window {
     }
   }
 
+  private void ActualiserEffectifsMutualisesTP() {
+    if (_profile == null || _gestionMutualisations == null) return;
+
+    txtEffectifRegrTP1.Text = CalculerEffectifMutualiseTP("TP1").ToString();
+    txtEffectifRegrTP2.Text = CalculerEffectifMutualiseTP("TP2").ToString();
+    txtEffectifRegrTP3.Text = CalculerEffectifMutualiseTP("TP3").ToString();
+  }
+
   private void btnSave_Click(object sender,RoutedEventArgs e) {
-    if (_gestionMutualisations != null) {
-      MutualisationCours interne = _gestionMutualisations.ObtenirMutualisation();
+    txtEffectifRegrTP1.Text = CalculerEffectifMutualiseTP("TP1").ToString();
+    txtEffectifRegrTP2.Text = CalculerEffectifMutualiseTP("TP2").ToString();
+    txtEffectifRegrTP3.Text = CalculerEffectifMutualiseTP("TP3").ToString();
+    Debug.WriteLine($"[TP1] Effectif = {CalculerEffectifMutualiseTP("TP1")}");
+    Debug.WriteLine($"[TP2] Effectif = {CalculerEffectifMutualiseTP("TP2")}");
+    Debug.WriteLine($"[TP3] Effectif = {CalculerEffectifMutualiseTP("TP3")}");
 
-      Debug.WriteLine($"[INTERNE] Module affiché : {Module.Text.Trim()}");
-      Debug.WriteLine($"[INTERNE] Module gestionnaire : {interne.Module}");
-
-      foreach (var onglet in interne.Groupes)
-        Debug.WriteLine($"[INTERNE] {onglet.Key} : {string.Join(", ",onglet.Value)}");
-    }
     EnregistrerMutualisationsDansProfil();
+  }
+
+  private static int TrouverEffectifGroupe(string groupe,string[] noms,int[] effectifs) {
+    if (string.IsNullOrWhiteSpace(groupe) || noms == null || effectifs == null)
+      return 0;
+
+    string groupeRecherche = groupe.Replace("__","_").Trim();
+
+    for (int i = 0;i < Math.Min(noms.Length,effectifs.Length);i++) {
+      if (string.Equals(noms[i]?.Trim(),groupeRecherche,StringComparison.OrdinalIgnoreCase))
+        return effectifs[i];
+    }
+
+    return 0;
+  }
+
+  private int CalculerEffectifMutualiseTP(string onglet) {
+    if (_profile == null || _gestionMutualisations == null) return 0;
+
+    bool parcoursSpecialise = !string.Equals(
+      Parcours.Text.Trim(),"Tronc commun",StringComparison.OrdinalIgnoreCase);
+
+    var groupes = _profile.Groups;
+
+    string[] nomsFI = parcoursSpecialise
+      ? groupes.Geii2_FI_TpSp_GroupNames
+      : groupes.Geii2_FI_Tp_GroupNames;
+
+    int[] effectifsFI = parcoursSpecialise
+      ? groupes.Geii2_FI_TpSp_Effectifs
+      : groupes.Geii2_FI_Tp_Effectifs;
+
+    string[] nomsFA = parcoursSpecialise
+      ? groupes.Geii2_FA_TpSp_GroupNames
+      : groupes.Geii2_FA_Tp_GroupNames;
+
+    int[] effectifsFA = parcoursSpecialise
+      ? groupes.Geii2_FA_TpSp_Effectifs
+      : groupes.Geii2_FA_Tp_Effectifs;
+
+    int total = 0;
+
+    foreach (string groupe in _gestionMutualisations.ObtenirGroupes(onglet)) {
+      bool estFI = groupe.EndsWith("__Fi",StringComparison.OrdinalIgnoreCase);
+
+      total += estFI
+        ? TrouverEffectifGroupe(groupe,nomsFI,effectifsFI)
+        : TrouverEffectifGroupe(groupe,nomsFA,effectifsFA);
+    }
+
+    return total;
+  }
+
+  private void MasquerGroupesSansEffectif(TabItem onglet) {
+    if (_profile == null) {
+      RestaurerEffectifsGeii2_FI_DepuisProfil();
+      RestaurerEffectifsGeii2_FA_DepuisProfil();
+    }
+
+    bool specialise = !string.Equals(Parcours.Text.Trim(),"Tronc commun",StringComparison.OrdinalIgnoreCase);
+    var g = _profile.Groups;
+
+    foreach (CheckBox cb in TrouverControles<CheckBox>(onglet)) {
+      string groupe = cb.Content?.ToString() ?? "";
+      bool fi = groupe.EndsWith("__Fi",StringComparison.OrdinalIgnoreCase);
+
+      string[] noms = fi
+        ? (specialise ? g.Geii2_FI_TpSp_GroupNames : g.Geii2_FI_Tp_GroupNames)
+        : (specialise ? g.Geii2_FA_TpSp_GroupNames : g.Geii2_FA_Tp_GroupNames);
+
+      int[] effectifs = fi
+        ? (specialise ? g.Geii2_FI_TpSp_Effectifs : g.Geii2_FI_Tp_Effectifs)
+        : (specialise ? g.Geii2_FA_TpSp_Effectifs : g.Geii2_FA_Tp_Effectifs);
+
+      cb.Visibility = TrouverEffectifGroupe(groupe,noms,effectifs) > 0
+        ? Visibility.Visible
+        : Visibility.Collapsed;
+    }
+  }
+
+  private static IEnumerable<T> TrouverControles<T>(DependencyObject parent) where T : DependencyObject {
+    foreach (object enfant in LogicalTreeHelper.GetChildren(parent)) {
+      if (enfant is T controle)
+        yield return controle;
+
+      if (enfant is DependencyObject descendant) {
+        foreach (T controleEnfant in TrouverControles<T>(descendant))
+          yield return controleEnfant;
+      }
+    }
   }
 }
