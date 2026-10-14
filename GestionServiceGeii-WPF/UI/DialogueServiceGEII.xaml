@@ -1292,7 +1292,7 @@
                                                 <CheckBox x:Name="chkTd3ESE21_Fi"
                                                           Content="ESE21__Fi" />
                                                 <CheckBox x:Name="chkTd3ESE22_Fi"
-                                                          Content="ESE22_Fi" />
+                                                          Content="ESE22__Fi" />
                                                 <CheckBox x:Name="chkTd3ESE21_Fa"
                                                           Content="ESE21__Fa" />
                                                 <CheckBox x:Name="chkTd3ESE22_Fa"
@@ -1308,7 +1308,7 @@
                                                 <CheckBox x:Name="chkTd3EME21_Fa"
                                                           Content="EME21__Fa" />
                                                 <CheckBox x:Name="chkTd3EME22_Fa"
-                                                          Content="EME22_Fa" />
+                                                          Content="EME22__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="2">
                                                 <Label x:Name="lblTd3AII21"

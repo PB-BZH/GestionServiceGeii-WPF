@@ -376,8 +376,8 @@
     "CurrentParcours": "Parcours EME"
   },
   "Window": {
-    "Left": 354.0,
-    "Top": 110.0,
+    "Left": 161.0,
+    "Top": 79.0,
     "Width": 1433.0,
     "Height": 784.0,
     "State": 0
@@ -389,27 +389,26 @@
       "Semestre": "S3",
       "Parcours": "Parcours EME",
       "Groupes": {
-        "CM": [],
+        "CM": [
+          "Cm__Fi",
+          "CM__Fa"
+        ],
         "TD1": [
           "ESE21__Fi",
           "ESE22__Fi",
-          "ESE21__Fa",
-          "ESE22__Fa"
-        ],
-        "TD2": [
-          "EME21__Fi",
-          "EME22__Fi",
           "EME21__Fa",
           "EME22__Fa"
         ],
-        "TD3": [
-          "AII21__Fi",
-          "AII22__Fi",
-          "AII21__Fa",
-          "AII22__Fa"
+        "TD2": [],
+        "TD3": [],
+        "TP1": [
+          "ESE21__Fi",
+          "ESE22__Fi"
         ],
-        "TP1": [],
-        "TP2": [],
+        "TP2": [
+          "AII21__Fi",
+          "AII22__Fi"
+        ],
         "TP3": []
       },
       "Effectifs": {}
@@ -422,7 +421,6 @@
       "Groupes": {
         "CM": [],
         "TD1": [
-          "ESE21__Fi",
           "ESE22__Fi",
           "ESE21__Fa",
           "ESE22__Fa"

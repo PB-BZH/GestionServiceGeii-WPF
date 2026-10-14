@@ -305,6 +305,8 @@ public partial class DialogueServiceGEII: Window {
         SelectionnerValeurComboBox(Cours,_profile.SaveState.CurrentCourse);
 
       ActualiserComboOseDepuisModule(Module.Text.Trim());
+
+      RestaurerMutualisationsDepuisProfil();
     }
     finally {
       _suspendViewRefresh = ancienneSuspension;
@@ -750,6 +752,7 @@ public partial class DialogueServiceGEII: Window {
 
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
+      RestaurerMutualisationsDepuisProfil();
     },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -775,6 +778,7 @@ public partial class DialogueServiceGEII: Window {
 
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
+      RestaurerMutualisationsDepuisProfil();
     },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -1386,8 +1390,9 @@ public partial class DialogueServiceGEII: Window {
 
       if (Module.Text.Trim().Length > 0 &&
           Formation.Text.Trim().Length > 0 &&
-          Semestre.Text.Trim().Length > 0)
+          Semestre.Text.Trim().Length > 0) {
         InitialiserGestionMutualisations();
+      }
     }
   }
 
@@ -3037,7 +3042,9 @@ public partial class DialogueServiceGEII: Window {
 
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
+      RestaurerMutualisationsDepuisProfil();
     },DispatcherPriority.ContextIdle);
+
     RequestRefreshModuleView();
   }
 
@@ -3053,6 +3060,7 @@ public partial class DialogueServiceGEII: Window {
     if (!_isInitializingView)
       Dispatcher.BeginInvoke(() => {
         ActualiserPanneauCours();
+        RestaurerMutualisationsDepuisProfil();
       },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -3444,7 +3452,7 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void InitialiserEvenementsMutualisation() {
-    List<TabItem> onglets = new() { titmTd1,titmTd2,titmTd3,titmTp1,titmTp2,titmTp3 };
+    List<TabItem> onglets = new() { titmCM,titmTd1,titmTd2,titmTd3,titmTp1,titmTp2,titmTp3 };
 
     foreach (TabItem onglet in onglets) {
       onglet.AddHandler(CheckBox.CheckedEvent,new RoutedEventHandler(GroupeMutualisation_Changed));
@@ -3507,27 +3515,105 @@ public partial class DialogueServiceGEII: Window {
       m.Semestre == mutualisation.Semestre &&
       m.Parcours == mutualisation.Parcours);
 
-    if (index >= 0)
+    if (index >= 0) {
       _profile.Mutualisations[index] = mutualisation;
-    else
+    }
+    else {
       _profile.Mutualisations.Add(mutualisation);
+    }
 
     ServiceProfileSerializer.Save(_currentProfilePath,_profile);
   }
 
-  public MutualisationCours ObtenirMutualisation() {
-    return new MutualisationCours {
-      Module = _mutualisation.Module,
-      Formation = _mutualisation.Formation,
-      Semestre = _mutualisation.Semestre,
-      Parcours = _mutualisation.Parcours,
-      Groupes = _mutualisation.Groupes.ToDictionary(
-        groupe => groupe.Key,
-        groupe => new List<string>(groupe.Value))
+  private void RestaurerMutualisationsDepuisProfil() {
+    if (_profile == null) return;
+
+    MutualisationCours? mutualisation = _profile.Mutualisations?.FirstOrDefault(m =>
+      m.Module == Module.Text.Trim() &&
+      m.Formation == Formation.Text.Trim() &&
+      m.Semestre == Semestre.Text.Trim() &&
+      m.Parcours == Parcours.Text.Trim());
+
+    _gestionMutualisations = new GestionMutualisations(
+      Module.Text.Trim(),
+      Formation.Text.Trim(),
+      Semestre.Text.Trim());
+
+    _gestionMutualisations.ChargerGroupes(mutualisation);
+
+    Debug.WriteLine(
+      $"[RESTAURATION] Module='{Module.Text.Trim()}' | " +
+      $"Mutualisation trouvée={mutualisation != null}");
+
+    Dictionary<string,CheckBox[]> casesParOnglet = new() {
+      ["CM"] = new CheckBox[] { chkCm__Fi,chkCm__Fa },
+
+      ["TD1"] = new CheckBox[] {
+      chkTd1ESE21_Fi,chkTd1ESE22_Fi,chkTd1ESE21_Fa,chkTd1ESE22_Fa,
+      chkTd1EME21_Fi,chkTd1EME22_Fi,chkTd1EME21_Fa,chkTd1EME22_Fa,
+      chkTd1AII21_Fi,chkTd1AII22_Fi,chkTd1AII21_Fa,chkTd1AII22_Fa
+    },
+
+      ["TD2"] = new CheckBox[] {
+      chkTd2ESE21_Fi,chkTd2ESE22_Fi,chkTd2ESE21_Fa,chkTd2ESE22_Fa,
+      chkTd2EME21_Fi,chkTd2EME22_Fi,chkTd2EME21_Fa,chkTd2EME22_Fa,
+      chkTd2AII21_Fi,chkTd2AII22_Fi,chkTd2AII21_Fa,chkTd2AII22_Fa
+    },
+
+      ["TD3"] = new CheckBox[] {
+      chkTd3ESE21_Fi,chkTd3ESE22_Fi,chkTd3ESE21_Fa,chkTd3ESE22_Fa,
+      chkTd3EME21_Fi,chkTd3EME22_Fi,chkTd3EME21_Fa,chkTd3EME22_Fa,
+      chkTd3AII21_Fi,chkTd3AII22_Fi,chkTd3AII21_Fa,chkTd3AII22_Fa
+    },
+
+      ["TP1"] = new CheckBox[] {
+      chkTp1ESE21_Fi,chkTp1ESE22_Fi,chkTp1ESE21_Fa,chkTp1ESE22_Fa,
+      chkTp1EME21_Fi,chkTp1EME22_Fi,chkTp1EME21_Fa,chkTp1EME22_Fa,
+      chkTp1AII21_Fi,chkTp1AII22_Fi,chkTp1AII21_Fa,chkTp1AII22_Fa
+    },
+
+      ["TP2"] = new CheckBox[] {
+      chkTp2ESE21_Fi,chkTp2ESE22_Fi,chkTp2ESE21_Fa,chkTp2ESE22_Fa,
+      chkTp2EME21_Fi,chkTp2EME22_Fi,chkTp2EME21_Fa,chkTp2EME22_Fa,
+      chkTp2AII21_Fi,chkTp2AII22_Fi,chkTp2AII21_Fa,chkTp2AII22_Fa
+    },
+
+      ["TP3"] = new CheckBox[] {
+      chkTp3ESE21_Fi,chkTp3ESE22_Fi,chkTp3ESE21_Fa,chkTp3ESE22_Fa,
+      chkTp3EME21_Fi,chkTp3EME22_Fi,chkTp3EME21_Fa,chkTp3EME22_Fa,
+      chkTp3AII21_Fi,chkTp3AII22_Fi,chkTp3AII21_Fa,chkTp3AII22_Fa
+    }
     };
+
+    _isRestoringMutualisation = true;
+
+    try {
+      foreach (var onglet in casesParOnglet) {
+        List<string>? groupes = null;
+
+        mutualisation?.Groupes?.TryGetValue(onglet.Key,out groupes);
+
+        foreach (CheckBox caseGroupe in onglet.Value) {
+          string groupe = caseGroupe.Content?.ToString() ?? string.Empty;
+          caseGroupe.IsChecked = groupes?.Contains(groupe) == true;
+        }
+      }
+    }
+    finally {
+      _isRestoringMutualisation = false;
+    }
   }
 
   private void btnSave_Click(object sender,RoutedEventArgs e) {
+    if (_gestionMutualisations != null) {
+      MutualisationCours interne = _gestionMutualisations.ObtenirMutualisation();
+
+      Debug.WriteLine($"[INTERNE] Module affiché : {Module.Text.Trim()}");
+      Debug.WriteLine($"[INTERNE] Module gestionnaire : {interne.Module}");
+
+      foreach (var onglet in interne.Groupes)
+        Debug.WriteLine($"[INTERNE] {onglet.Key} : {string.Join(", ",onglet.Value)}");
+    }
     EnregistrerMutualisationsDansProfil();
   }
 }
