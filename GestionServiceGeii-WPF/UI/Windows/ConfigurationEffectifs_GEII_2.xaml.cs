@@ -145,23 +145,6 @@ public partial class ConfigurationEffectifs_GEII_2: Window {
 
     NomGroupeTP_officiel_FI = _profile.Groups.Geii2_FI_Tp_officiel_GroupNames;
     NomGroupeTP_officiel_FA = _profile.Groups.Geii2_FA_Tp_officiel_GroupNames;
-
-    //_profile.Groups.Geii2_FI_StudentCount = int.TryParse(txtNbEtudiantsEseFi.Text,out int NbEtudiantsFi) ? NbEtudiantsFi : 0;
-    //_profile.Groups.Geii2_FA_StudentCount = int.TryParse(txtNbEtudiantsEseFa.Text,out int NbEtudiantsFa) ? NbEtudiantsFa : 0;
-
-    //_profile.Groups.Geii2_FI_Td_GroupNames = (string[])NomGroupeTD_FI.Clone();
-    //_profile.Groups.Geii2_FI_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FI.Clone();
-    //_profile.Groups.Geii2_FI_Tp_GroupNames = (string[])NomGroupeTP_FI.Clone();
-    //_profile.Groups.Geii2_FI_Tp_officiel_GroupNames = (string[])NomGroupeTP_officiel_FI.Clone();
-    //_profile.Groups.Geii2_FI_TpSp_GroupNames = (string[])NomGroupeTPSp_FI.Clone();
-    //_profile.Groups.Geii2_FI_TpSp_officiel_GroupNames = (string[])NomGroupeTPSp_officiel_FI.Clone();
-
-    //_profile.Groups.Geii2_FA_Td_GroupNames = (string[])NomGroupeTD_officiel_FA.Clone();
-    //_profile.Groups.Geii2_FA_Td_officiel_GroupNames = (string[])NomGroupeTD_officiel_FA.Clone();
-    //_profile.Groups.Geii2_FA_Tp_GroupNames = (string[])NomGroupeTP_FA.Clone();
-    //_profile.Groups.Geii2_FA_Tp_officiel_GroupNames = (string[])NomGroupeTP_officiel_FA.Clone();
-    //_profile.Groups.Geii2_FA_TpSp_GroupNames = (string[])NomGroupeTPSp_FA.Clone();
-    //_profile.Groups.Geii2_FA_TpSp_officiel_GroupNames = (string[])NomGroupeTPSp_officiel_FA.Clone();
   }
 
   private void ApplyUiToProfile(ServiceManagerProfile profile) {

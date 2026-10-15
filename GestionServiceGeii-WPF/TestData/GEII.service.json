@@ -356,7 +356,7 @@
   "SaveState": {
     "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "RESEAU3",
+    "CurrentModule": "ENER3 habil",
     "CurrentCourse": "CM",
     "CurrentParcours": "Parcours EME"
   },
@@ -374,73 +374,40 @@
       "Semestre": "S3",
       "Parcours": "Parcours EME",
       "Groupes": {
-        "CM": [
-          "Cm__Fi",
-          "CM__Fa"
-        ],
         "TD1": [
-          "ESE21__Fi",
-          "ESE22__Fi",
-          "ESE21__Fa",
-          "EME21__Fi",
-          "EME22__Fi",
-          "EME21__Fa",
-          "AII21__Fi"
-        ],
-        "TD2": [],
-        "TD3": [],
-        "TP1": [
-          "ESE21__Fi",
-          "ESE22__Fi",
-          "ESE22__Fa",
-          "ESE21__Fa"
-        ],
-        "TP2": [
-          "AII22__Fi",
-          "EME21__Fi",
-          "EME22__Fi",
-          "EME21__Fa",
-          "AII21__Fi"
-        ],
-        "TP3": []
+          "ESE__Fi",
+          "ESE__Fa",
+          "EME__Fi",
+          "EME__Fa",
+          "AII__Fi"
+        ]
       },
       "Effectifs": {}
     },
     {
-      "Module": "PAPP3",
+      "Module": "ENER3 habil",
       "Formation": "FI",
       "Semestre": "S3",
       "Parcours": "Parcours EME",
       "Groupes": {
-        "CM": [],
         "TD1": [
-          "ESE22__Fi",
-          "ESE21__Fa",
-          "ESE22__Fa"
+          "ESE__Fi",
+          "ESE__Fa",
+          "EME__Fa"
         ],
         "TD2": [
-          "EME21__Fi",
-          "EME22__Fi",
-          "EME21__Fa",
-          "EME22__Fa"
-        ],
-        "TD3": [
-          "AII21__Fi",
-          "AII22__Fi",
-          "AII21__Fa",
-          "AII22__Fa"
-        ],
-        "TP1": [],
-        "TP2": [],
-        "TP3": [
-          "ESE22__Fi",
-          "ESE21__Fa",
-          "EME21__Fi",
-          "EME22__Fi",
-          "AII21__Fi"
+          "EME__Fi",
+          "AII__Fi"
         ]
       },
-      "Effectifs": {}
+      "Effectifs": {
+        "TD1": 27,
+        "TD2": 28,
+        "TD3": 0,
+        "TP1": 0,
+        "TP2": 0,
+        "TP3": 0
+      }
     }
   ]
 }

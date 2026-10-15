@@ -1153,8 +1153,7 @@ public partial class DialogueServiceGEII: Window {
       tabTp.Foreground = Brushes.Black;
     }
 
-    btnSave.Background = Brushes.LightGreen;
-    btnSave.Foreground = Brushes.Black;
+    BtnCouleurs(btnSave,false);
   }
 
   internal void ControleCouleurBoutonsTDetTP(
@@ -3430,7 +3429,14 @@ public partial class DialogueServiceGEII: Window {
     return true;
   }
 
+  private static void BtnCouleurs(Button btn,bool isEnable) {
+    btn.IsEnabled = isEnable;
+    btn.Background = isEnable ? Brushes.LightGreen : Brushes.DarkGray;
+    btn.Foreground = isEnable ? Brushes.DarkGray : Brushes.LightGray;
+  }
+
   private void BoutonBasculerPanneau_Click(object sender,RoutedEventArgs e) {
+    BtnCouleurs(btnSave,false);
     BasculerPanneaux();
   }
 
@@ -3451,8 +3457,13 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void tbcCours_SelectionChanged(object sender,SelectionChangedEventArgs e) {
+    if (e.Source != tbcCours) return;
+
     if (!ReferenceEquals(e.OriginalSource,tbcCours))
       return;
+
+    if (tbcCours.SelectedItem is TabItem onglet)
+      MasquerGroupesSansEffectif(onglet);
 
     ControleCouleurTabItem();
   }
@@ -3483,6 +3494,8 @@ public partial class DialogueServiceGEII: Window {
     if (_isRestoringMutualisation)
       return;
 
+    BtnCouleurs(btnSave,true);
+
     if (_gestionMutualisations == null || e.OriginalSource is not CheckBox caseGroupe)
       return;
 
@@ -3500,6 +3513,9 @@ public partial class DialogueServiceGEII: Window {
 
     if (sender is TabItem ongletItem && ongletItem.Name is "titmTp1" or "titmTp2" or "titmTp3")
       ActualiserEffectifsMutualisesTP();
+
+    if (sender is TabItem ongletTD && ongletTD.Name is "titmTd1" or "titmTd2" or "titmTd3")
+      ActualiserEffectifsMutualisesTD();
   }
 
   private void EnregistrerMutualisationsDansProfil() {
@@ -3517,6 +3533,14 @@ public partial class DialogueServiceGEII: Window {
     mutualisation.Parcours = Parcours.Text.Trim();
 
     _profile.Mutualisations ??= new List<MutualisationCours>();
+
+    mutualisation.Effectifs ??= new Dictionary<string,int>();
+
+    foreach (string onglet in MutualisationCours.OngletsTD)
+      mutualisation.Effectifs[onglet] = CalculerEffectifMutualiseTD(onglet);
+
+    foreach (string onglet in MutualisationCours.OngletsTP)
+      mutualisation.Effectifs[onglet] = CalculerEffectifMutualiseTP(onglet);
 
     int index = _profile.Mutualisations.FindIndex(m =>
       m.Module == mutualisation.Module &&
@@ -3551,43 +3575,22 @@ public partial class DialogueServiceGEII: Window {
     _gestionMutualisations.ChargerGroupes(mutualisation);
 
     Dictionary<string,CheckBox[]> casesParOnglet = new() {
-      ["CM"] = new CheckBox[] { chkCm__Fi,chkCm__Fa },
-
-      ["TD1"] = new CheckBox[] {
-      chkTd1ESE21_Fi,chkTd1ESE22_Fi,chkTd1ESE21_Fa,chkTd1ESE22_Fa,
-      chkTd1EME21_Fi,chkTd1EME22_Fi,chkTd1EME21_Fa,chkTd1EME22_Fa,
-      chkTd1AII21_Fi,chkTd1AII22_Fi,chkTd1AII21_Fa,chkTd1AII22_Fa
-    },
-
-      ["TD2"] = new CheckBox[] {
-      chkTd2ESE21_Fi,chkTd2ESE22_Fi,chkTd2ESE21_Fa,chkTd2ESE22_Fa,
-      chkTd2EME21_Fi,chkTd2EME22_Fi,chkTd2EME21_Fa,chkTd2EME22_Fa,
-      chkTd2AII21_Fi,chkTd2AII22_Fi,chkTd2AII21_Fa,chkTd2AII22_Fa
-    },
-
-      ["TD3"] = new CheckBox[] {
-      chkTd3ESE21_Fi,chkTd3ESE22_Fi,chkTd3ESE21_Fa,chkTd3ESE22_Fa,
-      chkTd3EME21_Fi,chkTd3EME22_Fi,chkTd3EME21_Fa,chkTd3EME22_Fa,
-      chkTd3AII21_Fi,chkTd3AII22_Fi,chkTd3AII21_Fa,chkTd3AII22_Fa
-    },
-
-      ["TP1"] = new CheckBox[] {
-      chkTp1ESE21_Fi,chkTp1ESE22_Fi,chkTp1ESE21_Fa,chkTp1ESE22_Fa,
-      chkTp1EME21_Fi,chkTp1EME22_Fi,chkTp1EME21_Fa,chkTp1EME22_Fa,
-      chkTp1AII21_Fi,chkTp1AII22_Fi,chkTp1AII21_Fa,chkTp1AII22_Fa
-    },
-
-      ["TP2"] = new CheckBox[] {
-      chkTp2ESE21_Fi,chkTp2ESE22_Fi,chkTp2ESE21_Fa,chkTp2ESE22_Fa,
-      chkTp2EME21_Fi,chkTp2EME22_Fi,chkTp2EME21_Fa,chkTp2EME22_Fa,
-      chkTp2AII21_Fi,chkTp2AII22_Fi,chkTp2AII21_Fa,chkTp2AII22_Fa
-    },
-
-      ["TP3"] = new CheckBox[] {
-      chkTp3ESE21_Fi,chkTp3ESE22_Fi,chkTp3ESE21_Fa,chkTp3ESE22_Fa,
-      chkTp3EME21_Fi,chkTp3EME22_Fi,chkTp3EME21_Fa,chkTp3EME22_Fa,
-      chkTp3AII21_Fi,chkTp3AII22_Fi,chkTp3AII21_Fa,chkTp3AII22_Fa
-    }
+      ["CM"] = [chkCm__Fi,chkCm__Fa],
+      ["TD1"] = [chkTd1ESE_Fi,chkTd1ESE_Fa,chkTd1EME_Fi,chkTd1EME_Fa,chkTd1AII_Fi,chkTd1AII_Fa],
+      ["TD2"] = [chkTd2ESE_Fi,chkTd2ESE_Fa,chkTd2EME_Fi,chkTd2EME_Fa,chkTd2AII_Fi,chkTd2AII_Fa],
+      ["TD3"] = [chkTd3ESE_Fi,chkTd3ESE_Fa,chkTd3EME_Fi,chkTd3EME_Fa,chkTd3AII_Fi,chkTd3AII_Fa],
+      ["TP1"] = [
+        chkTp1ESE21_Fi,chkTp1ESE22_Fi,chkTp1ESE21_Fa,chkTp1ESE22_Fa,
+        chkTp1EME21_Fi,chkTp1EME22_Fi,chkTp1EME21_Fa,chkTp1EME22_Fa,
+        chkTp1AII21_Fi,chkTp1AII22_Fi,chkTp1AII21_Fa,chkTp1AII22_Fa],
+      ["TP2"] = [
+        chkTp2ESE21_Fi,chkTp2ESE22_Fi,chkTp2ESE21_Fa,chkTp2ESE22_Fa,
+        chkTp2EME21_Fi,chkTp2EME22_Fi,chkTp2EME21_Fa,chkTp2EME22_Fa,
+        chkTp2AII21_Fi,chkTp2AII22_Fi,chkTp2AII21_Fa,chkTp2AII22_Fa],
+      ["TP3"] = [
+        chkTp3ESE21_Fi,chkTp3ESE22_Fi,chkTp3ESE21_Fa,chkTp3ESE22_Fa,
+        chkTp3EME21_Fi,chkTp3EME22_Fi,chkTp3EME21_Fa,chkTp3EME22_Fa,
+        chkTp3AII21_Fi,chkTp3AII22_Fi,chkTp3AII21_Fa,chkTp3AII22_Fa]
     };
 
     _isRestoringMutualisation = true;
@@ -3607,25 +3610,37 @@ public partial class DialogueServiceGEII: Window {
     finally {
       _isRestoringMutualisation = false;
     }
+    ActualiserEffectifsMutualisesTP();
+    ActualiserEffectifsMutualisesTD();
   }
 
   private void ActualiserEffectifsMutualisesTP() {
     if (_profile == null || _gestionMutualisations == null) return;
 
-    txtEffectifRegrTP1.Text = CalculerEffectifMutualiseTP("TP1").ToString();
-    txtEffectifRegrTP2.Text = CalculerEffectifMutualiseTP("TP2").ToString();
-    txtEffectifRegrTP3.Text = CalculerEffectifMutualiseTP("TP3").ToString();
+    TextBox[] zones = [txtEffectifRegrTP1,txtEffectifRegrTP2,txtEffectifRegrTP3];
+    int longueurPrefixe = "txtEffectifRegr".Length;
+
+    foreach (TextBox zone in zones) {
+      string onglet = zone.Name[longueurPrefixe..];
+      zone.Text = CalculerEffectifMutualiseTP(onglet).ToString();
+    }
+  }
+
+  private void ActualiserEffectifsMutualisesTD() {
+    if (_profile == null || _gestionMutualisations == null) return;
+
+    TextBox[] zones = [txtEffectifRegrTD1,txtEffectifRegrTD2,txtEffectifRegrTD3];
+    int longueurPrefixe = "txtEffectifRegr".Length;
+
+    foreach (TextBox zone in zones) {
+      string onglet = zone.Name[longueurPrefixe..];
+      zone.Text = CalculerEffectifMutualiseTD(onglet).ToString();
+    }
   }
 
   private void btnSave_Click(object sender,RoutedEventArgs e) {
-    txtEffectifRegrTP1.Text = CalculerEffectifMutualiseTP("TP1").ToString();
-    txtEffectifRegrTP2.Text = CalculerEffectifMutualiseTP("TP2").ToString();
-    txtEffectifRegrTP3.Text = CalculerEffectifMutualiseTP("TP3").ToString();
-    Debug.WriteLine($"[TP1] Effectif = {CalculerEffectifMutualiseTP("TP1")}");
-    Debug.WriteLine($"[TP2] Effectif = {CalculerEffectifMutualiseTP("TP2")}");
-    Debug.WriteLine($"[TP3] Effectif = {CalculerEffectifMutualiseTP("TP3")}");
-
     EnregistrerMutualisationsDansProfil();
+    BtnCouleurs(btnSave,false);
   }
 
   private static int TrouverEffectifGroupe(string groupe,string[] noms,int[] effectifs) {
@@ -3679,26 +3694,75 @@ public partial class DialogueServiceGEII: Window {
     return total;
   }
 
-  private void MasquerGroupesSansEffectif(TabItem onglet) {
-    if (_profile == null) {
-      RestaurerEffectifsGeii2_FI_DepuisProfil();
-      RestaurerEffectifsGeii2_FA_DepuisProfil();
+  private int CalculerEffectifMutualiseTD(string onglet) {
+    if (_profile == null || _gestionMutualisations == null) return 0;
+
+    bool parcoursSpecialise = !string.Equals(
+      Parcours.Text.Trim(),"Tronc commun",StringComparison.OrdinalIgnoreCase);
+
+    var groupes = _profile.Groups;
+
+    string[] nomsFI = SupprimerUnderscoreGroupNames(groupes.Geii2_FI_Td_GroupNames);
+    int[] effectifsFI = groupes.Geii2_FI_TD_Effectifs;
+
+    string[] nomsFA = SupprimerUnderscoreGroupNames(groupes.Geii2_FA_Td_GroupNames);
+    int[] effectifsFA = groupes.Geii2_FA_TD_Effectifs;
+
+    int total = 0;
+
+    foreach (string groupe in _gestionMutualisations.ObtenirGroupes(onglet)) {
+      bool estFI = groupe.EndsWith("_Fi",StringComparison.OrdinalIgnoreCase);
+
+      total += estFI
+        ? TrouverEffectifGroupe(groupe,nomsFI,effectifsFI)
+        : TrouverEffectifGroupe(groupe,nomsFA,effectifsFA);
     }
+
+    return total;
+  }
+
+  private static string[] SupprimerUnderscoreGroupNames(string[] groupesTab) {
+    string[] newTab = new string[3];
+    for (int i = 0;i < groupesTab.Length;i++) {
+      newTab[i] = groupesTab[i]?.Replace("__","_");
+      Debug.WriteLine("Nouveau nom : " + newTab[i]);
+    }
+    return newTab;
+  }
+
+  private void MasquerGroupesSansEffectif(TabItem onglet) {
+    if (_profile == null) return;
+
+    bool estTD = onglet.Name is "titmTd1" or "titmTd2" or "titmTd3";
+    bool estTP = onglet.Name is "titmTp1" or "titmTp2" or "titmTp3";
+
+    if (!estTD && !estTP) return;
 
     bool specialise = !string.Equals(Parcours.Text.Trim(),"Tronc commun",StringComparison.OrdinalIgnoreCase);
     var g = _profile.Groups;
 
     foreach (CheckBox cb in TrouverControles<CheckBox>(onglet)) {
-      string groupe = cb.Content?.ToString() ?? "";
-      bool fi = groupe.EndsWith("__Fi",StringComparison.OrdinalIgnoreCase);
+      string groupe = cb.Content?.ToString() ?? string.Empty;
+      bool fi = groupe.EndsWith("_Fi",StringComparison.OrdinalIgnoreCase);
 
-      string[] noms = fi
-        ? (specialise ? g.Geii2_FI_TpSp_GroupNames : g.Geii2_FI_Tp_GroupNames)
-        : (specialise ? g.Geii2_FA_TpSp_GroupNames : g.Geii2_FA_Tp_GroupNames);
+      string[] noms;
+      int[] effectifs;
 
-      int[] effectifs = fi
-        ? (specialise ? g.Geii2_FI_TpSp_Effectifs : g.Geii2_FI_Tp_Effectifs)
-        : (specialise ? g.Geii2_FA_TpSp_Effectifs : g.Geii2_FA_Tp_Effectifs);
+      if (estTD) {
+        noms = fi ? g.Geii2_FI_Td_GroupNames : g.Geii2_FA_Td_GroupNames;
+        effectifs = fi ? g.Geii2_FI_TD_Effectifs : g.Geii2_FA_TD_Effectifs;
+
+        noms = SupprimerUnderscoreGroupNames(noms);
+      }
+      else {
+        noms = fi
+          ? (specialise ? g.Geii2_FI_TpSp_GroupNames : g.Geii2_FI_Tp_GroupNames)
+          : (specialise ? g.Geii2_FA_TpSp_GroupNames : g.Geii2_FA_Tp_GroupNames);
+
+        effectifs = fi
+          ? (specialise ? g.Geii2_FI_TpSp_Effectifs : g.Geii2_FI_Tp_Effectifs)
+          : (specialise ? g.Geii2_FA_TpSp_Effectifs : g.Geii2_FA_Tp_Effectifs);
+      }
 
       cb.Visibility = TrouverEffectifGroupe(groupe,noms,effectifs) > 0
         ? Visibility.Visible

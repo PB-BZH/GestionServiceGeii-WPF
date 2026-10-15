@@ -48,8 +48,10 @@ namespace GestionServiceGeii.Core.Profiles {
 
     // Ajouter un groupe d'étudiants à un onglet
     public void AjouterGroupe(string onglet,string groupe) {
-      if (!_mutualisation.Groupes.TryGetValue(onglet,out List<string>? groupes))
-        return;
+      if (!_mutualisation.Groupes.TryGetValue(onglet,out List<string>? groupes)) {
+        groupes = new List<string>();
+        _mutualisation.Groupes[onglet] = groupes;
+      }
 
       if (!groupes.Contains(groupe))
         groupes.Add(groupe);

@@ -1129,40 +1129,28 @@
 
                                             </Grid>
                                             <ListBox Grid.Column="0">
-                                                <Label x:Name="lblTd1ESE21"
+                                                <Label x:Name="lblTd1ESE"
                                                        Content="TD ESE" />
-                                                <CheckBox x:Name="chkTd1ESE21_Fi"
-                                                          Content="ESE21__Fi" />
-                                                <CheckBox x:Name="chkTd1ESE22_Fi"
-                                                          Content="ESE22__Fi" />
-                                                <CheckBox x:Name="chkTd1ESE21_Fa"
-                                                          Content="ESE21__Fa" />
-                                                <CheckBox x:Name="chkTd1ESE22_Fa"
-                                                          Content="ESE22__Fa" />
+                                                <CheckBox x:Name="chkTd1ESE_Fi"
+                                                          Content="ESE__Fi" />
+                                                <CheckBox x:Name="chkTd1ESE_Fa"
+                                                          Content="ESE__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="1">
-                                                <Label x:Name="lblTd1EME21"
+                                                <Label x:Name="lblTd1EME"
                                                        Content="TD EME" />
-                                                <CheckBox x:Name="chkTd1EME21_Fi"
-                                                          Content="EME21__Fi" />
-                                                <CheckBox x:Name="chkTd1EME22_Fi"
-                                                          Content="EME22__Fi" />
-                                                <CheckBox x:Name="chkTd1EME21_Fa"
-                                                          Content="EME21__Fa" />
-                                                <CheckBox x:Name="chkTd1EME22_Fa"
-                                                          Content="EME22__Fa" />
+                                                <CheckBox x:Name="chkTd1EME_Fi"
+                                                          Content="EME__Fi" />
+                                                <CheckBox x:Name="chkTd1EME_Fa"
+                                                          Content="EME__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="2">
-                                                <Label x:Name="lblTd1AII21"
+                                                <Label x:Name="lblTd1AII"
                                                        Content="TD AII" />
-                                                <CheckBox x:Name="chkTd1AII21_Fi"
-                                                          Content="AII21__Fi" />
-                                                <CheckBox x:Name="chkTd1AII22_Fi"
-                                                          Content="AII22__Fi" />
-                                                <CheckBox x:Name="chkTd1AII21_Fa"
-                                                          Content="AII21__Fa" />
-                                                <CheckBox x:Name="chkTd1AII22_Fa"
-                                                          Content="AII22__Fa" />
+                                                <CheckBox x:Name="chkTd1AII_Fi"
+                                                          Content="AII__Fi" />
+                                                <CheckBox x:Name="chkTd1AII_Fa"
+                                                          Content="AII__Fa" />
                                             </ListBox>
                                             <Grid Grid.Column="3"
                                                   VerticalAlignment="Center">
@@ -1208,40 +1196,28 @@
 
                                             </Grid>
                                             <ListBox Grid.Column="0">
-                                                <Label x:Name="lblTd2ESE21"
+                                                <Label x:Name="lblTd2ESE"
                                                        Content="TD ESE" />
-                                                <CheckBox x:Name="chkTd2ESE21_Fi"
-                                                          Content="ESE21__Fi" />
-                                                <CheckBox x:Name="chkTd2ESE22_Fi"
-                                                          Content="ESE22__Fi" />
-                                                <CheckBox x:Name="chkTd2ESE21_Fa"
-                                                          Content="ESE21__Fa" />
-                                                <CheckBox x:Name="chkTd2ESE22_Fa"
-                                                          Content="ESE22__Fa" />
+                                                <CheckBox x:Name="chkTd2ESE_Fi"
+                                                          Content="ESE__Fi" />
+                                                <CheckBox x:Name="chkTd2ESE_Fa"
+                                                          Content="ESE__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="1">
-                                                <Label x:Name="lblTd2EME21"
+                                                <Label x:Name="lblTd2EME"
                                                        Content="TD EME" />
-                                                <CheckBox x:Name="chkTd2EME21_Fi"
-                                                          Content="EME21__Fi" />
-                                                <CheckBox x:Name="chkTd2EME22_Fi"
-                                                          Content="EME22__Fi" />
-                                                <CheckBox x:Name="chkTd2EME21_Fa"
-                                                          Content="EME21__Fa" />
-                                                <CheckBox x:Name="chkTd2EME22_Fa"
-                                                          Content="EME22__Fa" />
+                                                <CheckBox x:Name="chkTd2EME_Fi"
+                                                          Content="EME__Fi" />
+                                                <CheckBox x:Name="chkTd2EME_Fa"
+                                                          Content="EME__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="2">
-                                                <Label x:Name="lblTd2AII21"
+                                                <Label x:Name="lblTd2AII"
                                                        Content="TD AII" />
-                                                <CheckBox x:Name="chkTd2AII21_Fi"
-                                                          Content="AII21__Fi" />
-                                                <CheckBox x:Name="chkTd2AII22_Fi"
-                                                          Content="AII22__Fi" />
-                                                <CheckBox x:Name="chkTd2AII21_Fa"
-                                                          Content="AII21__Fa" />
-                                                <CheckBox x:Name="chkTd2AII22_Fa"
-                                                          Content="AII22__Fa" />
+                                                <CheckBox x:Name="chkTd2AII_Fi"
+                                                          Content="AII__Fi" />
+                                                <CheckBox x:Name="chkTd2AII_Fa"
+                                                          Content="AII__Fa" />
                                             </ListBox>
                                             <Grid Grid.Column="3"
                                                   VerticalAlignment="Center">
@@ -1287,40 +1263,28 @@
 
                                             </Grid>
                                             <ListBox Grid.Column="0">
-                                                <Label x:Name="lblTd3ESE21"
+                                                <Label x:Name="lblTd3ESE"
                                                        Content="TD ESE" />
-                                                <CheckBox x:Name="chkTd3ESE21_Fi"
-                                                          Content="ESE21__Fi" />
-                                                <CheckBox x:Name="chkTd3ESE22_Fi"
-                                                          Content="ESE22__Fi" />
-                                                <CheckBox x:Name="chkTd3ESE21_Fa"
-                                                          Content="ESE21__Fa" />
-                                                <CheckBox x:Name="chkTd3ESE22_Fa"
-                                                          Content="ESE22__Fa" />
+                                                <CheckBox x:Name="chkTd3ESE_Fi"
+                                                          Content="ESE__Fi" />
+                                                <CheckBox x:Name="chkTd3ESE_Fa"
+                                                          Content="ESE__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="1">
-                                                <Label x:Name="lblTd3EME21"
+                                                <Label x:Name="lblTd3EME"
                                                        Content="TD EME" />
-                                                <CheckBox x:Name="chkTd3EME21_Fi"
-                                                          Content="EME21__Fi" />
-                                                <CheckBox x:Name="chkTd3EME22_Fi"
-                                                          Content="EME22__Fi" />
-                                                <CheckBox x:Name="chkTd3EME21_Fa"
-                                                          Content="EME21__Fa" />
-                                                <CheckBox x:Name="chkTd3EME22_Fa"
-                                                          Content="EME22__Fa" />
+                                                <CheckBox x:Name="chkTd3EME_Fi"
+                                                          Content="EME__Fi" />
+                                                <CheckBox x:Name="chkTd3EME_Fa"
+                                                          Content="EME__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="2">
-                                                <Label x:Name="lblTd3AII21"
+                                                <Label x:Name="lblTd3AII"
                                                        Content="TD AII" />
-                                                <CheckBox x:Name="chkTd3AII21_Fi"
-                                                          Content="AII21__Fi" />
-                                                <CheckBox x:Name="chkTd3AII22_Fi"
-                                                          Content="AII22__Fi" />
-                                                <CheckBox x:Name="chkTd3AII21_Fa"
-                                                          Content="AII21__Fa" />
-                                                <CheckBox x:Name="chkTd3AII22_Fa"
-                                                          Content="AII22__Fa" />
+                                                <CheckBox x:Name="chkTd3AII_Fi"
+                                                          Content="AII__Fi" />
+                                                <CheckBox x:Name="chkTd3AII_Fa"
+                                                          Content="AII__Fa" />
                                             </ListBox>
                                             <Grid Grid.Column="3"
                                                   VerticalAlignment="Center">
