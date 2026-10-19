@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 24/9/2026 - 00:11
+║  Le 18/10/2026 - 12:04
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -38,7 +38,8 @@
         MinHeight="730"
         MinWidth="1300"
         Closing="DialogueServiceGEII_Closing"
-        Height="756">
+        Height="756"
+        Width="1406">
 
     <Window.Resources>
 
@@ -52,7 +53,15 @@
             <Setter Property="TextAlignment"
                     Value="Center" />
         </Style>
-
+        <Style TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled"
+                         Value="False">
+                    <Setter Property="Opacity"
+                            Value="0.35" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
 
@@ -383,11 +392,12 @@
                             <Grid Margin="10"
                                   HorizontalAlignment="Center">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="32" />
-                                    <RowDefinition Height="32" />
-                                    <RowDefinition Height="32" />
+                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="25" />
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="15" />
+                                    <RowDefinition Height="25" />
                                     <RowDefinition Height="32" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
@@ -435,46 +445,65 @@
                                        VerticalAlignment="Center"
                                        FontWeight="Bold" />
 
-                                <Label Content="TD : "
+                                <Label Content="APP : "
                                        Grid.Row="1"
+                                       Grid.Column="4"
+                                       VerticalAlignment="Center" />
+
+                                <Label x:Name="valeur_APP"
+                                       Content="0"
+                                       Grid.Row="1"
+                                       Grid.Column="6"
+                                       VerticalAlignment="Center" />
+
+                                <Label Content="TD : "
+                                       Grid.Row="2"
                                        Grid.Column="4"
                                        VerticalAlignment="Center" />
 
                                 <Label x:Name="valeur_TD"
                                        Content="0"
-                                       Grid.Row="1"
+                                       Grid.Row="2"
                                        Grid.Column="6"
                                        VerticalAlignment="Center" />
 
                                 <Label Content="Module :"
-                                       Grid.Row="3"
+                                       Grid.Row="4"
                                        Grid.Column="0"
                                        VerticalAlignment="TOP" />
 
                                 <TextBox x:Name="texteLibelléModule"
                                          Text="Libellé module"
-                                         Grid.Row="3"
+                                         Grid.Row="4"
                                          Grid.Column="2"
                                          Grid.ColumnSpan="5"
                                          TextWrapping="Wrap"
-                                         Height="50"
-                                         VerticalContentAlignment="Top"
+                                         Height="30"
+                                         VerticalContentAlignment="Center"
                                          FontWeight="Bold" />
 
                                 <Label Content="TP : "
-                                       Grid.Row="2"
+                                       Grid.Row="3"
                                        Grid.Column="4"
                                        VerticalAlignment="Center" />
 
                                 <Label x:Name="valeur_TP"
                                        Content="0"
-                                       Grid.Row="2"
+                                       Grid.Row="3"
                                        Grid.Column="6"
                                        VerticalAlignment="Center" />
 
+                                <CheckBox x:Name="chkMutualisation"
+                                          Content="Mutualisation des cours"
+                                          VerticalAlignment="Center"
+                                          Grid.Row="5"
+                                          Checked="chkMutualisation_Checked"
+                                          Unchecked="chkMutualisation_Checked"
+                                          Grid.ColumnSpan="3" />
+
                                 <Button x:Name="modifierFicheMatière"
                                         Content="Modifier la fiche matière"
-                                        Grid.Row="5"
+                                        Grid.Row="6"
                                         Grid.ColumnSpan="7"
                                         HorizontalAlignment="Center"
                                         VerticalContentAlignment="Center"
@@ -670,6 +699,50 @@
                                             Height="25" />
                                 </Grid>
                             </GroupBox>
+                            <GroupBox Header="APP"
+                                      FontWeight="Bold"
+                                      Margin="0,2.5,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeApp_Geii2_FI"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeAppTotal_Geii2_FI"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterAPP_Geii2_FI"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterAPP_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerAPP_Geii2_FI"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerAPP_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
                             <GroupBox Header="TD"
                                       FontWeight="Bold"
                                       Margin="0,2.5,0,2.5"
@@ -861,6 +934,50 @@
                                             Height="25" />
                                 </Grid>
                             </GroupBox>
+                            <GroupBox Header="APP"
+                                      FontWeight="Bold"
+                                      Margin="0,2.5,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeApp_Geii2_FA"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeAppTotal_Geii2_FA"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterAPP_Geii2_FA"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterAPP_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerAPP_Geii2_FA"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerAPP_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
                             <GroupBox Header="TD"
                                       FontWeight="Bold"
                                       Margin="0,2.5,0,2.5"
@@ -1003,8 +1120,242 @@
                                 </GroupBox>
                             </StackPanel>
                         </StackPanel>
+                        <StackPanel x:Name="splCoursGeii2_Mutuel"
+                                    Grid.Row="2"
+                                    Visibility="Collapsed"
+                                    d:Visibility="Collapsed"
+                                    Orientation="Vertical">
+                            <Label Content="GEII 2 - Mutualisation"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                            <GroupBox Header="CM"
+                                      FontWeight="Bold"
+                                      Margin="0,0,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbEtudiants_Geii2_Mutuel"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <TextBlock Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="étudiants" />
+
+                                    <Button x:Name="boutonAjouterCM_Geii2_Mutuel"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterCM_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerCM_Geii2_Mutuel"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerCM_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="APP"
+                                      FontWeight="Bold"
+                                      Margin="0,2.5,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeApp_Geii2_Mutuel"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeAppTotal_Geii2_Mutuel"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterAPP_Geii2_Mutuel"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterAPP_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerAPP_Geii2_Mutuel"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerAPP_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="TD"
+                                      FontWeight="Bold"
+                                      Margin="0,2.5,0,2.5"
+                                      Width="400"
+                                      HorizontalAlignment="Center">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label x:Name="nbGroupeTd_Geii2_Mutuel"
+                                           Content="0"
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                    <Label Grid.Column="1"
+                                           Content=" / " />
+
+                                    <Label x:Name="nbGroupeTdTotal_Geii2_Mutuel"
+                                           Grid.Column="2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Content="0" />
+
+                                    <Button x:Name="boutonAjouterTD_Geii2_Mutuel"
+                                            Content="Ajouter"
+                                            Click="boutonAjouterTD_Click"
+                                            Grid.Column="4"
+                                            Height="25" />
+
+                                    <Button x:Name="boutonSupprimerTD_Geii2_Mutuel"
+                                            Content="Supprimer"
+                                            Click="boutonSupprimerTD_Click"
+                                            Grid.Column="6"
+                                            Height="25" />
+                                </Grid>
+                            </GroupBox>
+                            <StackPanel x:Name="sp_TP_Mutuel"
+                                        Orientation="Vertical">
+                                <GroupBox x:Name="grbTP_Mutuel"
+                                          Header="TP"
+                                          Margin="0,2.5,0,0"
+                                          FontWeight="Bold"
+                                          Width="400"
+                                          HorizontalAlignment="Center"
+                                          Visibility="Collapsed"
+                                          d:Visibility="Collapsed">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50" />
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="50" />
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="100" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label x:Name="nbGroupeTp_Geii2_Mutuel"
+                                               Content="0"
+                                               Grid.Column="0"
+                                               HorizontalContentAlignment="Center"
+                                               FontWeight="Bold" />
+
+                                        <Label Grid.Column="1"
+                                               Content=" / " />
+
+                                        <Label x:Name="nbGroupeTpTotal_Geii2_Mutuel"
+                                               Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Content="0" />
+
+                                        <Button x:Name="boutonAjouterTP_Geii2_Mutuel"
+                                                Content="Ajouter"
+                                                Click="boutonAjouterTP_Click"
+                                                Grid.Column="4"
+                                                Height="25" />
+
+                                        <Button x:Name="boutonSupprimerTP_Geii2_Mutuel"
+                                                Content="Supprimer"
+                                                Click="boutonSupprimerTP_Click"
+                                                Grid.Column="6"
+                                                Height="25" />
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox x:Name="grbTPSp_Mutuel"
+                                          Header="TP Spécialisés"
+                                          Margin="0,2.5,0,0"
+                                          FontWeight="Bold"
+                                          Width="400"
+                                          HorizontalAlignment="Center"
+                                          Visibility="Collapsed"
+                                          d:Visibility="Visible">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50" />
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="50" />
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="100" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label x:Name="nbGroupeTpSp_Geii2_Mutuel"
+                                               Content="0"
+                                               Grid.Column="0"
+                                               HorizontalContentAlignment="Center"
+                                               FontWeight="Bold" />
+
+                                        <Label Grid.Column="1"
+                                               Content=" / " />
+
+                                        <Label x:Name="nbGroupeTpSpTotal_Geii2_Mutuel"
+                                               Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Content="0" />
+
+                                        <Button x:Name="boutonAjouterTPSp_Geii2_Mutuel"
+                                                Content="Ajouter"
+                                                Click="BoutonBasculerPanneau_Click"
+                                                Grid.Column="4"
+                                                Height="25" />
+
+                                        <Button x:Name="boutonSupprimerTPSp_Geii2_Mutuel"
+                                                Content="Supprimer"
+                                                Click="BoutonBasculerPanneau_Click"
+                                                Grid.Column="6"
+                                                Height="25" />
+                                    </Grid>
+                                </GroupBox>
+                            </StackPanel>
+                        </StackPanel>
                         <Grid x:Name="splMutualisation"
-                              Grid.Column="1"
                               Grid.Row="2"
                               Visibility="Collapsed"
                               d:Visibility="Visible">
@@ -1054,7 +1405,7 @@
 
                                 <TabItem x:Name="titmCM"
                                          Header="CM"
-                                         Width="60"
+                                         Width="Auto"
                                          Height="Auto"
                                          HorizontalContentAlignment="Center"
                                          VerticalAlignment="Center">
@@ -1109,7 +1460,7 @@
                                 </TabItem>
                                 <TabItem x:Name="titmTd1"
                                          Header="TD1"
-                                         Width="60"
+                                         Width="Auto"
                                          Height="Auto"
                                          HorizontalContentAlignment="Center"
                                          VerticalAlignment="Center">
@@ -1176,7 +1527,7 @@
                                 </TabItem>
                                 <TabItem x:Name="titmTd2"
                                          Header="TD2"
-                                         Width="60"
+                                         Width="Auto"
                                          Height="Auto"
                                          HorizontalContentAlignment="Center"
                                          VerticalAlignment="Center">
@@ -1243,7 +1594,7 @@
                                 </TabItem>
                                 <TabItem x:Name="titmTd3"
                                          Header="TD3"
-                                         Width="60"
+                                         Width="Auto"
                                          Height="Auto"
                                          HorizontalContentAlignment="Center"
                                          VerticalAlignment="Center">
@@ -1310,7 +1661,7 @@
                                 </TabItem>
                                 <TabItem x:Name="titmTp1"
                                          Header="TP1"
-                                         Width="60"
+                                         Width="Auto"
                                          Height="Auto"
                                          HorizontalContentAlignment="Center"
                                          VerticalAlignment="Center">
@@ -1336,10 +1687,10 @@
                                                           Content="ESE21__Fi" />
                                                 <CheckBox x:Name="chkTp1ESE22_Fi"
                                                           Content="ESE22__Fi" />
-                                                <CheckBox x:Name="chkTp1ESE21_Fa"
-                                                          Content="ESE21__Fa" />
-                                                <CheckBox x:Name="chkTp1ESE22_Fa"
-                                                          Content="ESE22__Fa" />
+                                                <CheckBox x:Name="chkTp1ESE23_Fa"
+                                                          Content="ESE23__Fa" />
+                                                <CheckBox x:Name="chkTp1ESE24_Fa"
+                                                          Content="ESE24__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="1">
                                                 <Label x:Name="lblTp1EME21"
@@ -1348,10 +1699,10 @@
                                                           Content="EME21__Fi" />
                                                 <CheckBox x:Name="chkTp1EME22_Fi"
                                                           Content="EME22__Fi" />
-                                                <CheckBox x:Name="chkTp1EME21_Fa"
-                                                          Content="EME21__Fa" />
-                                                <CheckBox x:Name="chkTp1EME22_Fa"
-                                                          Content="EME22__Fa" />
+                                                <CheckBox x:Name="chkTp1EME23_Fa"
+                                                          Content="EME23__Fa" />
+                                                <CheckBox x:Name="chkTp1EME24_Fa"
+                                                          Content="EME24__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="2">
                                                 <Label x:Name="lblTp1AII21"
@@ -1360,10 +1711,10 @@
                                                           Content="AII21__Fi" />
                                                 <CheckBox x:Name="chkTp1AII22_Fi"
                                                           Content="AII22__Fi" />
-                                                <CheckBox x:Name="chkTp1AII21_Fa"
-                                                          Content="AII21__Fa" />
-                                                <CheckBox x:Name="chkTp1AII22_Fa"
-                                                          Content="AII22__Fa" />
+                                                <CheckBox x:Name="chkTp1AII23_Fa"
+                                                          Content="AII23__Fa" />
+                                                <CheckBox x:Name="chkTp1AII24_Fa"
+                                                          Content="AII24__Fa" />
                                             </ListBox>
                                             <Grid Grid.Column="3"
                                                   VerticalAlignment="Center">
@@ -1389,7 +1740,7 @@
                                 </TabItem>
                                 <TabItem x:Name="titmTp2"
                                          Header="TP2"
-                                         Width="60"
+                                         Width="Auto"
                                          Height="Auto"
                                          HorizontalContentAlignment="Center"
                                          VerticalAlignment="Center">
@@ -1415,10 +1766,10 @@
                                                           Content="ESE21__Fi" />
                                                 <CheckBox x:Name="chkTp2ESE22_Fi"
                                                           Content="ESE22__Fi" />
-                                                <CheckBox x:Name="chkTp2ESE21_Fa"
-                                                          Content="ESE21__Fa" />
-                                                <CheckBox x:Name="chkTp2ESE22_Fa"
-                                                          Content="ESE22__Fa" />
+                                                <CheckBox x:Name="chkTp2ESE23_Fa"
+                                                          Content="ESE23__Fa" />
+                                                <CheckBox x:Name="chkTp2ESE24_Fa"
+                                                          Content="ESE24__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="1">
                                                 <Label x:Name="lblTp2EME21"
@@ -1427,10 +1778,10 @@
                                                           Content="EME21__Fi" />
                                                 <CheckBox x:Name="chkTp2EME22_Fi"
                                                           Content="EME22__Fi" />
-                                                <CheckBox x:Name="chkTp2EME21_Fa"
-                                                          Content="EME21__Fa" />
-                                                <CheckBox x:Name="chkTp2EME22_Fa"
-                                                          Content="EME22__Fa" />
+                                                <CheckBox x:Name="chkTp2EME23_Fa"
+                                                          Content="EME23__Fa" />
+                                                <CheckBox x:Name="chkTp2EME24_Fa"
+                                                          Content="EME24__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="2">
                                                 <Label x:Name="lblTp2AII21"
@@ -1439,10 +1790,10 @@
                                                           Content="AII21__Fi" />
                                                 <CheckBox x:Name="chkTp2AII22_Fi"
                                                           Content="AII22__Fi" />
-                                                <CheckBox x:Name="chkTp2AII21_Fa"
-                                                          Content="AII21__Fa" />
-                                                <CheckBox x:Name="chkTp2AII22_Fa"
-                                                          Content="AII22__Fa" />
+                                                <CheckBox x:Name="chkTp2AII23_Fa"
+                                                          Content="AII23__Fa" />
+                                                <CheckBox x:Name="chkTp2AII24_Fa"
+                                                          Content="AII24__Fa" />
                                             </ListBox>
                                             <Grid Grid.Column="3"
                                                   VerticalAlignment="Center">
@@ -1468,7 +1819,7 @@
                                 </TabItem>
                                 <TabItem x:Name="titmTp3"
                                          Header="TP3"
-                                         Width="60"
+                                         Width="Auto"
                                          Height="Auto"
                                          HorizontalContentAlignment="Center"
                                          VerticalAlignment="Center">
@@ -1494,10 +1845,10 @@
                                                           Content="ESE21__Fi" />
                                                 <CheckBox x:Name="chkTp3ESE22_Fi"
                                                           Content="ESE22__Fi" />
-                                                <CheckBox x:Name="chkTp3ESE21_Fa"
-                                                          Content="ESE21__Fa" />
-                                                <CheckBox x:Name="chkTp3ESE22_Fa"
-                                                          Content="ESE22__Fa" />
+                                                <CheckBox x:Name="chkTp3ESE23_Fa"
+                                                          Content="ESE23__Fa" />
+                                                <CheckBox x:Name="chkTp3ESE24_Fa"
+                                                          Content="ESE24__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="1">
                                                 <Label x:Name="lblTp3EME21"
@@ -1506,10 +1857,10 @@
                                                           Content="EME21__Fi" />
                                                 <CheckBox x:Name="chkTp3EME22_Fi"
                                                           Content="EME22__Fi" />
-                                                <CheckBox x:Name="chkTp3EME21_Fa"
-                                                          Content="EME21__Fa" />
-                                                <CheckBox x:Name="chkTp3EME22_Fa"
-                                                          Content="EME22__Fa" />
+                                                <CheckBox x:Name="chkTp3EME23_Fa"
+                                                          Content="EME23__Fa" />
+                                                <CheckBox x:Name="chkTp3EME24_Fa"
+                                                          Content="EME24__Fa" />
                                             </ListBox>
                                             <ListBox Grid.Column="2">
                                                 <Label x:Name="lblTp3AII21"
@@ -1518,10 +1869,10 @@
                                                           Content="AII21__Fi" />
                                                 <CheckBox x:Name="chkTp3AII22_Fi"
                                                           Content="AII22__Fi" />
-                                                <CheckBox x:Name="chkTp3AII21_Fa"
-                                                          Content="AII21__Fa" />
-                                                <CheckBox x:Name="chkTp3AII22_Fa"
-                                                          Content="AII22__Fa" />
+                                                <CheckBox x:Name="chkTp3AII23_Fa"
+                                                          Content="AII23__Fa" />
+                                                <CheckBox x:Name="chkTp3AII24_Fa"
+                                                          Content="AII24__Fa" />
                                             </ListBox>
                                             <Grid Grid.Column="3"
                                                   VerticalAlignment="Center">
@@ -1536,6 +1887,85 @@
                                                            VerticalAlignment="Center" />
 
                                                 <TextBox x:Name="txtEffectifRegrTP3"
+                                                         Grid.Row="2"
+                                                         Height="25"
+                                                         Width="60"
+                                                         HorizontalContentAlignment="Center"
+                                                         VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem x:Name="titmTp4"
+                                         Header="TP4"
+                                         Width="auto"
+                                         Height="Auto"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="10" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid>
+
+                                            </Grid>
+                                            <ListBox Grid.Column="0">
+                                                <Label x:Name="lblTp4ESE21"
+                                                       Content="TP ESE" />
+                                                <CheckBox x:Name="chkTp4ESE21_Fi"
+                                                          Content="ESE21__Fi" />
+                                                <CheckBox x:Name="chkTp4ESE22_Fi"
+                                                          Content="ESE22__Fi" />
+                                                <CheckBox x:Name="chkTp4ESE23_Fa"
+                                                          Content="ESE23__Fa" />
+                                                <CheckBox x:Name="chkTp4ESE24_Fa"
+                                                          Content="ESE24__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="1">
+                                                <Label x:Name="lblTp4EME21"
+                                                       Content="TD EME" />
+                                                <CheckBox x:Name="chkTp4EME21_Fi"
+                                                          Content="EME21__Fi" />
+                                                <CheckBox x:Name="chkTp4EME22_Fi"
+                                                          Content="EME22__Fi" />
+                                                <CheckBox x:Name="chkTp4EME23_Fa"
+                                                          Content="EME23__Fa" />
+                                                <CheckBox x:Name="chkTp4EME24_Fa"
+                                                          Content="EME24__Fa" />
+                                            </ListBox>
+                                            <ListBox Grid.Column="2">
+                                                <Label x:Name="lblTp4AII21"
+                                                       Content="TD AII" />
+                                                <CheckBox x:Name="chkTp4AII21_Fi"
+                                                          Content="AII21__Fi" />
+                                                <CheckBox x:Name="chkTp4AII22_Fi"
+                                                          Content="AII22__Fi" />
+                                                <CheckBox x:Name="chkTp4AII23_Fa"
+                                                          Content="AII23__Fa" />
+                                                <CheckBox x:Name="chkTp4AII24_Fa"
+                                                          Content="AII24__Fa" />
+                                            </ListBox>
+                                            <Grid Grid.Column="3"
+                                                  VerticalAlignment="Center">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="42" />
+                                                    <RowDefinition Height="10" />
+                                                    <RowDefinition Height="42" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="Effectif TP4 : "
+                                                           Grid.Row="0"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+
+                                                <TextBox x:Name="txtEffectifRegrTP4"
                                                          Grid.Row="2"
                                                          Height="25"
                                                          Width="60"
@@ -1916,6 +2346,12 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <!-- GEII-1 : occupe les deux lignes -->
@@ -2032,6 +2468,48 @@
                            Text="TPSp : 0"
                            Margin="8,0"
                            VerticalAlignment="Center" />
+
+                <!-- GEII-1 : occupe les deux lignes -->
+                <Border Grid.Row="0"
+                        Grid.Column="11"
+                        Background="DeepSkyBlue"
+                        Padding="6,2"
+                        VerticalAlignment="Stretch">
+                    <TextBlock x:Name="étatTitreEffectif_Geii2_Mutuel"
+                               Text="Geii2 Mutualisé :"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center" />
+                </Border>
+
+                <TextBlock x:Name="étatEffectif_Geii2_Mutuel"
+                           Grid.Row="0"
+                           Grid.Column="12"
+                           Text="0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <TextBlock x:Name="étatNbGroupeTD_Geii2_Mutuel"
+                           Grid.Row="0"
+                           Grid.Column="13"
+                           Text="TD : 0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <TextBlock x:Name="étatNbGroupeTP_Geii2_Mutuel"
+                           Grid.Row="0"
+                           Grid.Column="14"
+                           Text="TP : 0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+                <TextBlock x:Name="étatNbGroupeTPSp_Geii2_Mutuel"
+                           Grid.Row="0"
+                           Grid.Column="15"
+                           Text="TPSp : 0"
+                           Margin="8,0"
+                           VerticalAlignment="Center" />
+
+
             </Grid>
         </StatusBar>
     </Grid>

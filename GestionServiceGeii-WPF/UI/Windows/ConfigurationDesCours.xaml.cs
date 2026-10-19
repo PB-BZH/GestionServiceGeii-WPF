@@ -10,24 +10,23 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 17/6/2026 - 11:30
+║  Le 18/10/2026 - 12:04
 ╟────────────────────────────────────────────────────────────────────────────────║
-║     Projet Visual Studio Professional 2026 : GestionServicesGEII
+║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
-║     Version : 1.5.3
+║     Version : 1.0.0
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║                Visual Studio Professional 2026 - Insiders                      ║
 ║                ──────────────────────────────────────────                      ║
 ║  Langage     : C# 14                                                           ║
-║  Technologie : .NET 10 / WinForms                                              ║
+║  Technologie : .NET 10 / WPF                                                   ║
 ║  Plateforme  : Windows 10 / Windows 11                                         ║
 ║  Encodage    : UTF-8                                                           ║
 ╟────────────────────────────────────────────────────────────────────────────────║
-║  Nom de fichier : Configuration des coursForm.cs
+║  Nom de fichier : ConfigurationDesCours.xaml.cs
 ╚════════════════════════════════════════════════════════════════════════════════╝
 */
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,6 +44,7 @@ public partial class ConfigurationDesCours: Window {
   private DataSet _dataSetExcelSélection;
   internal bool FicheModifiee { get; private set; }
   internal string ValeurCMValidee { get; private set; } = string.Empty;
+  internal string ValeurAPPValidee { get; private set; } = string.Empty;
   internal string ValeurTDValidee { get; private set; } = string.Empty;
   internal string ValeurTPValidee { get; private set; } = string.Empty;
 
@@ -80,6 +80,10 @@ public partial class ConfigurationDesCours: Window {
           Valeur_CM_Module.Text = durée;
           break;
 
+        case "APP":
+          Valeur_APP_Module.Text = durée;
+          break;
+
         case "TD":
           Valeur_TD_Module.Text = durée;
           break;
@@ -112,7 +116,7 @@ public partial class ConfigurationDesCours: Window {
   internal void ModifierVolumeHoraire(string NomModule,Label Matière,DataGrid dataGrid,ServiceManagerProfile profile) {
     _profile = profile;
     ConfigurationFicheMatière(NomModule,dataGrid);
-    ClasseBaseDeDonnées.ChangementBaseDeDonnéesFicheModule(_dataSetExcelSélection,Matière,NouvelleValeurCM,NouvelleValeurTD,NouvelleValeurTP);
+    ClasseBaseDeDonnées.ChangementBaseDeDonnéesFicheModule(_dataSetExcelSélection,Matière,NouvelleValeurCM,NouvelleValeurAPP,NouvelleValeurTD,NouvelleValeurTP);
   }
 
   private string _codeCourtModule = string.Empty;
@@ -141,6 +145,7 @@ public partial class ConfigurationDesCours: Window {
     txtCodeOSE.Content = codeOse;
 
     ValeurCM.Text = ClasseBaseDeDonnées.RechercheValeur(_dataSetExcelSélection,NomModule,ExcelSchemaNames.Columns.CM,ExcelSchemaNames.Tables.Module);
+    ValeurAPP.Text = ClasseBaseDeDonnées.RechercheValeur(_dataSetExcelSélection,NomModule,ExcelSchemaNames.Columns.APP,ExcelSchemaNames.Tables.Module);
     ValeurTD.Text = ClasseBaseDeDonnées.RechercheValeur(_dataSetExcelSélection,NomModule,ExcelSchemaNames.Columns.TD,ExcelSchemaNames.Tables.Module);
     ValeurTP.Text = ClasseBaseDeDonnées.RechercheValeur(_dataSetExcelSélection,NomModule,ExcelSchemaNames.Columns.TP,ExcelSchemaNames.Tables.Module);
     ShowDialog();
@@ -148,12 +153,14 @@ public partial class ConfigurationDesCours: Window {
 
   private void AfficherValeursCourantes() {
     NouvelleValeurCM.Text = ValeurCM.Text;
+    NouvelleValeurAPP.Text = ValeurAPP.Text;
     NouvelleValeurTD.Text = ValeurTD.Text;
     NouvelleValeurTP.Text = ValeurTP.Text;
   }
 
   private void MiseAjourNouvellesValeurs() {
     ValeurCM.Text = NouvelleValeurCM.Text;
+    ValeurAPP.Text = NouvelleValeurAPP.Text;
     ValeurTD.Text = NouvelleValeurTD.Text;
     ValeurTP.Text = NouvelleValeurTP.Text;
   }
@@ -166,7 +173,7 @@ public partial class ConfigurationDesCours: Window {
   private void MiseAJourIUT_Click(object sender,RoutedEventArgs e) {
     MiseAjourNouvellesValeurs();
     FenêtreCorrectionIUT.Visibility = Visibility.Collapsed;
-    ClasseBaseDeDonnées.ChangementBaseDeDonnéesFicheModule(_dataSetExcelSélection,texteMatière,NouvelleValeurCM,NouvelleValeurTD,NouvelleValeurTP);
+    ClasseBaseDeDonnées.ChangementBaseDeDonnéesFicheModule(_dataSetExcelSélection,texteMatière,NouvelleValeurCM,NouvelleValeurAPP,NouvelleValeurTD,NouvelleValeurTP);
   }
 
   internal void ValiderficheMatière_Click(object sender,RoutedEventArgs e) {
@@ -175,19 +182,11 @@ public partial class ConfigurationDesCours: Window {
       MessageBox.Show(this,"Aucun module n'est sélectionné.","Validation fiche matière",MessageBoxButton.OK,MessageBoxImage.Warning);
       return;
     }
-
-    Stopwatch chronoTotal = Stopwatch.StartNew();
-
     try {
       Mouse.OverrideCursor = Cursors.Wait;
       IsEnabled = false;
 
-      Stopwatch chrono = Stopwatch.StartNew();
-
       RestaurerCheminsClasseursDepuisProfil();
-      Debug.WriteLine($"[CHRONO] Restaurer chemins : {chrono.ElapsedMilliseconds} ms");
-
-      chrono.Restart();
 
       DialogueServiceGEII.MiseAJourModule_fichierDeServiceExcel(
         FichierDeSelection.Selection,
@@ -195,34 +194,21 @@ public partial class ConfigurationDesCours: Window {
         ExcelSchemaNames.Tables.Module,
         module,true);
 
-      Debug.WriteLine($"[CHRONO] Selection / Module : {chrono.ElapsedMilliseconds} ms");
-
-      chrono.Restart();
-
-      //ClasseBaseDeDonnées.MiseAJourDureesAttenduesGlobal_Epplus(
-      //  FichierDeService.Service,
-      //  _codeCourtModule,
-      //  NouvelleValeurCM.Text,
-      //  NouvelleValeurTD.Text,
-      //  NouvelleValeurTP.Text);
-
       ClasseBaseDeDonnées.MiseAJourDureesAttenduesGlobal_OleDb(
           FichierDeService.Service,
           _codeCourtModule,
           NouvelleValeurCM.Text,
+          NouvelleValeurAPP.Text,
           NouvelleValeurTD.Text,
           NouvelleValeurTP.Text);
 
-      Debug.WriteLine($"[CHRONO] Service / DUREE_ATTENDUE : {chrono.ElapsedMilliseconds} ms");
-
       ValeurCMValidee = NouvelleValeurCM.Text;
+      ValeurAPPValidee = NouvelleValeurAPP.Text;
       ValeurTDValidee = NouvelleValeurTD.Text;
       ValeurTPValidee = NouvelleValeurTP.Text;
 
       FicheModifiee = true;
       DialogResult = true;
-
-      Debug.WriteLine($"[CHRONO] TOTAL validation : {chronoTotal.ElapsedMilliseconds} ms");
     }
     catch (Exception ex) {
       MessageBox.Show(

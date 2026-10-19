@@ -29,11 +29,17 @@
     "Geii2_FI_FormationName": "GEII 2 FI",
     "Geii2_FI_StudentCount": 43,
     "Geii2_FI_TdGroupCount": 3,
+    "Geii2_FI_CmGroupCount": 1,
     "Geii2_FI_TpGroupCount": 5,
     "Geii2_FI_TpSpGroupCount": 5,
+    "Geii2_FI_Cm_officiel_GroupCount": 0,
     "Geii2_FI_Td_officiel_GroupCount": 2,
     "Geii2_FI_Tp_officiel_GroupCount": 3,
     "Geii2_FI_TpSp_officiel_GroupCount": 3,
+    "Geii2_FI_Cm_GroupNames": [
+      null,
+      null
+    ],
     "Geii2_FI_Td_GroupNames": [
       "ESE__Fi",
       "EME__Fi",
@@ -94,9 +100,9 @@
       "TP3"
     ],
     "TotalGroupe_Geii2_Tp_FI_officiel": [
+      13,
       16,
-      14,
-      13
+      14
     ],
     "Geii2_FI_TpSp_officiel_GroupNames": [
       "TP1",
@@ -115,7 +121,7 @@
     "Geii2_FA_TpGroupCount": 2,
     "Geii2_FA_TpSpGroupCount": 2,
     "Geii2_FA_Td_officiel_GroupCount": 1,
-    "Geii2_FA_Tp_officiel_GroupCount": 1,
+    "Geii2_FA_Tp_officiel_GroupCount": 2,
     "Geii2_FA_TpSp_officiel_GroupCount": 2,
     "Geii2_FA_Td_GroupNames": [
       "ESE__FA",
@@ -129,9 +135,9 @@
     ],
     "TotalGoupe_Geii2_Td_FA": [],
     "Geii2_FA_Tp_GroupNames": [
-      "ESE21_FA",
+      "ESE23_FA",
       null,
-      "EME21_FA",
+      "EME23_FA",
       null,
       null,
       null
@@ -145,9 +151,9 @@
       0
     ],
     "Geii2_FA_TpSp_GroupNames": [
-      "ESE21_FA",
+      "ESE21_Fi",
       null,
-      "EME21_FA",
+      "EME23_FA",
       null,
       null,
       null
@@ -172,13 +178,13 @@
     ],
     "Geii2_FA_Tp_officiel_GroupNames": [
       "TP1",
-      null,
+      "TP2",
       null
     ],
     "TotalGroupe_Geii2_Tp_FA_officiel": [
+      13,
       16,
-      14,
-      13
+      14
     ],
     "Geii2_FA_TpSp_officiel_GroupNames": [
       "TP1",
@@ -223,6 +229,12 @@
       false
     ],
     "Geii2_FI_Tp_Checks": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
       true,
       true,
       false,
@@ -234,24 +246,18 @@
       true,
       true,
       false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      true,
       false
     ],
     "Geii2_FA_Tp_Checks": [
       true,
       false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
       true,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
       false,
       false,
       false,
@@ -356,15 +362,15 @@
   "SaveState": {
     "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "ENER3 habil",
+    "CurrentModule": "REGUL3",
     "CurrentCourse": "CM",
-    "CurrentParcours": "Parcours EME"
+    "CurrentParcours": "Tronc commun"
   },
   "Window": {
-    "Left": 192.0,
-    "Top": 117.0,
-    "Width": 1433.0,
-    "Height": 784.0,
+    "Left": 157.0,
+    "Top": 45.0,
+    "Width": 1545.0,
+    "Height": 837.0,
     "State": 0
   },
   "Mutualisations": [
@@ -373,22 +379,44 @@
       "Formation": "FI",
       "Semestre": "S3",
       "Parcours": "Parcours EME",
+      "EstMutualise": true,
       "Groupes": {
         "TD1": [
-          "ESE__Fi",
-          "ESE__Fa",
           "EME__Fi",
           "EME__Fa",
           "AII__Fi"
-        ]
+        ],
+        "TP1": [
+          "EME21__Fi",
+          "EME21__Fa"
+        ],
+        "TP2": [
+          "AII21__Fi",
+          "EME22__Fi"
+        ],
+        "CM": [
+          "Cm__Fi",
+          "CM__Fa"
+        ],
+        "TP3": []
       },
-      "Effectifs": {}
+      "Effectifs": {
+        "CM": 55,
+        "TD1": 35,
+        "TD2": 0,
+        "TD3": 0,
+        "TP1": 17,
+        "TP2": 18,
+        "TP3": 0,
+        "TP4": 0
+      }
     },
     {
       "Module": "ENER3 habil",
       "Formation": "FI",
       "Semestre": "S3",
       "Parcours": "Parcours EME",
+      "EstMutualise": true,
       "Groupes": {
         "TD1": [
           "ESE__Fi",
@@ -398,15 +426,222 @@
         "TD2": [
           "EME__Fi",
           "AII__Fi"
+        ],
+        "CM": [
+          "Cm__Fi",
+          "CM__Fa"
         ]
       },
       "Effectifs": {
+        "CM": 55,
         "TD1": 27,
         "TD2": 28,
         "TD3": 0,
         "TP1": 0,
         "TP2": 0,
-        "TP3": 0
+        "TP3": 0,
+        "TP4": 0
+      }
+    },
+    {
+      "Module": "VE3",
+      "Formation": "FI",
+      "Semestre": "S3",
+      "Parcours": "Tronc commun",
+      "EstMutualise": true,
+      "Groupes": {
+        "TD1": [
+          "ESE__Fi",
+          "EME__Fi",
+          "AII__Fi"
+        ]
+      },
+      "Effectifs": {
+        "CM": 0,
+        "TD1": 43,
+        "TD2": 0,
+        "TD3": 0,
+        "TP1": 0,
+        "TP2": 0,
+        "TP3": 0,
+        "TP4": 0
+      }
+    },
+    {
+      "Module": "OML3",
+      "Formation": "FI",
+      "Semestre": "S3",
+      "Parcours": "Tronc commun",
+      "EstMutualise": null,
+      "Groupes": {
+        "TD3": [
+          "ESE__Fi",
+          "ESE__Fa",
+          "EME__Fi",
+          "EME__Fa",
+          "AII__Fi"
+        ],
+        "CM": [
+          "Cm__Fi",
+          "CM__Fa"
+        ],
+        "TD1": [],
+        "TD2": []
+      },
+      "Effectifs": {
+        "CM": 55,
+        "TD1": 0,
+        "TD2": 0,
+        "TD3": 55,
+        "TP1": 0,
+        "TP2": 0,
+        "TP3": 0,
+        "TP4": 0
+      }
+    },
+    {
+      "Module": "INFO3",
+      "Formation": "FI",
+      "Semestre": "S3",
+      "Parcours": "Tronc commun",
+      "EstMutualise": true,
+      "Groupes": {
+        "TD1": [
+          "ESE__Fi",
+          "ESE__Fa",
+          "EME__Fi",
+          "EME__Fa",
+          "AII__Fi"
+        ],
+        "TP1": [
+          "ESE21__Fi",
+          "ESE22__Fi"
+        ],
+        "TP2": [
+          "EME21__Fi",
+          "EME22__Fi"
+        ],
+        "TP3": [
+          "AII21__Fi"
+        ],
+        "CM": [
+          "Cm__Fi"
+        ]
+      },
+      "Effectifs": {
+        "CM": 43,
+        "TD1": 55,
+        "TD2": 0,
+        "TD3": 0,
+        "TP1": 16,
+        "TP2": 14,
+        "TP3": 13,
+        "TP4": 0
+      }
+    },
+    {
+      "Module": "ENER3",
+      "Formation": "FI",
+      "Semestre": "S3",
+      "Parcours": "Tronc commun",
+      "EstMutualise": true,
+      "Groupes": {
+        "CM": [
+          "CM__Fa",
+          "Cm__Fi"
+        ],
+        "TD1": [
+          "ESE__Fi",
+          "ESE__Fa",
+          "EME__Fi",
+          "EME__Fa",
+          "AII__Fi"
+        ],
+        "TP1": [
+          "AII21__Fi"
+        ],
+        "TP2": [
+          "EME21__Fi"
+        ],
+        "TP3": [
+          "ESE21__Fi",
+          "ESE22__Fi"
+        ],
+        "TP4": [
+          "EME22__Fi"
+        ]
+      },
+      "Effectifs": {
+        "CM": 55,
+        "TD1": 55,
+        "TD2": 0,
+        "TD3": 0,
+        "TP1": 13,
+        "TP2": 10,
+        "TP3": 16,
+        "TP4": 4
+      }
+    },
+    {
+      "Module": "MAINTENANCE",
+      "Formation": "FI",
+      "Semestre": "S3",
+      "Parcours": "Tronc commun",
+      "EstMutualise": true,
+      "Groupes": {
+        "TD1": [
+          "ESE__Fi",
+          "EME__Fi",
+          "AII__Fi"
+        ],
+        "CM": [
+          "Cm__Fi"
+        ]
+      },
+      "Effectifs": {
+        "CM": 43,
+        "TD1": 43,
+        "TD2": 0,
+        "TD3": 0,
+        "TP1": 0,
+        "TP2": 0,
+        "TP3": 0,
+        "TP4": 0
+      }
+    },
+    {
+      "Module": "ELEN3",
+      "Formation": "FA",
+      "Semestre": "S3",
+      "Parcours": "Tronc commun",
+      "EstMutualise": true,
+      "Groupes": {
+        "TD1": [
+          "ESE__Fa",
+          "EME__Fa"
+        ],
+        "TP1": [
+          "ESE21__Fa",
+          "ESE23__Fa"
+        ],
+        "TP2": [
+          "EME21__Fa",
+          "EME23__Fa"
+        ],
+        "TP3": [],
+        "CM": [
+          "CM__Fa"
+        ]
+      },
+      "Effectifs": {
+        "CM": 12,
+        "TD1": 12,
+        "TD2": 0,
+        "TD3": 0,
+        "TP1": 5,
+        "TP2": 7,
+        "TP3": 0,
+        "TP4": 0
       }
     }
   ]

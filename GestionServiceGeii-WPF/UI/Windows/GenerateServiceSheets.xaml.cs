@@ -10,20 +10,20 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 17/6/2026 - 11:30
+║  Le 18/10/2026 - 12:04
 ╟────────────────────────────────────────────────────────────────────────────────║
-║     Projet Visual Studio Professional 2026 : GestionServicesGEII
+║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
-║     Version : 1.5.3
+║     Version : 1.0.0
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║                Visual Studio Professional 2026 - Insiders                      ║
 ║                ──────────────────────────────────────────                      ║
 ║  Langage     : C# 14                                                           ║
-║  Technologie : .NET 10 / WinForms                                              ║
+║  Technologie : .NET 10 / WPF                                                   ║
 ║  Plateforme  : Windows 10 / Windows 11                                         ║
 ║  Encodage    : UTF-8                                                           ║
 ╟────────────────────────────────────────────────────────────────────────────────║
-║  Nom de fichier : GenerateServiceSheetsForm.cs
+║  Nom de fichier : GenerateServiceSheets.xaml.cs
 ╚════════════════════════════════════════════════════════════════════════════════╝
 */
 using System.Data;

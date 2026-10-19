@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 24/9/2026 - 00:10
+║  Le 18/10/2026 - 12:04
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -29,11 +29,15 @@
 namespace GestionServiceGeii.Shared.Librairie_GEII {
   public class Promotion {
     internal int NbEtudiants { get; set; }
+    internal int NbGroupeCM { get; set; } = 1;
     internal int NbGroupeTD { get; set; }
+    internal int NbGroupeCM_officiel { get; set; }
     internal int NbGroupeTD_officiel { get; set; }
     internal int NbGroupeTP { get; set; }
+    internal int NbGroupeTP_Mutel { get; set; }
     internal int NbGroupeTP_officiel { get; set; }
     internal int NbGroupeTPSp { get; set; }
+    internal int NbGroupeTPSp_Mutuel { get; set; }
     internal int NbGroupeTPSp_officiel { get; set; }
     internal string? Cours { get; set; }
     internal string?[] NomGroupeTD = [];
@@ -49,5 +53,6 @@ namespace GestionServiceGeii.Shared.Librairie_GEII {
     internal static Promotion Geii_2_FI { get; set; } = new();
     internal static Promotion Geii_1_FA { get; set; } = new();
     internal static Promotion Geii_2_FA { get; set; } = new();
+    internal static Promotion Geii_2_Mutuel { get; set; } = new();
   }
 }

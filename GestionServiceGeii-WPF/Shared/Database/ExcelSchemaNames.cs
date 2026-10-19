@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 24/9/2026 - 00:10
+║  Le 18/10/2026 - 12:04
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -73,6 +73,7 @@ namespace GestionServiceGeii.Shared.Database {
       internal const string Libelle = "Libellé";
       internal const string OSE = "OSE";
       internal const string CM = "CM";
+      internal const string APP = "APP";
       internal const string TD = "TD";
       internal const string TP = "TP";
       internal const string Parcours = "Parcours";

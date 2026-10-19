@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 24/9/2026 - 00:10
+║  Le 18/10/2026 - 12:03
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -99,12 +99,15 @@ namespace GestionServiceGeii.Core.Profiles {
     public string Geii2_FI_FormationName { get; set; } = "GEII 2 FI";
     public int Geii2_FI_StudentCount { get; set; }
     public int Geii2_FI_TdGroupCount { get; set; }
+    public int Geii2_FI_CmGroupCount { get; set; }
     public int Geii2_FI_TpGroupCount { get; set; }
     public int Geii2_FI_TpSpGroupCount { get; set; }
+    public int Geii2_FI_Cm_officiel_GroupCount { get; set; }
     public int Geii2_FI_Td_officiel_GroupCount { get; set; }
     public int Geii2_FI_Tp_officiel_GroupCount { get; set; }
     public int Geii2_FI_TpSp_officiel_GroupCount { get; set; }
     //---------------
+    public string[] Geii2_FI_Cm_GroupNames { get; set; } = [];
     public string[] Geii2_FI_Td_GroupNames { get; set; } = [];
     public int[] Geii2_FI_TD_Effectifs { get; set; } = [];
     public int[] TotalGoupe_Geii2_Td_FI { get; set; } = [];

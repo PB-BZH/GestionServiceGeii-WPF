@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 24/9/2026 - 00:11
+║  Le 18/10/2026 - 12:04
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -30,7 +30,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -81,6 +80,7 @@ public partial class DialogueServiceGEII: Window {
   internal static string[] NomGroupeTD_Geii1 = new string[4];
   internal static string[] NomGroupeTP_Geii1 = new string[8];
 
+  internal static string[] NomGroupeCM_Geii2_FI = new string[3];
   internal static string[] NomGroupeTD_Geii2_FI = new string[3];
   internal static int nbGroupeTD_officiel_Geii2_FI;
   internal static string[] NomGroupeTD_Geii2_officiel_FI = new string[3];
@@ -96,6 +96,10 @@ public partial class DialogueServiceGEII: Window {
   internal static string[] NomGroupeTP_officiel_Geii2_FA = new string[6];
   internal static string[] NomGroupeTPSp_Geii2_FA = new string[6];
   internal static string[] NomGroupeTPSp_officiel_Geii2_FA = new string[6];
+
+  internal static string[] NomGroupeTD_Geii2_Mutuel = new string[3];
+  internal static string[] NomGroupeTP_Geii2_Mutuel = new string[6];
+  internal static string[] NomGroupeTPSp_Geii2_Mutuel = new string[6];
 
   private ServiceManagerProfile _profile = new();
   private string _currentProfilePath = string.Empty;
@@ -182,6 +186,11 @@ public partial class DialogueServiceGEII: Window {
     set => valeur_CM = value ?? Valeur_CM;
   }
 
+  private Label Valeur_APP {
+    get => valeur_APP;
+    set => valeur_APP = value ?? Valeur_APP;
+  }
+
   private Label Valeur_TD {
     get => valeur_TD;
     set => valeur_TD = value ?? valeur_TD;
@@ -234,30 +243,6 @@ public partial class DialogueServiceGEII: Window {
       _ => SaveWindowStateMode.Normal
     };
   }
-
-  private static void ExporterDataTableCsv(DataTable table,string cheminFichier) {
-    if (table == null)
-      throw new ArgumentNullException(nameof(table));
-
-    static string Csv(object? valeur) {
-      string texte = valeur == null || valeur == DBNull.Value ? "" : Convert.ToString(valeur) ?? "";
-      return "\"" + texte.Replace("\"","\"\"") + "\"";
-    }
-
-    using StreamWriter fichier = new(cheminFichier,false,new UTF8Encoding(true));
-
-    fichier.WriteLine(string.Join(";",table.Columns.Cast<DataColumn>().Select(c => Csv(c.ColumnName))));
-
-    foreach (DataRow ligne in table.Rows) {
-      if (ligne.RowState == DataRowState.Deleted)
-        continue;
-
-      fichier.WriteLine(string.Join(";",table.Columns.Cast<DataColumn>().Select(c => Csv(ligne[c]))));
-    }
-
-    Debug.WriteLine($"[EXPORT CSV] {table.Rows.Count} lignes exportées vers {cheminFichier}");
-  }
-
 
   private void ApplyProfileToUi() {
     string title = "Gestion Services GEII";
@@ -358,6 +343,10 @@ public partial class DialogueServiceGEII: Window {
     cm.Setters.Add(new Setter(Control.BackgroundProperty,Brushes.LightBlue));
     cm.Setters.Add(new Setter(Control.ForegroundProperty,Brushes.Black));
 
+    DataTrigger app = new() { Binding = new Binding(ExcelSchemaNames.Columns.Cours),Value = "APP" };
+    app.Setters.Add(new Setter(Control.BackgroundProperty,Brushes.Yellow));
+    app.Setters.Add(new Setter(Control.ForegroundProperty,Brushes.Black));
+
     DataTrigger td = new() { Binding = new Binding(ExcelSchemaNames.Columns.Cours),Value = "TD" };
     td.Setters.Add(new Setter(Control.BackgroundProperty,Brushes.LightGreen));
     td.Setters.Add(new Setter(Control.ForegroundProperty,Brushes.Black));
@@ -372,6 +361,7 @@ public partial class DialogueServiceGEII: Window {
     attente.Setters.Add(new Setter(Control.FontWeightProperty,FontWeights.Bold));
 
     style.Triggers.Add(cm);
+    style.Triggers.Add(app);
     style.Triggers.Add(td);
     style.Triggers.Add(tp);
     style.Triggers.Add(attente);
@@ -439,6 +429,7 @@ public partial class DialogueServiceGEII: Window {
       return;
 
     FormationGEII.Geii_2_FI.NbEtudiants = _profile.Groups.Geii2_FI_StudentCount;
+    FormationGEII.Geii_2_FI.NbGroupeCM = _profile.Groups.Geii2_FI_Cm_officiel_GroupCount;
     FormationGEII.Geii_2_FI.NbGroupeTD_officiel = _profile.Groups.Geii2_FI_Td_officiel_GroupCount;
     FormationGEII.Geii_2_FI.NbGroupeTP_officiel = _profile.Groups.Geii2_FI_Tp_officiel_GroupCount;
     FormationGEII.Geii_2_FI.NbGroupeTPSp_officiel = _profile.Groups.Geii2_FI_TpSp_officiel_GroupCount;
@@ -459,8 +450,51 @@ public partial class DialogueServiceGEII: Window {
       = Visibility.Visible;
   }
 
-  private void
-    RestaurerEffectifsGeii2_FA_DepuisProfil() {
+  private MutualisationCours? RechercherMutualisationModule() {
+    if (_profile?.Mutualisations == null)
+      return null;
+
+    return _profile.Mutualisations.FirstOrDefault(m =>
+      string.Equals(m.Module,Module.Text.Trim(),StringComparison.OrdinalIgnoreCase) &&
+      string.Equals(m.Formation,Formation.Text.Trim(),StringComparison.OrdinalIgnoreCase) &&
+      string.Equals(m.Semestre,Semestre.Text.Trim(),StringComparison.OrdinalIgnoreCase) &&
+      string.Equals(m.Parcours,Parcours.Text.Trim(),StringComparison.OrdinalIgnoreCase));
+  }
+
+  private int RechercherEffectifMutualise(string groupe) {
+    MutualisationCours? mutualisation = RechercherMutualisationModule();
+
+    return mutualisation?.Effectifs?.TryGetValue(groupe,out int effectif) == true ? effectif : 0;
+  }
+
+  private void RestaurerGroupesMutualisesModuleDepuisProfil() {
+    MutualisationCours? mutualisation = RechercherMutualisationModule();
+
+    string[] groupesTD = [];
+    string[] groupesTP = [];
+
+    if (mutualisation?.EstMutualise == true) {
+      groupesTD = MutualisationCours.OngletsTD
+        .Where(onglet => mutualisation.Groupes.TryGetValue(onglet,out List<string>? groupes) && groupes.Count > 0)
+        .ToArray();
+
+      groupesTP = MutualisationCours.OngletsTP
+        .Where(onglet => mutualisation.Groupes.TryGetValue(onglet,out List<string>? groupes) && groupes.Count > 0)
+        .ToArray();
+    }
+
+    NomGroupeTD_Geii2_Mutuel = groupesTD;
+    NomGroupeTP_Geii2_Mutuel = groupesTP;
+    FormationGEII.Geii_2_Mutuel.NbGroupeTD = groupesTD.Length;
+    FormationGEII.Geii_2_Mutuel.NbGroupeTP = groupesTP.Length;
+
+    étatEffectif_Geii2_Mutuel.Text = RechercherEffectifMutualise("CM").ToString() + " étudiants";
+    étatNbGroupeTD_Geii2_Mutuel.Text = FormationGEII.Geii_2_Mutuel.NbGroupeTD + " groupes de TD, ";
+    étatNbGroupeTP_Geii2_Mutuel.Text = FormationGEII.Geii_2_Mutuel.NbGroupeTP + " groupes de TP, ";
+    étatNbGroupeTPSp_Geii2_Mutuel.Text = FormationGEII.Geii_2_Mutuel.NbGroupeTPSp + " groupes de TP sp";
+  }
+
+  private void RestaurerEffectifsGeii2_FA_DepuisProfil() {
     if (_profile == null || _profile.Groups == null)
       return;
 
@@ -731,17 +765,22 @@ public partial class DialogueServiceGEII: Window {
     string formation = Formation.Text?.Trim() ?? string.Empty;
     string semestre = Semestre.Text?.Trim() ?? string.Empty;
 
-    splCoursGeii1.Visibility = Visibility.Collapsed;
-    splCoursGeii2_FI.Visibility = Visibility.Collapsed;
-    splCoursGeii2_FA.Visibility = Visibility.Collapsed;
+    bool mutualisation = chkMutualisation.IsChecked == true;
+    bool troncCommun = Parcours.Text.Trim() == "Tronc commun";
+    bool geii1 = formation == "FI" && semestre is "S1" or "S2";
+    bool geii2 = semestre is "S3" or "S4";
 
-    if (formation == "FI" && (semestre == "S1" || semestre == "S2"))
-      splCoursGeii1.Visibility = Visibility.Visible;
-    else if (formation == "FI" && (semestre == "S3" || semestre == "S4"))
-      splCoursGeii2_FI.Visibility = Visibility.Visible;
-    else if (formation == "FA" && (semestre == "S3" || semestre == "S4"))
-      splCoursGeii2_FA.Visibility = Visibility.Visible;
+    splCoursGeii1.Visibility = geii1 && !mutualisation ? Visibility.Visible : Visibility.Collapsed;
+    splCoursGeii2_FI.Visibility = geii2 && formation == "FI" && !mutualisation ? Visibility.Visible : Visibility.Collapsed;
+    splCoursGeii2_FA.Visibility = geii2 && formation == "FA" && !mutualisation ? Visibility.Visible : Visibility.Collapsed;
+    grbTP_FI.Visibility = geii2 && troncCommun && !mutualisation ? Visibility.Visible : Visibility.Collapsed;
+    grbTPSp_FI.Visibility = geii2 && troncCommun && !mutualisation ? Visibility.Collapsed : Visibility.Visible;
+    splCoursGeii2_Mutuel.Visibility = geii2 && mutualisation ? Visibility.Visible : Visibility.Collapsed;
+
+    grbTP_Mutuel.Visibility = troncCommun ? Visibility.Visible : Visibility.Collapsed;
+    grbTPSp_Mutuel.Visibility = troncCommun ? Visibility.Collapsed : Visibility.Visible;
   }
+
 
   private void Formation_SelectionChanged(object sender,SelectionChangedEventArgs e) {
     if (_suspendViewRefresh || _isInitializingView)
@@ -749,8 +788,8 @@ public partial class DialogueServiceGEII: Window {
     _suspendViewRefresh = true;
 
     try {
-      AfficherListesDonnées(Parcours);
-      AfficherListesDonnées(Module);
+      //AfficherListesDonnées(Parcours);
+      //AfficherListesDonnées(Module);
     }
     finally {
       _suspendViewRefresh = false;
@@ -771,6 +810,7 @@ public partial class DialogueServiceGEII: Window {
     _suspendViewRefresh = true;
 
     try {
+      //AfficherListesDonnées(Formation);
       AfficherListesDonnées(Module);
     }
     finally {
@@ -1138,7 +1178,7 @@ public partial class DialogueServiceGEII: Window {
 
   internal void ControleCouleurTabItem() {
     List<TabItem> listeTD = new() { titmTd1,titmTd2,titmTd3 };
-    List<TabItem> listeTP = new() { titmTp1,titmTp2,titmTp3 };
+    List<TabItem> listeTP = new() { titmTp1,titmTp2,titmTp3,titmTp4 };
 
     titmCM.Background = titmCM.IsSelected ? Brushes.Orange : Brushes.LightBlue;
     titmCM.Foreground = Brushes.Black;
@@ -1160,69 +1200,44 @@ public partial class DialogueServiceGEII: Window {
     Label nbGroupeTd,Label nbGroupeTdTotal,Label nbGroupeTp,Label nbGroupeTpTotal,
     Button ajouterCm,Button ajouterTd,Button ajouterTp,Button supprimerCm,
     Button supprimerTd,Button supprimerTp,Label? nbGroupeTpSp = null,Label? nbGroupeTpSpTotal = null,
-    Button? ajouterTpSp = null,Button? supprimerTpSp = null) {
-    ushort td = ushort.Parse(nbGroupeTd.Content?.ToString() ?? "0");
-    ushort tdTotal = ushort.Parse(nbGroupeTdTotal.Content?.ToString() ?? "0");
-    ushort tp = ushort.Parse(nbGroupeTp.Content?.ToString() ?? "0");
-    ushort tpTotal = ushort.Parse(nbGroupeTpTotal.Content?.ToString() ?? "0");
+    Button? ajouterTpSp = null,Button? supprimerTpSp = null,
+    Label? nbGroupeApp = null,Label? nbGroupeAppTotal = null,
+    Button? ajouterApp = null,Button? supprimerApp = null) {
+
+    // Fonction commune de coloration des boutons.
+    static void ColorierBoutons(Label nombre,Label total,Button ajouter,Button supprimer) {
+      ushort nb = ushort.Parse(nombre.Content?.ToString() ?? "0");
+      ushort nbTotal = ushort.Parse(total.Content?.ToString() ?? "0");
+
+      ajouter.Background = nb < nbTotal ? Brushes.Red : Brushes.DarkSeaGreen;
+      supprimer.Background = nb > nbTotal ? Brushes.Red : Brushes.DarkSeaGreen;
+
+      ajouter.IsEnabled = nbTotal > 0;
+      supprimer.IsEnabled = nb > 0;
+    }
 
     ActualiserVisibiliteGroupesTP();
 
-    if (td != tdTotal) {
-      if (td < tdTotal) {
-        ajouterTd.Background = Brushes.Red;
-        supprimerTd.Background = Brushes.DarkSeaGreen;
-      }
-      else {
-        ajouterTd.Background = Brushes.DarkSeaGreen;
-        supprimerTd.Background = Brushes.Red;
-      }
-    }
-    else {
-      ajouterTd.Background = Brushes.DarkSeaGreen;
-      supprimerTd.Background = Brushes.DarkSeaGreen;
-    }
+    // TD : tous les parcours.
+    ColorierBoutons(nbGroupeTd,nbGroupeTdTotal,ajouterTd,supprimerTd);
 
-    if (Parcours.Text == "Tronc commun") {
-      if (tp != tpTotal) {
-        if (tp < tpTotal) {
-          ajouterTp.Background = Brushes.Red;
-          supprimerTp.Background = Brushes.DarkSeaGreen;
-        }
-        else {
-          ajouterTp.Background = Brushes.DarkSeaGreen;
-          supprimerTp.Background = Brushes.Red;
-        }
-      }
-      else {
-        ajouterTp.Background = Brushes.DarkSeaGreen;
-        supprimerTp.Background = Brushes.DarkSeaGreen;
-      }
-    }
-    if (Parcours.Text == "Parcours EME" || Parcours.Text == "Parcours ESE" || Parcours.Text == "Parcours AII") {
+    // TP classiques : tronc commun.
+    if (Parcours.Text == "Tronc commun")
+      ColorierBoutons(nbGroupeTp,nbGroupeTpTotal,ajouterTp,supprimerTp);
+
+    //APP: tronc commun, conformément à ta version actuelle.
+    if (nbGroupeApp != null && nbGroupeAppTotal != null &&
+        ajouterApp != null && supprimerApp != null)
+      ColorierBoutons(nbGroupeApp,nbGroupeAppTotal,ajouterApp,supprimerApp);
+
+    // TP spécialisés : parcours EME, ESE ou AII.
+    if (Parcours.Text is "Parcours EME" or "Parcours ESE" or "Parcours AII") {
       if (nbGroupeTpSp != null && nbGroupeTpSpTotal != null &&
-          ajouterTpSp != null && supprimerTpSp != null) {
-
-        ushort tpSp = ushort.Parse(nbGroupeTpSp.Content?.ToString() ?? "0");
-        ushort tpSpTotal = ushort.Parse(nbGroupeTpSpTotal.Content?.ToString() ?? "0");
-
-        if (tpSp != tpSpTotal) {
-          if (tpSp < tpSpTotal) {
-            ajouterTpSp.Background = Brushes.Red;
-            supprimerTpSp.Background = Brushes.DarkSeaGreen;
-          }
-          else {
-            ajouterTpSp.Background = Brushes.DarkSeaGreen;
-            supprimerTpSp.Background = Brushes.Red;
-          }
-        }
-        else {
-          ajouterTpSp.Background = Brushes.DarkSeaGreen;
-          supprimerTpSp.Background = Brushes.DarkSeaGreen;
-        }
-      }
+          ajouterTpSp != null && supprimerTpSp != null)
+        ColorierBoutons(nbGroupeTpSp,nbGroupeTpSpTotal,ajouterTpSp,supprimerTpSp);
     }
 
+    // CM : boutons toujours verts.
     ajouterCm.Background = Brushes.DarkSeaGreen;
     supprimerCm.Background = Brushes.DarkSeaGreen;
   }
@@ -1255,6 +1270,12 @@ public partial class DialogueServiceGEII: Window {
 
     nbGroupeTd_Geii2_FI.Content = CompteurTD.ToString();
     nbGroupeTp_Geii2_FI.Content = CompteurTP.ToString();
+    nbGroupeTpSp_Geii2_FI.Content = CompteurTP.ToString();
+    nbGroupeApp_Geii2_FI.Content = CompteurAPP.ToString();
+    nbGroupeAppTotal_Geii2_FI.Content = AppEstEnPromo(VisualisationDonnées)
+      ? FormationGEII.Geii_2_FI.NbGroupeCM_officiel.ToString()
+      : FormationGEII.Geii_2_FI.NbGroupeTD_officiel.ToString();
+
     nbGroupeTdTotal_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbGroupeTD_officiel.ToString();
     nbGroupeTpTotal_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbGroupeTP_officiel.ToString();
     nbGroupeTpSpTotal_Geii2_FI.Content = FormationGEII.Geii_2_FI.NbGroupeTPSp_officiel.ToString();
@@ -1262,10 +1283,28 @@ public partial class DialogueServiceGEII: Window {
 
     nbGroupeTd_Geii2_FA.Content = CompteurTD.ToString();
     nbGroupeTp_Geii2_FA.Content = CompteurTP.ToString();
+    nbGroupeTpSp_Geii2_FA.Content = CompteurTP.ToString();
+    nbGroupeApp_Geii2_FA.Content = CompteurAPP.ToString();
+    nbGroupeAppTotal_Geii2_FA.Content = AppEstEnPromo(VisualisationDonnées)
+      ? FormationGEII.Geii_2_FA.NbGroupeCM_officiel.ToString()
+      : FormationGEII.Geii_2_FA.NbGroupeTD_officiel.ToString();
     nbGroupeTdTotal_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbGroupeTD_officiel.ToString();
     nbGroupeTpTotal_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbGroupeTP_officiel.ToString();
     nbGroupeTpSpTotal_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbGroupeTPSp_officiel.ToString();
     nbEtudiants_Geii2_FA.Content = FormationGEII.Geii_2_FA.NbEtudiants.ToString();
+
+    nbGroupeTd_Geii2_Mutuel.Content = CompteurTD.ToString();
+    nbGroupeTp_Geii2_Mutuel.Content = CompteurTP.ToString();
+    nbGroupeTpSp_Geii2_Mutuel.Content = CompteurTP.ToString();
+    nbGroupeApp_Geii2_Mutuel.Content = CompteurAPP.ToString();
+    nbGroupeAppTotal_Geii2_Mutuel.Content = AppEstEnPromo(VisualisationDonnées)
+      ? FormationGEII.Geii_2_Mutuel.NbGroupeCM_officiel.ToString()
+      : FormationGEII.Geii_2_Mutuel.NbGroupeTD_officiel.ToString();
+    nbGroupeTdTotal_Geii2_Mutuel.Content = MutualisationCours.OngletsTD.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe)));
+    nbGroupeTpTotal_Geii2_Mutuel.Content = MutualisationCours.OngletsTP.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe)));
+    nbGroupeTpSpTotal_Geii2_Mutuel.Content = MutualisationCours.OngletsTP.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe)));
+    nbEtudiants_Geii2_Mutuel.Content = RechercherEffectifMutualise("CM").ToString() + " étudiants";
+
 
     ControleCouleurBoutonsTDetTP(
       nbGroupeTd_Geii1,
@@ -1293,7 +1332,13 @@ public partial class DialogueServiceGEII: Window {
       nbGroupeTpSp_Geii2_FA,
       nbGroupeTpSpTotal_Geii2_FA,
       boutonAjouterTPSp_Geii2_FA,
-      boutonSupprimerTPSp_Geii2_FA);
+      boutonSupprimerTPSp_Geii2_FA,
+      nbGroupeApp_Geii2_FA,
+      nbGroupeAppTotal_Geii2_FA,
+      boutonAjouterAPP_Geii2_FA,
+      boutonSupprimerAPP_Geii2_FA
+    );
+
 
     ControleCouleurBoutonsTDetTP(
       nbGroupeTd_Geii2_FI,
@@ -1309,7 +1354,33 @@ public partial class DialogueServiceGEII: Window {
       nbGroupeTpSp_Geii2_FI,
       nbGroupeTpSpTotal_Geii2_FI,
       boutonAjouterTPSp_Geii2_FI,
-      boutonSupprimerTPSp_Geii2_FI);
+      boutonSupprimerTPSp_Geii2_FI,
+      nbGroupeApp_Geii2_FI,
+      nbGroupeAppTotal_Geii2_FI,
+      boutonAjouterAPP_Geii2_FI,
+      boutonSupprimerAPP_Geii2_FI
+      );
+
+    ControleCouleurBoutonsTDetTP(
+      nbGroupeTd_Geii2_Mutuel,
+      nbGroupeTdTotal_Geii2_Mutuel,
+      nbGroupeTp_Geii2_Mutuel,
+      nbGroupeTpTotal_Geii2_Mutuel,
+      boutonAjouterCM_Geii2_Mutuel,
+      boutonAjouterTD_Geii2_Mutuel,
+      boutonAjouterTP_Geii2_Mutuel,
+      boutonSupprimerCM_Geii2_Mutuel,
+      boutonSupprimerTD_Geii2_Mutuel,
+      boutonSupprimerTP_Geii2_Mutuel,
+      nbGroupeTpSp_Geii2_Mutuel,
+      nbGroupeTpSpTotal_Geii2_Mutuel,
+      boutonAjouterTPSp_Geii2_Mutuel,
+      boutonSupprimerTPSp_Geii2_Mutuel,
+      nbGroupeApp_Geii2_Mutuel,
+      nbGroupeAppTotal_Geii2_Mutuel,
+      boutonAjouterAPP_Geii2_Mutuel,
+      boutonSupprimerAPP_Geii2_Mutuel
+      );
 
     DétailMatière.Visibility = Visibility.Visible;
   }
@@ -1318,6 +1389,7 @@ public partial class DialogueServiceGEII: Window {
     string nomModule = RechercheNomModule();
 
     Valeur_CM.Content = RechercheValeur(DataSetExcelSélection,nomModule,"CM","Module") + " h";
+    Valeur_APP.Content = RechercheValeur(DataSetExcelSélection,nomModule,"APP","Module") + " h";
     Valeur_TD.Content = RechercheValeur(DataSetExcelSélection,nomModule,"TD","Module") + " h";
     Valeur_TP.Content = RechercheValeur(DataSetExcelSélection,nomModule,"TP","Module") + " h";
   }
@@ -1363,29 +1435,6 @@ public partial class DialogueServiceGEII: Window {
       DataSetExcel = DataSetExcelService;
 
       DataTable global = DataSetExcel.Tables["Global"]!;
-
-      foreach (DataRow ligne in global.Rows.Cast<DataRow>()
-          .Where(r => r["OSE"]?.ToString()?.Trim() == "F2S32B"
-                   && r["Noms"]?.ToString()?.Trim() == "ROUDAUT")) {
-
-        Debug.WriteLine(
-            $"[SAE32 EME] Module='{ligne["Module"]}' | " +
-            $"Cours='{ligne["Cours"]}' | " +
-            $"Noms='{ligne["Noms"]}' | " +
-            $"Durée='{ligne["Durée"]}' | " +
-            $"Groupe='{ligne["Groupe"]}' | " +
-            $"SourceSheet='{ligne["SourceSheet"]}' | " +
-            $"SourceRow='{ligne["SourceRow"]}'");
-      }
-
-
-      if (DataSetExcelService.Tables.Contains("Global")) {
-        string cheminCsv = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-            "Global_Diagnostic.csv");
-
-        ExporterDataTableCsv(DataSetExcelService.Tables["Global"]!,cheminCsv);
-      }
 
       BindSelectionComboBoxes();
       ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
@@ -1568,7 +1617,7 @@ public partial class DialogueServiceGEII: Window {
     Hide();
 
     ChoixTypeDeCours choix = new();
-    choix.InitialiserContexteGroupes(table,groupeCourant,Formation.Text,Parcours.Text);
+    choix.InitialiserContexteGroupes(table,groupeCourant,Formation.Text,Parcours.Text,coursMutualise: chkMutualisation.IsChecked == true);
 
     if (choix.ShowDialog() == true) {
       nouveauTypeCours = choix.TypeDeCoursSelectionne;
@@ -2089,13 +2138,9 @@ public partial class DialogueServiceGEII: Window {
 
 
     if (!string.Equals(cours,coursAttendu,StringComparison.OrdinalIgnoreCase)) {
-      MessageBox.Show(
-          this,
-          "Veuillez sélectionner une ligne de " + coursAttendu + " dans le tableau.",
-          "Ajout ligne",
-          MessageBoxButton.OK,
-          MessageBoxImage.Warning);
-      return;
+      ChoixTypeDeCours choixTypeDeCours = new();
+      if (choixTypeDeCours.DialogResult == true)
+        coursAttendu = choixTypeDeCours.GroupeSelectionne;
     }
 
     (cours,groupeCourant) = AfficheChoixTypeCours(table);
@@ -2180,6 +2225,8 @@ public partial class DialogueServiceGEII: Window {
     nouvelleLigne[ExcelSchemaNames.Columns.TotalType] = duree;
 
     row.Row.Table.Rows.Add(nouvelleLigne);
+
+    AfficheFicheModule();
   }
 
   private async Task AjouterLigne(string type) {
@@ -2187,7 +2234,7 @@ public partial class DialogueServiceGEII: Window {
     await MettreAJourSource();
   }
 
-  private void SuppressionOuMiseAJourVueEtFichierExcel(DataGrid table,string typeCoursAttendu) {
+  private bool SuppressionOuMiseAJourVueEtFichierExcel(DataGrid table,string typeCoursAttendu) {
     int ligne = (int)_celluleSelectionnee.Y;
 
     if (ligne < 0 || ligne >= table.Items.Count ||
@@ -2198,7 +2245,7 @@ public partial class DialogueServiceGEII: Window {
           "Suppression",
           MessageBoxButton.OK,
           MessageBoxImage.Warning);
-      return;
+      return false;
     }
 
     if (row[ExcelSchemaNames.Columns.SourceReferences] is not Dictionary<string,ClasseBaseDeDonnées.ExcelSourceReference> references ||
@@ -2209,7 +2256,7 @@ public partial class DialogueServiceGEII: Window {
           "Suppression",
           MessageBoxButton.OK,
           MessageBoxImage.Warning);
-      return;
+      return false;
     }
 
     string noms = GetBoundRowValue_vue(row,ExcelSchemaNames.Columns.Noms).Trim();
@@ -2225,7 +2272,7 @@ public partial class DialogueServiceGEII: Window {
           "Suppression",
           MessageBoxButton.OK,
           MessageBoxImage.Warning);
-      return;
+      return false;
     }
 
     if (!int.TryParse(dureeText,out int duree)) {
@@ -2235,7 +2282,7 @@ public partial class DialogueServiceGEII: Window {
           "Suppression",
           MessageBoxButton.OK,
           MessageBoxImage.Warning);
-      return;
+      return false;
     }
 
     if (!string.Equals(cours,typeCoursAttendu,StringComparison.OrdinalIgnoreCase)) {
@@ -2245,7 +2292,7 @@ public partial class DialogueServiceGEII: Window {
           "Suppression",
           MessageBoxButton.OK,
           MessageBoxImage.Warning);
-      return;
+      return false;
     }
 
     string groupeASupprimer;
@@ -2265,12 +2312,12 @@ public partial class DialogueServiceGEII: Window {
       );
 
       if (choixSuppression.ShowDialog() != true)
-        return;
+        return false;
 
       groupeASupprimer = choixSuppression.GroupeSelectionne;
 
       if (string.IsNullOrWhiteSpace(groupeASupprimer))
-        return;
+        return false;
     }
 
     if (!references.TryGetValue(
@@ -2282,11 +2329,11 @@ public partial class DialogueServiceGEII: Window {
           "Suppression",
           MessageBoxButton.OK,
           MessageBoxImage.Warning);
-      return;
+      return false;
     }
 
     if (!SupprimerAffectationSource(FichierDeService.Service,sourceReference.SourceSheet,sourceReference.SourceRow,sourceReference.SourceColumn))
-      return;
+      return false;
 
     references.Remove(groupeASupprimer);
 
@@ -2302,11 +2349,15 @@ public partial class DialogueServiceGEII: Window {
       row[ExcelSchemaNames.Columns.TotalType] = nouveauNombre * duree;
     }
     DataSetExcelService.AcceptChanges();
+
+    AfficheFicheModule();
+
+    return true;
   }
 
   private async Task SupprimerLigne(string type) {
-    SuppressionOuMiseAJourVueEtFichierExcel(VisualisationDonnées,type);
-    await MettreAJourSource();
+    if (SuppressionOuMiseAJourVueEtFichierExcel(VisualisationDonnées,type))
+      await MettreAJourSource(sourceDejaModifiee: true);
   }
 
   private async void boutonAjouterCM_Click(object sender,RoutedEventArgs e) {
@@ -2320,6 +2371,14 @@ public partial class DialogueServiceGEII: Window {
   private async void boutonAjouterTD_Click(object sender,RoutedEventArgs e) {
     await AjouterLigne("TD");
   }
+
+  private async void boutonAjouterAPP_Click(object sender,RoutedEventArgs e) {
+    await AjouterLigne("APP");
+  }
+  private async void boutonSupprimerAPP_Click(object sender,RoutedEventArgs e) {
+    await SupprimerLigne("APP");
+  }
+
 
   private async void boutonSupprimerTD_Click(object sender,RoutedEventArgs e) {
     await SupprimerLigne("TD");
@@ -2338,34 +2397,22 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void ModifierFicheMatière(ServiceManagerProfile profile) {
-    Stopwatch chronoTotal = Stopwatch.StartNew();
-    Stopwatch chrono = Stopwatch.StartNew();
-
     Hide();
     string NomModule = RechercheNomModule();
-
-    Debug.WriteLine($"[CHRONO RETOUR] Préparation : {chrono.ElapsedMilliseconds} ms");
-
-    chrono.Restart();
-
     DataSetExcelSélection = ReadWorkbookTables(WorkbookRole.Selection);
-
-    Debug.WriteLine($"[CHRONO RETOUR] Lecture Selection AVANT fenêtre : {chrono.ElapsedMilliseconds} ms");
-
-    chrono.Restart();
 
     ConfigurationDesCours fenetre = new(NomModule,Matière,VisualisationDonnées,profile,DataSetExcelSélection);
 
-    Debug.WriteLine($"[CHRONO RETOUR] ConfigurationDesCours complète : {chrono.ElapsedMilliseconds} ms");
-
     if (fenetre.FicheModifiee) {
       string valeurCM = fenetre.ValeurCMValidee;
+      string valeurAPP = fenetre.ValeurAPPValidee;
       string valeurTD = fenetre.ValeurTDValidee;
       string valeurTP = fenetre.ValeurTPValidee;
 
-      MiseAJourModuleSelection_DataTable(DataSetExcelSélection,NomModule,valeurCM,valeurTD,valeurTP);
+      MiseAJourModuleSelection_DataTable(DataSetExcelSélection,NomModule,valeurCM,valeurAPP,valeurTD,valeurTP);
 
       Valeur_CM.Content = valeurCM + " h";
+      Valeur_APP.Content = valeurAPP + " h";
       Valeur_TD.Content = valeurTD + " h";
       Valeur_TP.Content = valeurTP + " h";
 
@@ -2373,45 +2420,16 @@ public partial class DialogueServiceGEII: Window {
           DataSetExcelService,
           NomModule,
           valeurCM,
+          valeurAPP,
           valeurTD,
           valeurTP);
 
       TotalType(VisualisationDonnées);
     }
-    chrono.Restart();
 
     AfficheFicheModule();
     Show();
-
-    Debug.WriteLine($"[CHRONO RETOUR] AfficheFicheModule + Show : {chrono.ElapsedMilliseconds} ms");
-    Debug.WriteLine($"[CHRONO RETOUR] TOTAL ModifierFicheMatière : {chronoTotal.ElapsedMilliseconds} ms");
   }
-
-  //private void ModifierFicheMatière(ServiceManagerProfile profile) {
-  //  Hide();
-  //  string NomModule = RechercheNomModule();
-  //  DataSetExcelSélection = ReadWorkbookTables(WorkbookRole.Selection);
-
-  //  ConfigurationDesCours fenetre = new(NomModule,Matière,VisualisationDonnées,profile,DataSetExcelSélection);
-
-  //  if (fenetre.FicheModifiee) {
-  //    DataSetExcelSélection = ReadWorkbookTables(WorkbookRole.Selection);
-
-  //    string valeurCM = RechercheValeur(DataSetExcelSélection,NomModule,ExcelSchemaNames.Columns.CM,ExcelSchemaNames.Tables.Module);
-  //    string valeurTD = RechercheValeur(DataSetExcelSélection,NomModule,ExcelSchemaNames.Columns.TD,ExcelSchemaNames.Tables.Module);
-  //    string valeurTP = RechercheValeur(DataSetExcelSélection,NomModule,ExcelSchemaNames.Columns.TP,ExcelSchemaNames.Tables.Module);
-
-  //    Valeur_CM.Content = valeurCM + " h";
-  //    Valeur_TD.Content = valeurTD + " h";
-  //    Valeur_TP.Content = valeurTP + " h";
-
-  //    MiseAJourDureesAttenduesGlobal_DataTable(DataSetExcelService,NomModule,valeurCM,valeurTD,valeurTP);
-  //    TotalType(VisualisationDonnées);
-  //  }
-
-  //  AfficheFicheModule();
-  //  Show();
-  //}
 
   private async void ModifierFicheMatière_Click(object sender,RoutedEventArgs e) {
     ModifierFicheMatière(_profile);
@@ -2549,6 +2567,7 @@ public partial class DialogueServiceGEII: Window {
     _profile.Groups.Geii2_FI_FormationName = "GEII 2 FI";
 
     _profile.Groups.Geii2_FI_StudentCount = FormationGEII.Geii_2_FI.NbEtudiants;
+    _profile.Groups.Geii2_FI_CmGroupCount = FormationGEII.Geii_2_FI.NbGroupeCM_officiel;
     _profile.Groups.Geii2_FI_TdGroupCount = FormationGEII.Geii_2_FI.NbGroupeTD;
     _profile.Groups.Geii2_FI_Td_officiel_GroupCount = FormationGEII.Geii_2_FI.NbGroupeTD_officiel;
     _profile.Groups.Geii2_FI_TpGroupCount = FormationGEII.Geii_2_FI.NbGroupeTP;
@@ -2598,6 +2617,7 @@ public partial class DialogueServiceGEII: Window {
 
     nbGroupeTD_officiel_Geii2_FI = window.nbGroupeTD_officiel_FI;
 
+    NomGroupeCM_Geii2_FI = window.NomGroupeCM_FI;
     NomGroupeTD_Geii2_FI = window.NomGroupeTD_FI;
     NomGroupeTD_Geii2_officiel_FI = window.NomGroupeTD_officiel_FI;
     NomGroupeTP_Geii2_FI = window.NomGroupeTP_FI;
@@ -2614,6 +2634,7 @@ public partial class DialogueServiceGEII: Window {
 
     EnregistrerEffectifsGeii2_FI_DansProfil();
     EnregistrerEffectifsGeii2_FA_DansProfil();
+    EnregistrerMutualisationsDansProfil();
 
     if (!string.IsNullOrWhiteSpace(FichierDeService.Service.CheminFichier) && File.Exists(FichierDeService.Service.CheminFichier)) {
       AfficheFicheModule();
@@ -2711,8 +2732,8 @@ public partial class DialogueServiceGEII: Window {
     }
   }
 
-  private async Task<bool> MettreAJourSource() {
-    if (_pendingSourceChanges.Count == 0 && _pendingSourceRowRewrites.Count == 0)
+  private async Task<bool> MettreAJourSource(bool sourceDejaModifiee = false) {
+    if (!sourceDejaModifiee && _pendingSourceChanges.Count == 0 && _pendingSourceRowRewrites.Count == 0)
       return false;
 
     if (!VerifierGroupesRenseignesAvantMiseAJour(VisualisationDonnées))
@@ -2740,11 +2761,7 @@ public partial class DialogueServiceGEII: Window {
     FormatageCouleurLignes(VisualisationDonnées);
     AfficheFicheModule();
 
-    Stopwatch chronoCache = Stopwatch.StartNew();
-
     await ReconstruireCacheFichierServiceAsync(FichierDeService.Service);
-
-    Debug.WriteLine($"[CHRONO CACHE ASYNC] Reconstruction : {chronoCache.ElapsedMilliseconds} ms");
 
     return true;
   }
@@ -3038,7 +3055,6 @@ public partial class DialogueServiceGEII: Window {
     _suspendViewRefresh = true;
 
     try {
-      AfficherListesDonnées(Parcours);
       AfficherListesDonnées(Module);
     }
     finally {
@@ -3048,6 +3064,7 @@ public partial class DialogueServiceGEII: Window {
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
       RestaurerMutualisationsDepuisProfil();
+      ActualiserComboCodePedagogiqueDepuisModule();
     },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -3453,6 +3470,8 @@ public partial class DialogueServiceGEII: Window {
     if (!afficherMutualisation)
       ActualiserPanneauCours();
 
+    AfficheFicheModule();
+
     btnBasculerPanneau.Content = afficherMutualisation ? "Répartition des cours" : "Mutualisation";
   }
 
@@ -3469,7 +3488,7 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void InitialiserEvenementsMutualisation() {
-    List<TabItem> onglets = new() { titmCM,titmTd1,titmTd2,titmTd3,titmTp1,titmTp2,titmTp3 };
+    List<TabItem> onglets = new() { titmCM,titmTd1,titmTd2,titmTd3,titmTp1,titmTp2,titmTp3,titmTp4 };
 
     foreach (TabItem onglet in onglets) {
       onglet.AddHandler(CheckBox.CheckedEvent,new RoutedEventHandler(GroupeMutualisation_Changed));
@@ -3511,11 +3530,14 @@ public partial class DialogueServiceGEII: Window {
     else
       _gestionMutualisations.RetirerGroupe(onglet,groupe);
 
-    if (sender is TabItem ongletItem && ongletItem.Name is "titmTp1" or "titmTp2" or "titmTp3")
+    if (sender is TabItem ongletItem && ongletItem.Name is "titmTp1" or "titmTp2" or "titmTp3" or "titmTp4")
       ActualiserEffectifsMutualisesTP();
 
     if (sender is TabItem ongletTD && ongletTD.Name is "titmTd1" or "titmTd2" or "titmTd3")
       ActualiserEffectifsMutualisesTD();
+
+    if (sender is TabItem ongletCM && ongletCM.Name == "titmCM")
+      ActualiserEffectifsMutualisesCM();
   }
 
   private void EnregistrerMutualisationsDansProfil() {
@@ -3531,10 +3553,13 @@ public partial class DialogueServiceGEII: Window {
     mutualisation.Formation = Formation.Text.Trim();
     mutualisation.Semestre = Semestre.Text.Trim();
     mutualisation.Parcours = Parcours.Text.Trim();
+    mutualisation.EstMutualise = chkMutualisation.IsChecked == true ? true : null;
 
     _profile.Mutualisations ??= new List<MutualisationCours>();
 
     mutualisation.Effectifs ??= new Dictionary<string,int>();
+
+    mutualisation.Effectifs["CM"] = CalculerEffectifMutualiseCM();
 
     foreach (string onglet in MutualisationCours.OngletsTD)
       mutualisation.Effectifs[onglet] = CalculerEffectifMutualiseTD(onglet);
@@ -3554,6 +3579,11 @@ public partial class DialogueServiceGEII: Window {
     else {
       _profile.Mutualisations.Add(mutualisation);
     }
+
+    étatNbGroupeTD_Geii2_Mutuel.Text = MutualisationCours.OngletsTD.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe))).ToString();
+    étatNbGroupeTP_Geii2_Mutuel.Text = MutualisationCours.OngletsTP.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe))).ToString();
+    étatNbGroupeTPSp_Geii2_Mutuel.Text = MutualisationCours.OngletsTP.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe))).ToString();
+    étatEffectif_Geii2_Mutuel.Text = (FormationGEII.Geii_2_FI.NbEtudiants + FormationGEII.Geii_2_FA.NbEtudiants).ToString();
 
     ServiceProfileSerializer.Save(_currentProfilePath,_profile);
   }
@@ -3580,22 +3610,33 @@ public partial class DialogueServiceGEII: Window {
       ["TD2"] = [chkTd2ESE_Fi,chkTd2ESE_Fa,chkTd2EME_Fi,chkTd2EME_Fa,chkTd2AII_Fi,chkTd2AII_Fa],
       ["TD3"] = [chkTd3ESE_Fi,chkTd3ESE_Fa,chkTd3EME_Fi,chkTd3EME_Fa,chkTd3AII_Fi,chkTd3AII_Fa],
       ["TP1"] = [
-        chkTp1ESE21_Fi,chkTp1ESE22_Fi,chkTp1ESE21_Fa,chkTp1ESE22_Fa,
-        chkTp1EME21_Fi,chkTp1EME22_Fi,chkTp1EME21_Fa,chkTp1EME22_Fa,
-        chkTp1AII21_Fi,chkTp1AII22_Fi,chkTp1AII21_Fa,chkTp1AII22_Fa],
+        chkTp1ESE21_Fi,chkTp1ESE22_Fi,chkTp1ESE23_Fa,chkTp1ESE24_Fa,
+        chkTp1EME21_Fi,chkTp1EME22_Fi,chkTp1EME23_Fa,chkTp1EME24_Fa,
+        chkTp1AII21_Fi,chkTp1AII22_Fi,chkTp1AII23_Fa,chkTp1AII24_Fa],
       ["TP2"] = [
-        chkTp2ESE21_Fi,chkTp2ESE22_Fi,chkTp2ESE21_Fa,chkTp2ESE22_Fa,
-        chkTp2EME21_Fi,chkTp2EME22_Fi,chkTp2EME21_Fa,chkTp2EME22_Fa,
-        chkTp2AII21_Fi,chkTp2AII22_Fi,chkTp2AII21_Fa,chkTp2AII22_Fa],
+        chkTp2ESE21_Fi,chkTp2ESE22_Fi,chkTp2ESE23_Fa,chkTp2ESE24_Fa,
+        chkTp2EME21_Fi,chkTp2EME22_Fi,chkTp2EME23_Fa,chkTp2EME24_Fa,
+        chkTp2AII21_Fi,chkTp2AII22_Fi,chkTp2AII23_Fa,chkTp2AII24_Fa],
       ["TP3"] = [
-        chkTp3ESE21_Fi,chkTp3ESE22_Fi,chkTp3ESE21_Fa,chkTp3ESE22_Fa,
-        chkTp3EME21_Fi,chkTp3EME22_Fi,chkTp3EME21_Fa,chkTp3EME22_Fa,
-        chkTp3AII21_Fi,chkTp3AII22_Fi,chkTp3AII21_Fa,chkTp3AII22_Fa]
+        chkTp3ESE21_Fi,chkTp3ESE22_Fi,chkTp3ESE23_Fa,chkTp3ESE24_Fa,
+        chkTp3EME21_Fi,chkTp3EME22_Fi,chkTp3EME23_Fa,chkTp3EME24_Fa,
+        chkTp3AII21_Fi,chkTp3AII22_Fi,chkTp3AII23_Fa,chkTp3AII24_Fa],
+      ["TP4"] = [
+        chkTp4ESE21_Fi,chkTp4ESE22_Fi,chkTp4ESE23_Fa,chkTp4ESE24_Fa,
+        chkTp4EME21_Fi,chkTp4EME22_Fi,chkTp4EME23_Fa,chkTp4EME24_Fa,
+        chkTp4AII21_Fi,chkTp4AII22_Fi,chkTp4AII23_Fa,chkTp4AII24_Fa]
     };
+
+    étatEffectif_Geii2_Mutuel.Text = nbEtudiants_Geii2_Mutuel.Content.ToString();
+    étatNbGroupeTD_Geii2_Mutuel.Text = nbGroupeTdTotal_Geii2_Mutuel.Content.ToString();
+    étatNbGroupeTP_Geii2_Mutuel.Text = nbGroupeTpTotal_Geii2_Mutuel.Content.ToString();
+    étatNbGroupeTPSp_Geii2_Mutuel.Text = nbGroupeTpSpTotal_Geii2_Mutuel.Content.ToString();
 
     _isRestoringMutualisation = true;
 
     try {
+      chkMutualisation.IsChecked = mutualisation?.EstMutualise == true;
+
       foreach (var onglet in casesParOnglet) {
         List<string>? groupes = null;
 
@@ -3610,14 +3651,18 @@ public partial class DialogueServiceGEII: Window {
     finally {
       _isRestoringMutualisation = false;
     }
+
+    ActualiserPanneauCours();
+    ActualiserEffectifsMutualisesCM();
     ActualiserEffectifsMutualisesTP();
     ActualiserEffectifsMutualisesTD();
+    RestaurerGroupesMutualisesModuleDepuisProfil();
   }
 
   private void ActualiserEffectifsMutualisesTP() {
     if (_profile == null || _gestionMutualisations == null) return;
 
-    TextBox[] zones = [txtEffectifRegrTP1,txtEffectifRegrTP2,txtEffectifRegrTP3];
+    TextBox[] zones = [txtEffectifRegrTP1,txtEffectifRegrTP2,txtEffectifRegrTP3,txtEffectifRegrTP4];
     int longueurPrefixe = "txtEffectifRegr".Length;
 
     foreach (TextBox zone in zones) {
@@ -3636,6 +3681,30 @@ public partial class DialogueServiceGEII: Window {
       string onglet = zone.Name[longueurPrefixe..];
       zone.Text = CalculerEffectifMutualiseTD(onglet).ToString();
     }
+  }
+
+  private void ActualiserEffectifsMutualisesCM() {
+    if (_profile == null || _gestionMutualisations == null)
+      return;
+
+    txtEffectifRegrCM.Text = CalculerEffectifMutualiseCM().ToString();
+  }
+
+  private int CalculerEffectifMutualiseCM() {
+    if (_profile?.Groups == null || _gestionMutualisations == null)
+      return 0;
+
+    int total = 0;
+
+    foreach (string groupe in _gestionMutualisations.ObtenirGroupes("CM")) {
+      if (string.Equals(groupe,"Cm__Fi",StringComparison.OrdinalIgnoreCase))
+        total += _profile.Groups.Geii2_FI_StudentCount;
+
+      else if (string.Equals(groupe,"CM__Fa",StringComparison.OrdinalIgnoreCase))
+        total += _profile.Groups.Geii2_FA_StudentCount;
+    }
+
+    return total;
   }
 
   private void btnSave_Click(object sender,RoutedEventArgs e) {
@@ -3725,7 +3794,6 @@ public partial class DialogueServiceGEII: Window {
     string[] newTab = new string[3];
     for (int i = 0;i < groupesTab.Length;i++) {
       newTab[i] = groupesTab[i]?.Replace("__","_");
-      Debug.WriteLine("Nouveau nom : " + newTab[i]);
     }
     return newTab;
   }
@@ -3734,7 +3802,7 @@ public partial class DialogueServiceGEII: Window {
     if (_profile == null) return;
 
     bool estTD = onglet.Name is "titmTd1" or "titmTd2" or "titmTd3";
-    bool estTP = onglet.Name is "titmTp1" or "titmTp2" or "titmTp3";
+    bool estTP = onglet.Name is "titmTp1" or "titmTp2" or "titmTp3" or "titmTp4";
 
     if (!estTD && !estTP) return;
 
@@ -3780,5 +3848,9 @@ public partial class DialogueServiceGEII: Window {
           yield return controleEnfant;
       }
     }
+  }
+
+  private void chkMutualisation_Checked(object sender,RoutedEventArgs e) {
+    ActualiserPanneauCours();
   }
 }
