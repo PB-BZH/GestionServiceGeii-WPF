@@ -76,6 +76,19 @@ namespace GestionServiceGeii.Shared.Database {
     private const int StopColonnesVidesConsecutives = 25;
     private readonly ServiceManagerProfile _profile;
 
+    private sealed record CorrespondanceActiviteS4(string Module,string Infos);
+
+    private static readonly Dictionary<string,CorrespondanceActiviteS4> CorrespondancesS4Fifa =
+    new(StringComparer.OrdinalIgnoreCase) {
+      ["Communication numérique"] = new("ELEN4","COM Num"),
+      ["Transmission sans fil"] = new("ELEN4","Trans ss Fil"),
+      ["Filtrage numérique"] = new("ELEN4","Filt Num"),
+      ["Variation de Vitesse"] = new("ENER4","Var de Vit"),
+      ["CANECO"] = new("ENER4","CANECO"),
+      ["Production d'énergie"] = new("ENER4","Prod énergie")
+    };
+
+
     #endregion Champs
 
     #region Propriétés
@@ -283,7 +296,8 @@ namespace GestionServiceGeii.Shared.Database {
       DataTable grilleS3 = LireFeuilleSemestreCommeGrille_OleDb(connection,"S3 FIFA");
       DataTable grilleS4 = LireFeuilleSemestreCommeGrille_OleDb(connection,"S4 FIFA");
 
-      List<AffectationGroupeSemestre> affectationsS3 = LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(grilleS3);
+      List<AffectationGroupeSemestre> affectationsS3 = LireAffectationsGroupesDepuisFeuilleS3Fifa_S4Fifa_OleDb(grilleS3);
+      List<AffectationGroupeSemestre> affectationsS4 = LireAffectationsGroupesDepuisFeuilleS3Fifa_S4Fifa_OleDb(grilleS4);
 
 
       NormaliserColonnesGlobalPourInterface(tableGlobal);
@@ -1305,6 +1319,7 @@ namespace GestionServiceGeii.Shared.Database {
 
     private sealed class AffectationGroupeSemestre {
       internal string Semestre { get; set; } = string.Empty;
+      internal string Formation { get; set; } = string.Empty;
       internal string Module { get; set; } = string.Empty;
       internal string LibelleCourt { get; set; } = string.Empty;
       internal string Cours { get; set; } = string.Empty;
@@ -1802,106 +1817,139 @@ namespace GestionServiceGeii.Shared.Database {
       return groupesParCle;
     }
 
+
     internal static void AjouterLignesManquantesDepuisFeuilleSemestre_OleDb(DataTable grille,DataTable tableGlobal) {
       if (grille == null || tableGlobal == null)
         return;
 
-      if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Semestre))
+      if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Semestre) ||
+          !tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Module) ||
+          !tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Cours) ||
+          !tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Noms) ||
+          !tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Groupe))
         return;
 
-      if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Module))
-        return;
-
-      if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Cours))
-        return;
-
-      if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Noms))
-        return;
-
-      if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Groupe))
-        return;
-
-      string nomFeuille = grille.TableName;
-
-      string semestre = nomFeuille switch {
-        "S3 FIFA" => "S3",
-        "S4 FIFA" => "S4",
-        _ => nomFeuille
-      };
-
-      string colonneLibelleCourt = TrouverNomColonneIgnoreCase(tableGlobal,ExcelSchemaNames.Columns.LibelleCourt);
+      string colonneLibelleCourt = TrouverNomColonneIgnoreCase(
+          tableGlobal,ExcelSchemaNames.Columns.LibelleCourt);
 
       if (string.IsNullOrWhiteSpace(colonneLibelleCourt))
         return;
 
-      List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(grille);
+      List<AffectationGroupeSemestre> affectations =
+          LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(grille);
 
       if (affectations.Count == 0)
         return;
 
       int prochainId = TrouverProchainIdGlobal(tableGlobal);
+
       AjouterColonnesSourceSemestreSiAbsentes(tableGlobal);
 
-      ReconstruireLignesInfosSpecialesDepuisAffectations(tableGlobal,colonneLibelleCourt,affectations);
+      // Reconstruit les lignes associées aux activités particulières.
+      // Reconstruction désactivée temporairement :
+      // les lignes existantes de Global ne doivent pas être supprimées
+      // avant la recherche des affectations et des modèles.
+      // ReconstruireLignesInfosSpecialesDepuisAffectations(
+      //     tableGlobal,colonneLibelleCourt,affectations);
 
-      Dictionary<string,DataRow> indexActivites = new(StringComparer.OrdinalIgnoreCase);
-      Dictionary<string,DataRow> indexModeles = new(StringComparer.OrdinalIgnoreCase);
+
+      // Index des affectations et des lignes modèles de Global.
+      Dictionary<string,DataRow> indexActivites =
+          new(StringComparer.OrdinalIgnoreCase);
+
+      Dictionary<string,DataRow> indexModeles =
+          new(StringComparer.OrdinalIgnoreCase);
+
+      if (grille.TableName == "S4 FIFA") {
+        foreach (string cle in indexModeles.Keys.Where(cle =>
+            cle.StartsWith("S4|ELEN4-1|",StringComparison.OrdinalIgnoreCase) ||
+            cle.StartsWith("S4|ENER4-1|",StringComparison.OrdinalIgnoreCase))) {
+
+          Debug.WriteLine($"[MODELE GLOBAL S4] {cle}");
+        }
+      }
 
       foreach (DataRow row in tableGlobal.Rows) {
-        semestre = GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre);
+        string semestre = GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre);
         string module = GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Module);
         string cours = GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours);
         string noms = GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms);
         string groupe = GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Groupe);
         string libelleCourt = GetRowValueIfColumnExists(row,colonneLibelleCourt);
 
-        string cleActivite = ConstruireCleActiviteGlobal(semestre,module,cours,noms,groupe,libelleCourt);
+        string cleActivite = ConstruireCleActiviteGlobal(
+            semestre,module,cours,noms,groupe,libelleCourt);
 
         if (!indexActivites.ContainsKey(cleActivite))
           indexActivites.Add(cleActivite,row);
 
-        string cleModele = ConstruireCleModeleGlobal(semestre,module,cours,libelleCourt);
+        string cleModele = ConstruireCleModeleGlobal(
+            semestre,module,cours,libelleCourt);
 
         if (!indexModeles.ContainsKey(cleModele))
           indexModeles.Add(cleModele,row);
-
       }
 
       int nbExistantes = 0;
       int nbAjoutees = 0;
       int nbSansModele = 0;
+
       HashSet<DataRow> lignesUtilisees = new();
 
       foreach (AffectationGroupeSemestre affectation in affectations) {
-        if (string.IsNullOrWhiteSpace(affectation.Noms))
+        if (string.IsNullOrWhiteSpace(affectation.Noms) ||
+            EstLigneTechniqueGlobal(affectation.Noms))
           continue;
 
-        if (EstLigneTechniqueGlobal(affectation.Noms))
-          continue;
+        // Pour S4 FIFA, on utilise le code normalisé uniquement
+        // pour retrouver la ligne correspondante dans Global.
+        string libelleRecherche = string.Equals(
+            affectation.SourceSheet,"S4 FIFA",StringComparison.OrdinalIgnoreCase)
+              ? NormaliserCodeCoursS4Fifa(affectation.LibelleCourt)
+              : affectation.LibelleCourt;
+
+        string groupeRecherche = affectation.Cours is "CM" or "DS" or "APP"
+            ? "0"
+            : affectation.Groupe;
 
         string cleActivite = ConstruireCleActiviteGlobal(
             affectation.Semestre,
             affectation.Module,
             affectation.Cours,
             affectation.Noms,
-            affectation.Cours is "CM" or "DS" or "APP" ? "0" : affectation.Groupe,
-            affectation.LibelleCourt);
+            groupeRecherche,
+            libelleRecherche);
 
-        DataRow? ligneExistante = null;
+        bool specialiteS4 =
+            string.Equals(affectation.SourceSheet,"S4 FIFA",StringComparison.OrdinalIgnoreCase) &&
+            !string.IsNullOrWhiteSpace(affectation.Formation) &&
+            !string.IsNullOrWhiteSpace(affectation.Infos) &&
+            (affectation.Module == "ELEN4" || affectation.Module == "ENER4");
 
-        if (indexActivites.TryGetValue(cleActivite,out DataRow? ligneIndexee) &&
-            !lignesUtilisees.Contains(ligneIndexee)) {
+        if (specialiteS4 &&
+            affectation.Formation == "FA" &&
+            affectation.Module == "ENER4")
+          continue;
+
+        DataRow? ligneExistante = specialiteS4
+            ? RechercherLigneSpecialiteS4(
+                tableGlobal,affectation,colonneLibelleCourt,lignesUtilisees,false)
+            : null;
+
+        // 1. Recherche d'une affectation déjà présente dans Global.
+        if (!specialiteS4 && indexActivites.TryGetValue(cleActivite,out DataRow? ligneIndexee) && !lignesUtilisees.Contains(ligneIndexee)) {
           ligneExistante = ligneIndexee;
         }
 
-        if (ligneExistante == null && affectation.Cours is "TD" or "TP") {
+        // 2. Pour TD/TP, recherche d'une ligne existante sans groupe attribué.
+        if (!specialiteS4 && ligneExistante == null && affectation.Cours is "TD" or "TP") {
           string cleSansGroupe = ConstruireCleActiviteGlobal(
               affectation.Semestre,
               affectation.Module,
               affectation.Cours,
               affectation.Noms,
               "0",
-              affectation.LibelleCourt);
+              libelleRecherche);
 
           ligneExistante = tableGlobal.Rows.Cast<DataRow>().FirstOrDefault(row =>
               !lignesUtilisees.Contains(row) &&
@@ -1917,41 +1965,58 @@ namespace GestionServiceGeii.Shared.Database {
                   StringComparison.OrdinalIgnoreCase));
         }
 
+        // 3. Une ligne existe déjà : actualisation des informations source.
         if (ligneExistante != null) {
-          if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.Infos))
-            ligneExistante[ExcelSchemaNames.Columns.Infos] = affectation.Infos?.Trim() ?? string.Empty;
 
-          if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.SourceSheet))
+          if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Infos) &&
+              (!specialiteS4 || affectation.Formation == "FI"))
+            ligneExistante[ExcelSchemaNames.Columns.Infos] =
+                affectation.Infos?.Trim() ?? string.Empty;
+
+          if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.SourceSheet))
             ligneExistante[ExcelSchemaNames.Columns.SourceSheet] = affectation.SourceSheet;
 
-          if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.SourceRow))
+          if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.SourceRow))
             ligneExistante[ExcelSchemaNames.Columns.SourceRow] = affectation.SourceRow.ToString();
 
-          if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.SourceColumn))
+          if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.SourceColumn))
             ligneExistante[ExcelSchemaNames.Columns.SourceColumn] = affectation.SourceColumn.ToString();
 
-          if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.Groupe))
+          if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Groupe))
             ligneExistante[ExcelSchemaNames.Columns.Groupe] = affectation.Groupe;
 
+          lignesUtilisees.Add(ligneExistante);
           nbExistantes++;
           continue;
         }
 
+        // 4. Aucune ligne existante : recherche d'un modèle dans Global.
         string cleModele = ConstruireCleModeleGlobal(
             affectation.Semestre,
             affectation.Module,
             affectation.Cours,
-            affectation.LibelleCourt);
+            libelleRecherche);
 
-        indexModeles.TryGetValue(cleModele,out DataRow? modele);
-
+        DataRow? modele = specialiteS4
+            ? RechercherLigneSpecialiteS4(tableGlobal,affectation,colonneLibelleCourt,lignesUtilisees,true)
+            : indexModeles.TryGetValue(cleModele,out DataRow? modeleIndexe) ? modeleIndexe : null;
         if (modele == null) {
-          lignesUtilisees.Add(ligneExistante);
-          indexActivites[cleActivite] = ligneExistante;
           nbSansModele++;
+
+          Debug.WriteLine(
+              $"[SANS MODELE S4] " +
+              $"Module='{affectation.Module}' | " +
+              $"CodeSource='{affectation.LibelleCourt}' | " +
+              $"CodeRecherche='{libelleRecherche}' | " +
+              $"Cours='{affectation.Cours}' | " +
+              $"Nom='{affectation.Noms}' | " +
+              $"Infos='{affectation.Infos}' | " +
+              $"CleModele='{cleModele}'");
+
           continue;
         }
 
+        // 5. Création d'une nouvelle ligne à partir du modèle.
         DataRow nouvelleLigne = tableGlobal.NewRow();
 
         foreach (DataColumn colonne in tableGlobal.Columns)
@@ -1964,12 +2029,17 @@ namespace GestionServiceGeii.Shared.Database {
 
         nouvelleLigne[ExcelSchemaNames.Columns.Noms] = affectation.Noms;
         nouvelleLigne[ExcelSchemaNames.Columns.Groupe] = affectation.Groupe;
+
         nouvelleLigne[ExcelSchemaNames.Columns.SourceSheet] = affectation.SourceSheet;
         nouvelleLigne[ExcelSchemaNames.Columns.SourceRow] = affectation.SourceRow.ToString();
         nouvelleLigne[ExcelSchemaNames.Columns.SourceColumn] = affectation.SourceColumn.ToString();
+
         nouvelleLigne[ExcelSchemaNames.Columns.Nombre] = "1";
         nouvelleLigne[ExcelSchemaNames.Columns.Cours] = affectation.Cours;
-        nouvelleLigne[ExcelSchemaNames.Columns.Module] = modele[ExcelSchemaNames.Columns.Module]?.ToString() ?? affectation.Module;
+        nouvelleLigne[ExcelSchemaNames.Columns.Module] =
+            modele[ExcelSchemaNames.Columns.Module]?.ToString() ?? affectation.Module;
+
+        // On conserve le code source de l'affectation.
         nouvelleLigne[colonneLibelleCourt] = affectation.LibelleCourt;
 
         if (affectation.Duree > 0) {
@@ -1978,26 +2048,28 @@ namespace GestionServiceGeii.Shared.Database {
         }
 
         if (tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Infos))
-          nouvelleLigne[ExcelSchemaNames.Columns.Infos] = affectation.Infos?.Trim() ?? string.Empty;
+          nouvelleLigne[ExcelSchemaNames.Columns.Infos] =
+              affectation.Infos?.Trim() ?? string.Empty;
 
         tableGlobal.Rows.Add(nouvelleLigne);
-        indexActivites[cleActivite] = nouvelleLigne;
-        nbAjoutees++;
 
-        if (string.Equals(affectation.Module,"ENER1-2",StringComparison.OrdinalIgnoreCase)) {
-          Debug.WriteLine(
-              "Ligne ajoutée ENER1-2 : " +
-              affectation.LibelleCourt + " | " +
-              affectation.Cours + " | " +
-              affectation.Noms + " | " +
-              affectation.Groupe + " | " +
-              affectation.Duree + "h | ligne Excel " +
-              affectation.SourceRow);
-        }
+        indexActivites[cleActivite] = nouvelleLigne;
+        lignesUtilisees.Add(nouvelleLigne);
+
+        nbAjoutees++;
       }
+
+      Debug.WriteLine(
+          $"[RECONCILIATION {grille.TableName}] " +
+          $"Affectations={affectations.Count} | " +
+          $"Existantes={nbExistantes} | " +
+          $"Ajoutées={nbAjoutees} | " +
+          $"Sans modèle={nbSansModele} | " +
+          $"Total Global={tableGlobal.Rows.Count}");
 
       tableGlobal.AcceptChanges();
     }
+
 
     internal static void EnrichirGroupesGlobalDepuisFeuilleSemestre_OleDb(DataTable grille,DataTable tableGlobal) {
       if (grille == null || tableGlobal == null)
@@ -2025,6 +2097,17 @@ namespace GestionServiceGeii.Shared.Database {
         return;
 
       List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(grille);
+
+      if (grille.TableName == "S4 FIFA") {
+        foreach (var a in affectations.Where(a =>
+            a.LibelleCourt.Contains("EME07",StringComparison.OrdinalIgnoreCase))) {
+
+          Debug.WriteLine(
+            $"[S4 INFOS] Code='{a.LibelleCourt}' | " +
+            $"Module='{a.Module}' | Infos='{a.Infos}' | " +
+            $"Nom='{a.Noms}' | Groupe='{a.Groupe}'");
+        }
+      }
 
       if (affectations.Count == 0)
         return;
@@ -2102,6 +2185,16 @@ namespace GestionServiceGeii.Shared.Database {
       }
 
       tableGlobal.AcceptChanges();
+    }
+
+    private static string NormaliserCodeCoursS4Fifa(string code) {
+      code = code.Trim();
+
+      return Regex.Replace(
+          code,
+          @"^(R4-(?:ESE|EME)\d{2})[ABCD]A?(-(?:CM|TD|TP|DS|APP))$",
+          "$1$2",
+          RegexOptions.IgnoreCase);
     }
 
     private static string NormaliserCodeCours(string code) {
@@ -2338,6 +2431,24 @@ namespace GestionServiceGeii.Shared.Database {
           colonneLibelleCourt,
           affectations);
 
+      if (tableGlobal.TableName == "S4 FIFA") {
+        foreach (DataRow row in tableGlobal.Rows) {
+          if (GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre) != "S4" ||
+              GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Module) != "ELEN4" ||
+              GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Infos) != "Trans ss Fil" ||
+              GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours) != "TD" ||
+              GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms) != "LAURENT")
+            continue;
+
+          Debug.WriteLine(
+              $"[TD AVANT RECONCILIATION] " +
+              $"Formation='{GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Formation)}' | " +
+              $"Groupe='{GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Groupe)}' | " +
+              $"Duree='{GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Duree)}' | " +
+              $"Code='{GetRowValueIfColumnExists(row,colonneLibelleCourt)}'");
+        }
+      }
+
       Dictionary<string,DataRow> indexActivites =
           new(StringComparer.OrdinalIgnoreCase);
 
@@ -2387,6 +2498,42 @@ namespace GestionServiceGeii.Shared.Database {
                 affectation.Noms,
                 affectation.Groupe,
                 affectation.LibelleCourt);
+
+        if (affectation.SourceSheet == "S4 FIFA" &&
+            !indexActivites.ContainsKey(cleActivite) &&
+            affectation.Cours is "TD" or "TP") {
+
+          string cleSansGroupe = ConstruireCleActiviteGlobal(
+              affectation.Semestre,
+              affectation.Module,
+              affectation.Cours,
+              affectation.Noms,
+              "0",
+              affectation.LibelleCourt);
+
+          if (affectation.SourceSheet == "S4 FIFA" &&
+              affectation.Module == "ENER4" &&
+              affectation.Noms == "JACCOUD") {
+
+            Debug.WriteLine($"[S4 TEST] Source = {affectation.LibelleCourt}");
+            Debug.WriteLine($"[S4 TEST] Clé groupe 0 = {cleSansGroupe}");
+            Debug.WriteLine($"[S4 TEST] Présente dans index = {indexActivites.ContainsKey(cleSansGroupe)}");
+
+            foreach (string cle in indexActivites.Keys.Where(c =>
+                c.Contains("JACCOUD",StringComparison.OrdinalIgnoreCase) &&
+                c.Contains("ENER4",StringComparison.OrdinalIgnoreCase)))
+              Debug.WriteLine($"[S4 INDEX] {cle}");
+          }
+
+          if (indexActivites.TryGetValue(cleSansGroupe,out DataRow? ligneSansGroupe)) {
+            indexActivites[cleActivite] = ligneSansGroupe;
+
+            Debug.WriteLine(
+                $"[S4 REUTILISATION] {affectation.Module} | " +
+                $"{affectation.Noms} | {affectation.Cours} | " +
+                $"0 -> {affectation.Groupe}");
+          }
+        }
 
         if (indexActivites.TryGetValue(cleActivite,out DataRow? ligneExistante)) {
           if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.Infos))
@@ -2577,7 +2724,7 @@ namespace GestionServiceGeii.Shared.Database {
 
       AjouterColonnesSourceSemestreSiAbsentes(tableGlobal);
 
-      List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(grille);
+      List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleS3Fifa_S4Fifa_OleDb(grille);
 
       if (affectations.Count == 0)
         return;
@@ -2589,7 +2736,7 @@ namespace GestionServiceGeii.Shared.Database {
           continue;
 
         bool estFA =
-            Regex.IsMatch(affectation.LibelleCourt,@"^R3-?\d{2}A-",RegexOptions.IgnoreCase) ||
+            Regex.IsMatch(affectation.LibelleCourt,@"^R[34]-?\d{2}A-",RegexOptions.IgnoreCase) ||
             affectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase);
 
         string formation = estFA ? "FA" : "FI";
@@ -2613,7 +2760,7 @@ namespace GestionServiceGeii.Shared.Database {
         AffectationGroupeSemestre premiereAffectation = listeAffectations[0];
 
         bool estFA =
-            Regex.IsMatch(premiereAffectation.LibelleCourt,@"^R3]-?\d{2}A-",RegexOptions.IgnoreCase) ||
+            Regex.IsMatch(premiereAffectation.LibelleCourt,@"^R[34]-?\d{2}A-",RegexOptions.IgnoreCase) ||
             premiereAffectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase);
 
         string formation = estFA ? "FA" : "FI";
@@ -2829,7 +2976,7 @@ namespace GestionServiceGeii.Shared.Database {
       };
     }
 
-    private static List<AffectationGroupeSemestre> LireAffectationsGroupesDepuisFeuilleS3Fifa_OleDb(DataTable grille) {
+    private static List<AffectationGroupeSemestre> LireAffectationsGroupesDepuisFeuilleS3Fifa_S4Fifa_OleDb(DataTable grille) {
       List<AffectationGroupeSemestre> affectations = new();
 
       if (grille == null || grille.Rows.Count == 0 || grille.Columns.Count == 0)
@@ -2855,7 +3002,7 @@ namespace GestionServiceGeii.Shared.Database {
       int rowMax = TrouverDerniereLigneUtileSemestre(grille);
 
       Regex regexCodeService = new(
-          @"^(R3-?(?:\d{2}|[A-Z]+-?\d{2})(A?)-(CM|TD|TP|DS)|SAE\s*3-[A-Z]+-\d{2}(?:_FA)?)$",
+          @"^(R[34]-?(?:\d{2}|[A-Z]+-?\d{2})(A?)-(CM|TD|TP|DS)|SAE\s*[34]-[A-Z]+-\d{2}(?:_FA)?)$",
           RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
       for (int row = 1;row <= rowMax;row++) {
@@ -2913,6 +3060,18 @@ namespace GestionServiceGeii.Shared.Database {
       return affectations;
     }
 
+    private static string DeterminerFormationSpecialiteS4(string codeService) {
+      Match match = Regex.Match(
+          codeService.Trim(),
+          @"^R4-(?:ESE|EME)07[ABC](A)?-(?:CM|TD|TP|DS|APP)$",
+          RegexOptions.IgnoreCase);
+
+      if (!match.Success)
+        return string.Empty;
+
+      return match.Groups[1].Success ? "FA" : "FI";
+    }
+
     private static List<AffectationGroupeSemestre> LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(DataTable grille) {
       List<AffectationGroupeSemestre> affectations = new();
 
@@ -2940,7 +3099,7 @@ namespace GestionServiceGeii.Shared.Database {
       bool feuilleS3 = nomFeuille == "S3 FIFA";
       bool feuilleS4 = nomFeuille == "S4 FIFA";
 
-      int ligneGroupesTD = feuilleS3 ? ligneSalles + 1 : ligneSalles;
+      int ligneGroupesTD = feuilleS3 || feuilleS4 ? ligneSalles + 1 : ligneSalles;
       int ligneGroupesTP = ligneSalles + 1;
 
       Dictionary<int,string> groupesTd = LireGroupesFeuilleSemestre(grille,ligneGroupesTD,colonneSalles + 1,colMax,estTp: false);
@@ -2949,8 +3108,7 @@ namespace GestionServiceGeii.Shared.Database {
       int colonnePromo = 0;
 
       int lignePromo = string.Equals(
-        nomFeuille,"S3 FIFA",StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(nomFeuille,"S4 FIFA",StringComparison.OrdinalIgnoreCase)
+        nomFeuille,"S3 FIFA",StringComparison.OrdinalIgnoreCase) || string.Equals(nomFeuille,"S4 FIFA",StringComparison.OrdinalIgnoreCase)
         ? ligneSalles + 1
         : ligneSalles;
 
@@ -2964,7 +3122,10 @@ namespace GestionServiceGeii.Shared.Database {
       }
 
       int rowMax = TrouverDerniereLigneUtileSemestre(grille);
-      Regex regexCodeService = new(@"^(R\d+-?\d{2})-(CM|TD|TP|DS|APP)$",RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+      Regex regexCodeService = new(
+        @"^(R[34]-?(?:\d{2}|[A-Z]+-?\d{2}[ABC]A?))-(CM|TD|TP|DS|APP)$",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
       string moduleCourant = string.Empty;
       string codeServiceCourant = string.Empty;
@@ -2972,8 +3133,23 @@ namespace GestionServiceGeii.Shared.Database {
 
       for (int row = 1;row <= rowMax;row++) {
         string celluleModule = LireCelluleGrille(grille,row,1);
-        int colonneCode = nomFeuille == "S3 FIFA" ? 5 : 2;
+
+        if (feuilleS4 && row >= 45 && row <= 75) {
+          Debug.WriteLine(
+            $"[S4 ESE LECTURE] Ligne={row} | " +
+            $"Col1='{LireCelluleGrille(grille,row,1)}' | " +
+            $"Col2='{LireCelluleGrille(grille,row,2)}' | " +
+            $"Col3='{LireCelluleGrille(grille,row,3)}' | " +
+            $"Col4='{LireCelluleGrille(grille,row,4)}' | " +
+            $"Code='{LireCelluleGrille(grille,row,5)}'");
+        }
+
+        int colonneCode = feuilleS3 ? 5 : feuilleS4 ? 3 : 2;
         string codeService = LireCelluleGrille(grille,row,colonneCode);
+
+        string formationCourante = feuilleS4
+            ? DeterminerFormationSpecialiteS4(codeService)
+            : string.Empty;
 
         Match match = regexCodeService.Match(codeService);
 
@@ -2987,11 +3163,22 @@ namespace GestionServiceGeii.Shared.Database {
         }
 
         string moduleDetecte = ExtraireModuleDepuisCelluleFeuilleSemestre(celluleModule);
-        if (!string.IsNullOrWhiteSpace(moduleDetecte)) {
+
+        string intituleActivite = feuilleS4
+          ? Regex.Replace(celluleModule.Trim(),@"\s*\([^)]*\)\s*$",string.Empty).Trim()
+          : celluleModule.Trim();
+
+        if (feuilleS4 && CorrespondancesS4Fifa.TryGetValue(intituleActivite,out var correspondance)) {
+          moduleCourant = correspondance.Module;
+          infosCourantes = correspondance.Infos;
+
+          Debug.WriteLine($"[S4 CORRESPONDANCE] {celluleModule} => {moduleCourant} / {infosCourantes}");
+        }
+        else if (!string.IsNullOrWhiteSpace(moduleDetecte)) {
           moduleCourant = moduleDetecte;
           infosCourantes = string.Empty;
         }
-        else if (match.Success && !string.IsNullOrWhiteSpace(celluleModule)) {
+        else if (!feuilleS4 && match.Success && !string.IsNullOrWhiteSpace(celluleModule)) {
           infosCourantes = celluleModule;
         }
         if (match.Success) {
@@ -3019,6 +3206,7 @@ namespace GestionServiceGeii.Shared.Database {
 
           affectations.Add(new AffectationGroupeSemestre {
             Semestre = semestre,
+            Formation = formationCourante,
             Module = moduleCourant,
             LibelleCourt = codeServiceCourant,
             Cours = coursCourant,
@@ -3041,6 +3229,7 @@ namespace GestionServiceGeii.Shared.Database {
             if (EstNomIntervenantValidePourGroupe(nomPromo)) {
               affectations.Add(new AffectationGroupeSemestre {
                 Semestre = semestre,
+                Formation = formationCourante,
                 Module = moduleCourant,
                 LibelleCourt = codeServiceCourant,
                 Cours = "APP",
@@ -3063,6 +3252,7 @@ namespace GestionServiceGeii.Shared.Database {
 
             affectations.Add(new AffectationGroupeSemestre {
               Semestre = semestre,
+              Formation = formationCourante,
               Module = moduleCourant,
               LibelleCourt = codeServiceCourant,
               Cours = "APP",
@@ -3092,6 +3282,7 @@ namespace GestionServiceGeii.Shared.Database {
 
           affectations.Add(new AffectationGroupeSemestre {
             Semestre = semestre,
+            Formation = formationCourante,
             Module = moduleCourant,
             LibelleCourt = codeServiceCourant,
             Cours = coursCourant,
@@ -3259,13 +3450,99 @@ namespace GestionServiceGeii.Shared.Database {
         }
       }
 
-      foreach (AffectationGroupeSemestre a in affectations.Where(a =>
-                   a.Module.Equals("AN1",StringComparison.OrdinalIgnoreCase))) {
-        Debug.WriteLine($"[AN1 SOURCE] {a.SourceSheet}!R{a.SourceRow}C{a.SourceColumn} | Module={a.Module} | Libelle={a.LibelleCourt} | Cours={a.Cours} | Groupe={a.Groupe} | Nom={a.Noms}");
-      }
-
       return affectations;
     }
+
+    private static bool CorrespondFormationEtActiviteS4(DataRow ligne,AffectationGroupeSemestre affectation) {
+      string formationGlobal = GetRowValueIfColumnExists(
+          ligne,ExcelSchemaNames.Columns.Formation);
+
+      if (string.IsNullOrWhiteSpace(affectation.Formation) ||
+          !string.Equals(formationGlobal,affectation.Formation,StringComparison.OrdinalIgnoreCase))
+        return false;
+
+      // Hors spécialités identifiées, la formation suffit pour ce contrôle.
+      if (string.IsNullOrWhiteSpace(affectation.Infos))
+        return true;
+
+      string moduleGlobal = GetRowValueIfColumnExists(
+          ligne,ExcelSchemaNames.Columns.Module);
+
+      if (affectation.Formation == "FI") {
+        string infosGlobal = GetRowValueIfColumnExists(
+            ligne,ExcelSchemaNames.Columns.Infos);
+
+        return string.Equals(moduleGlobal,affectation.Module,StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(infosGlobal,affectation.Infos,StringComparison.OrdinalIgnoreCase);
+      }
+
+      // Correspondances FA vérifiées pour le parcours ESE.
+      string? moduleAttendu = affectation.Module == "ELEN4"
+          ? affectation.Infos switch {
+            "COM Num" => "COM NUM",
+            "Trans ss Fil" => "Transm ss fil",
+            "Filt Num" => "FILTRAGE num",
+            _ => null
+          }
+          : null;
+
+      return moduleAttendu != null &&
+             string.Equals(moduleGlobal,moduleAttendu,StringComparison.OrdinalIgnoreCase);
+    }
+
+
+    private static DataRow? RechercherLigneSpecialiteS4(
+        DataTable tableGlobal,
+        AffectationGroupeSemestre affectation,
+        string colonneLibelleCourt,
+        HashSet<DataRow> lignesUtilisees,
+        bool rechercherModele) {
+
+      string codeRecherche = NormaliserCodeCours(
+          NormaliserCodeCoursS4Fifa(affectation.LibelleCourt));
+
+      return tableGlobal.Rows.Cast<DataRow>().FirstOrDefault(row => {
+        if (row.RowState == DataRowState.Deleted || lignesUtilisees.Contains(row))
+          return false;
+
+        if (!CorrespondFormationEtActiviteS4(row,affectation))
+          return false;
+
+        if (!string.Equals(
+            GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre),
+            affectation.Semestre,StringComparison.OrdinalIgnoreCase))
+          return false;
+
+        if (!string.Equals(
+            GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours),
+            affectation.Cours,StringComparison.OrdinalIgnoreCase))
+          return false;
+
+        string codeGlobal = NormaliserCodeCours(
+            NormaliserCodeCoursS4Fifa(
+                GetRowValueIfColumnExists(row,colonneLibelleCourt)));
+
+        if (!string.Equals(codeGlobal,codeRecherche,StringComparison.OrdinalIgnoreCase))
+          return false;
+
+        if (rechercherModele)
+          return true;
+
+        if (!string.Equals(
+            GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms),
+            affectation.Noms,StringComparison.OrdinalIgnoreCase))
+          return false;
+
+        string groupeGlobal = GetRowValueIfColumnExists(
+            row,ExcelSchemaNames.Columns.Groupe);
+
+        return string.Equals(groupeGlobal,affectation.Groupe,StringComparison.OrdinalIgnoreCase) ||
+               groupeGlobal == "0" ||
+               string.IsNullOrWhiteSpace(groupeGlobal);
+      });
+    }
+
+
 
     private static string ConstruireCleActiviteGlobal(
     string semestre,
@@ -5173,7 +5450,16 @@ namespace GestionServiceGeii.Shared.Database {
 
       string filtreListe = string.Join(" AND ",filtres);
 
+      if (liste5?.Name == "INFOS" && !string.IsNullOrWhiteSpace(liste5.Text)) {
+        int nb = tableSource.Select(filtreListe).Length;
+
+        Debug.WriteLine($"[INFOS DEBUG] '{liste5.Text}' : {nb} ligne(s) correspondant au filtre.");
+      }
+
       FiltreAffichage(table,tableDeDonnée,filtreListe);
+
+      Debug.WriteLine($"[FILTRE INFOS] {filtreListe}");
+      Debug.WriteLine($"[FILTRE INFOS] Lignes Global = {tableSource.Rows.Count}");
     }
 
 
@@ -5218,7 +5504,13 @@ namespace GestionServiceGeii.Shared.Database {
       if (tableSource == null) return;
 
       if (tableDeDonnée == ExcelSchemaNames.Tables.NomTableGlobal) {
+
+        Debug.WriteLine($"[FILTRE AVANT] {filtreListe}");
+
         filtreListe = AjouterFiltreMetierGlobal(filtreListe,tableSource);
+
+        Debug.WriteLine($"[FILTRE APRÈS] {filtreListe}");
+
         InitialiserReferencesSources(tableSource);
       }
 
@@ -5227,6 +5519,7 @@ namespace GestionServiceGeii.Shared.Database {
       if (!string.IsNullOrWhiteSpace(filtreListe)) {
         try {
           vue.RowFilter = filtreListe;
+          Debug.WriteLine($"[FILTRE RÉSULTAT] {vue.Count} ligne(s)");
         }
         catch (Exception ex) {
           ShowFilterError(ex,tableDeDonnée,filtreListe,tableSource);
@@ -5402,10 +5695,7 @@ namespace GestionServiceGeii.Shared.Database {
       return cellulesModifiees;
     }
 
-    private static string AjouterFiltreMetierGlobal(
-        string filtreExistant,
-        DataTable tableSource
-    ) {
+    private static string AjouterFiltreMetierGlobal(string filtreExistant,DataTable tableSource) {
       List<string> filtres = [];
 
       if (!string.IsNullOrWhiteSpace(filtreExistant))

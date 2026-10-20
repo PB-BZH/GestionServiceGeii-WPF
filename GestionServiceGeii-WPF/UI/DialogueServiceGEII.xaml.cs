@@ -545,7 +545,46 @@ public partial class DialogueServiceGEII: Window {
     return ProfileFileValidator.AreProfileFilesAvailable(_profile);
   }
 
+  private void RemplirComboBoxInfos() {
+    DataTable? table = DataSetExcelService?.Tables[ExcelSchemaNames.Tables.NomTableGlobal];
+
+    if (table == null || !table.Columns.Contains(ExcelSchemaNames.Columns.Infos))
+      return;
+
+    string module = Module.Text.Trim();
+    string semestre = Semestre.Text.Trim();
+    string formation = Formation.Text.Trim();
+
+    Debug.WriteLine($"[REMPLISSAGE INFOS] Module='{module}' | Semestre='{semestre}' | Formation='{formation}' | Global={table.Rows.Count} lignes");
+
+    string[] informations = table.AsEnumerable()
+      .Where(row =>
+        string.Equals(row[ExcelSchemaNames.Columns.Module]?.ToString()?.Trim(),module,StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(row[ExcelSchemaNames.Columns.Semestre]?.ToString()?.Trim(),semestre,StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(row[ExcelSchemaNames.Columns.Formation]?.ToString()?.Trim(),formation,StringComparison.OrdinalIgnoreCase))
+      .Select(row => row[ExcelSchemaNames.Columns.Infos]?.ToString()?.Trim() ?? string.Empty)
+      .Where(info => !string.IsNullOrWhiteSpace(info))
+      .Distinct(StringComparer.OrdinalIgnoreCase)
+      .OrderBy(info => info)
+      .ToArray();
+
+    Debug.WriteLine($"[REMPLISSAGE INFOS] {informations.Length} valeur(s) : {string.Join(" | ",informations)}");
+
+    _isRefreshingInfos = true;
+
+    try {
+      INFOS.ItemsSource = null;
+      INFOS.Items.Clear();
+      INFOS.ItemsSource = informations;
+      INFOS.SelectedIndex = -1;
+    }
+    finally {
+      _isRefreshingInfos = false;
+    }
+  }
+
   public void AfficherListesDonnées(ComboBox liste,ComboBox critèreDeSelection = null!) {
+    Debug.WriteLine($"[AFFICHER LISTES] ComboBox='{liste.Name}'");
     switch (liste.Name) {
       case "Semestre":
         Semestre = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,Module,Formation,Parcours);
@@ -574,6 +613,7 @@ public partial class DialogueServiceGEII: Window {
       case "OSE":
         break;
       case "INFOS":
+        RemplirComboBoxInfos();
         break;
       case "Module":
         Module = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name,Semestre,Formation,Parcours);
@@ -759,6 +799,8 @@ public partial class DialogueServiceGEII: Window {
     AfficherListesDonnées(Module,Semestre);
 
     ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
+
+    Debug.WriteLine($"[BIND INFOS] Module='{Module.Text}' | Semestre='{Semestre.Text}' | Formation='{Formation.Text}' | Nombre={INFOS.Items.Count}");
   }
 
   private void ActualiserPanneauCours() {
@@ -798,6 +840,7 @@ public partial class DialogueServiceGEII: Window {
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
       RestaurerMutualisationsDepuisProfil();
+      AfficherListesDonnées(INFOS);
     },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -810,7 +853,7 @@ public partial class DialogueServiceGEII: Window {
     _suspendViewRefresh = true;
 
     try {
-      //AfficherListesDonnées(Formation);
+      AfficherListesDonnées(INFOS);
       AfficherListesDonnées(Module);
     }
     finally {
@@ -841,12 +884,19 @@ public partial class DialogueServiceGEII: Window {
     if (_suspendViewRefresh || _isInitializingView || _isRefreshingInfos)
       return;
 
-    if (string.IsNullOrWhiteSpace(INFOS.Text)) {
+    string information = e.AddedItems.Count > 0
+      ? e.AddedItems[0]?.ToString()?.Trim() ?? string.Empty
+      : string.Empty;
+
+    Debug.WriteLine($"[INFOS] Nouvelle sélection = '{information}'");
+
+    if (string.IsNullOrWhiteSpace(information)) {
       RequestRefreshModuleView();
       return;
     }
 
-    AfficherVueAvecFiltreInfos();
+    Dispatcher.BeginInvoke(() => AfficherVueAvecFiltreInfos(),
+      System.Windows.Threading.DispatcherPriority.Background);
   }
 
   private void VisualisationDonnées_SelectionChanged(object sender,SelectionChangedEventArgs e) {
@@ -860,12 +910,14 @@ public partial class DialogueServiceGEII: Window {
     if (!FichierDeService.Service.FichierOuvert)
       return;
 
+    Debug.WriteLine($"[INFOS SELECTION] Text='{INFOS.Text}' | SelectedItem='{INFOS.SelectedItem}'");
+
     LireDonnées(
         VisualisationDonnées,
         Semestre,
         Module,
         Formation,
-        Cours,
+        null!,
         INFOS,
         null!,
         ExcelSchemaNames.Tables.NomTableGlobal);
@@ -3065,6 +3117,7 @@ public partial class DialogueServiceGEII: Window {
       ActualiserPanneauCours();
       RestaurerMutualisationsDepuisProfil();
       ActualiserComboCodePedagogiqueDepuisModule();
+      AfficherListesDonnées(INFOS);
     },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -3083,6 +3136,7 @@ public partial class DialogueServiceGEII: Window {
       Dispatcher.BeginInvoke(() => {
         ActualiserPanneauCours();
         RestaurerMutualisationsDepuisProfil();
+        AfficherListesDonnées(INFOS);
       },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();

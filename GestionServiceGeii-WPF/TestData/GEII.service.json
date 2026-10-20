@@ -360,15 +360,15 @@
     "ApplicationId": ""
   },
   "SaveState": {
-    "CurrentSemester": "S3",
+    "CurrentSemester": "S4",
     "CurrentFormation": "FI",
-    "CurrentModule": "REGUL3",
+    "CurrentModule": "ENER4",
     "CurrentCourse": "CM",
-    "CurrentParcours": "Tronc commun"
+    "CurrentParcours": "Parcours AII"
   },
   "Window": {
-    "Left": 157.0,
-    "Top": 45.0,
+    "Left": 211.0,
+    "Top": 43.0,
     "Width": 1545.0,
     "Height": 837.0,
     "State": 0
@@ -640,6 +640,33 @@
         "TD3": 0,
         "TP1": 5,
         "TP2": 7,
+        "TP3": 0,
+        "TP4": 0
+      }
+    },
+    {
+      "Module": "ELEN4",
+      "Formation": "FI",
+      "Semestre": "S4",
+      "Parcours": "Parcours ESE",
+      "EstMutualise": true,
+      "Groupes": {
+        "TD1": [
+          "ESE__Fi",
+          "ESE__Fa"
+        ],
+        "CM": [
+          "Cm__Fi",
+          "CM__Fa"
+        ]
+      },
+      "Effectifs": {
+        "CM": 55,
+        "TD1": 20,
+        "TD2": 0,
+        "TD3": 0,
+        "TP1": 0,
+        "TP2": 0,
         "TP3": 0,
         "TP4": 0
       }
