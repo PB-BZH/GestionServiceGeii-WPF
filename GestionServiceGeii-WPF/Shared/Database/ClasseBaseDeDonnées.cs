@@ -298,7 +298,8 @@ namespace GestionServiceGeii.Shared.Database {
       EnrichirCodesGlobalDepuisLibelleCourt(tableGlobal);
 
       ReconstruireNomsGlobalDepuisAffectations_OleDb(tableGlobal,grilleS1,grilleS2);
-      ReconstruireNomsGlobalDepuisAffectationsS3_OleDb(tableGlobal,grilleS3);
+      ReconstruireNomsGlobalDepuisAffectationsS3_S4_OleDb(tableGlobal,grilleS3);
+      ReconstruireNomsGlobalDepuisAffectationsS3_S4_OleDb(tableGlobal,grilleS4);
 
       EnrichirGlobalDepuisLignesTechniques(tableGlobal);
 
@@ -2018,7 +2019,31 @@ namespace GestionServiceGeii.Shared.Database {
             affectation.Groupe,
             affectation.LibelleCourt);
 
-        if (indexActivites.TryGetValue(cleActivite,out DataRow? ligneExistante)) {
+        DataRow? ligneExistante = null;
+
+        if (!indexActivites.TryGetValue(cleActivite,out ligneExistante) &&
+            affectation.Cours == "APP") {
+
+          string cleSansGroupe = ConstruireCleActiviteGlobal(
+              affectation.Semestre,
+              affectation.Module,
+              affectation.Cours,
+              affectation.Noms,
+              "0",
+              affectation.LibelleCourt);
+
+          indexActivites.TryGetValue(cleSansGroupe,out ligneExistante);
+
+          if (ligneExistante != null) {
+            ligneExistante[ExcelSchemaNames.Columns.Groupe] = affectation.Groupe;
+
+            // L'ancienne clé Groupe=0 ne doit plus référencer cette ligne.
+            indexActivites.Remove(cleSansGroupe);
+            indexActivites[cleActivite] = ligneExistante;
+          }
+        }
+
+        if (ligneExistante != null) {
           if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.Infos))
             ligneExistante[ExcelSchemaNames.Columns.Infos] = affectation.Infos?.Trim() ?? string.Empty;
 
@@ -2651,8 +2676,13 @@ namespace GestionServiceGeii.Shared.Database {
       }
     }
 
-    private static void ReconstruireNomsGlobalDepuisAffectationsS3_OleDb(DataTable tableGlobal,DataTable grilleS3) {
-      if (tableGlobal == null || grilleS3 == null || grilleS3.Rows.Count == 0)
+    private static void ReconstruireNomsGlobalDepuisAffectationsS3_S4_OleDb(DataTable tableGlobal,DataTable grille) {
+      if (tableGlobal == null || grille == null || grille.Rows.Count == 0)
+        return;
+
+      string semestre = grille.TableName.Split(' ')[0];
+
+      if (semestre == "S4")
         return;
 
       if (!tableGlobal.Columns.Contains(ExcelSchemaNames.Columns.Semestre) ||
@@ -2668,7 +2698,7 @@ namespace GestionServiceGeii.Shared.Database {
 
       AjouterColonnesSourceSemestreSiAbsentes(tableGlobal);
 
-      List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleS3Fifa_S4Fifa_OleDb(grilleS3);
+      List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleS3Fifa_S4Fifa_OleDb(grille);
 
       foreach (AffectationGroupeSemestre affectation in affectations
           .Where(a => a.LibelleCourt.Contains("SAE32",StringComparison.OrdinalIgnoreCase))) {
@@ -2691,14 +2721,17 @@ namespace GestionServiceGeii.Shared.Database {
         if (string.IsNullOrWhiteSpace(affectation.Noms))
           continue;
 
-        bool estFA =
-            Regex.IsMatch(affectation.LibelleCourt,@"^R3-?\d{2}A-",RegexOptions.IgnoreCase) ||
-            affectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase);
+        string formation = semestre == "S4" &&
+                           !string.IsNullOrWhiteSpace(affectation.Formation)
+            ? affectation.Formation
+            : Regex.IsMatch(affectation.LibelleCourt,@"^R3-?\d{2}A-",RegexOptions.IgnoreCase) ||
+              affectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase)
+                ? "FA"
+                : "FI";
 
-        string formation = estFA ? "FA" : "FI";
         string libelleGlobal = NormaliserLibelleCourtS3(affectation.LibelleCourt);
 
-        string cle = $"S3|{formation}|{affectation.Cours}|{libelleGlobal}";
+        string cle = $"{semestre}|{formation}|{affectation.Cours}|{libelleGlobal}";
 
         if (!affectationsParCle.TryGetValue(cle,out List<AffectationGroupeSemestre>? liste)) {
           liste = new List<AffectationGroupeSemestre>();
@@ -2716,16 +2749,19 @@ namespace GestionServiceGeii.Shared.Database {
 
         AffectationGroupeSemestre premiereAffectation = listeAffectations[0];
 
-        bool estFA =
-            Regex.IsMatch(premiereAffectation.LibelleCourt,@"^R3-?\d{2}A-",RegexOptions.IgnoreCase) ||
-            premiereAffectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase);
+        string formation = semestre == "S4" &&
+                           !string.IsNullOrWhiteSpace(premiereAffectation.Formation)
+            ? premiereAffectation.Formation
+            : Regex.IsMatch(premiereAffectation.LibelleCourt,@"^R3-?\d{2}A-",RegexOptions.IgnoreCase) ||
+              premiereAffectation.LibelleCourt.EndsWith("_FA",StringComparison.OrdinalIgnoreCase)
+                ? "FA"
+                : "FI";
 
-        string formation = estFA ? "FA" : "FI";
         string libelleGlobal = NormaliserLibelleCourtS3(premiereAffectation.LibelleCourt);
 
         List<DataRow> lignesGlobal = tableGlobal.Rows.Cast<DataRow>()
             .Where(row =>
-                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre),"S3",StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre),semestre,StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Formation),formation,StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours),premiereAffectation.Cours,StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(GetRowValueIfColumnExists(row,colonneLibelleCourt),libelleGlobal,StringComparison.OrdinalIgnoreCase))
