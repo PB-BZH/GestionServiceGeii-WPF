@@ -2019,6 +2019,30 @@ namespace GestionServiceGeii.Shared.Database {
             affectation.Groupe,
             affectation.LibelleCourt);
 
+        if (grille.TableName == "S3 FIFA" &&
+            affectation.Module == "OML3" &&
+            affectation.Cours == "APP" &&
+            affectation.Noms == "BOSSARD") {
+
+          foreach (DataRow row in tableGlobal.Rows) {
+            if (GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre) != "S3" ||
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Module) != "OML3" ||
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours) != "APP" ||
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms) != "BOSSARD")
+              continue;
+
+            string cleGlobal = ConstruireCleActiviteGlobal(
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre),
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Module),
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours),
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms),
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Groupe),
+                GetRowValueIfColumnExists(row,colonneLibelleCourt));
+
+            Debug.WriteLine($"[OML3 CLE GLOBAL] '{cleGlobal}' | DansIndex={indexActivites.ContainsKey(cleGlobal)}");
+          }
+        }
+
         DataRow? ligneExistante = null;
 
         if (!indexActivites.TryGetValue(cleActivite,out ligneExistante) &&
@@ -2032,7 +2056,18 @@ namespace GestionServiceGeii.Shared.Database {
               "0",
               affectation.LibelleCourt);
 
-          indexActivites.TryGetValue(cleSansGroupe,out ligneExistante);
+          if (!indexActivites.TryGetValue(cleSansGroupe,out ligneExistante)) {
+            ligneExistante = tableGlobal.Rows.Cast<DataRow>().FirstOrDefault(row =>
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre),affectation.Semestre,StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Module),affectation.Module,StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours),affectation.Cours,StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms),affectation.Noms,StringComparison.OrdinalIgnoreCase) &&
+                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Groupe) == "0" &&
+            string.Equals(
+                Regex.Replace(GetRowValueIfColumnExists(row,colonneLibelleCourt),@"^(R\d+)-(\d{2})-","$1$2-",RegexOptions.IgnoreCase),
+                Regex.Replace(affectation.LibelleCourt,@"^(R\d+)-(\d{2})-","$1$2-",RegexOptions.IgnoreCase),
+                StringComparison.OrdinalIgnoreCase));
+          }
 
           if (ligneExistante != null) {
             ligneExistante[ExcelSchemaNames.Columns.Groupe] = affectation.Groupe;
@@ -2147,6 +2182,16 @@ namespace GestionServiceGeii.Shared.Database {
         return;
 
       List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(grille);
+
+      if (grille.TableName == "S3 FIFA") {
+        foreach (AffectationGroupeSemestre a in affectations.Where(a =>
+            a.Module == "OML3" && a.Cours == "APP")) {
+
+          Debug.WriteLine(
+              $"[OML3 APP] Nom='{a.Noms}' | Groupe='{a.Groupe}' | " +
+              $"Source='{a.SourceSheet}' | Ligne={a.SourceRow}");
+        }
+      }
 
       if (affectations.Count == 0)
         return;
@@ -2470,9 +2515,7 @@ namespace GestionServiceGeii.Shared.Database {
         string groupe = GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Groupe);
         string libelleCourt = GetRowValueIfColumnExists(row,colonneLibelleCourt);
 
-        string cleActivite =
-            ConstruireCleActiviteGlobal(
-                semestre,module,cours,noms,groupe,libelleCourt);
+        string cleActivite = ConstruireCleActiviteGlobal(semestre,module,cours,noms,groupe,libelleCourt);
 
         if (!indexActivites.ContainsKey(cleActivite))
           indexActivites.Add(cleActivite,row);
@@ -2491,6 +2534,18 @@ namespace GestionServiceGeii.Shared.Database {
 
 
       foreach (AffectationGroupeSemestre affectation in affectations) {
+
+        if (tableGlobal.TableName == "S3 FIFA" &&
+            affectation.Module == "OML3" &&
+            affectation.Cours == "APP") {
+
+          Debug.WriteLine(
+              $"[OML3 AVANT FILTRES] Nom='{affectation.Noms}' | " +
+              $"Groupe='{affectation.Groupe}' | " +
+              $"Technique={EstLigneTechniqueGlobal(affectation.Noms)}");
+        }
+
+        // Conserve ici le reste de ta boucle.
         if (string.IsNullOrWhiteSpace(affectation.Noms))
           continue;
 
@@ -2505,6 +2560,25 @@ namespace GestionServiceGeii.Shared.Database {
                 affectation.Noms,
                 affectation.Groupe,
                 affectation.LibelleCourt);
+
+        if (tableGlobal.TableName == "S3 FIFA" &&
+            affectation.Module == "OML3" &&
+            affectation.Cours == "APP") {
+
+          string cleSansGroupe = ConstruireCleActiviteGlobal(
+              affectation.Semestre,
+              affectation.Module,
+              affectation.Cours,
+              affectation.Noms,
+              "0",
+              affectation.LibelleCourt);
+
+          Debug.WriteLine(
+              $"[OML3 RECHERCHE] " +
+              $"Clé Promo='{cleActivite}' | " +
+              $"Clé Groupe 0='{cleSansGroupe}' | " +
+              $"Trouvée={indexActivites.ContainsKey(cleSansGroupe)}");
+        }
 
         if (indexActivites.TryGetValue(cleActivite,out DataRow? ligneExistante)) {
           if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.Infos))

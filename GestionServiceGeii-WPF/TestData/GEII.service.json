@@ -360,15 +360,15 @@
     "ApplicationId": ""
   },
   "SaveState": {
-    "CurrentSemester": "S1",
+    "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "AN1",
+    "CurrentModule": "OML3",
     "CurrentCourse": "CM",
     "CurrentParcours": "Tronc commun"
   },
   "Window": {
-    "Left": 211.0,
-    "Top": 43.0,
+    "Left": 208.0,
+    "Top": 80.0,
     "Width": 1545.0,
     "Height": 837.0,
     "State": 0
@@ -472,7 +472,7 @@
       "Formation": "FI",
       "Semestre": "S3",
       "Parcours": "Tronc commun",
-      "EstMutualise": null,
+      "EstMutualise": true,
       "Groupes": {
         "TD3": [
           "ESE__Fi",
@@ -482,16 +482,20 @@
           "AII__Fi"
         ],
         "CM": [
-          "Cm__Fi",
-          "CM__Fa"
+          "Cm__Fi"
         ],
-        "TD1": [],
-        "TD2": []
+        "TD1": [
+          "ESE__Fi"
+        ],
+        "TD2": [
+          "EME__Fi",
+          "AII__Fi"
+        ]
       },
       "Effectifs": {
-        "CM": 55,
-        "TD1": 0,
-        "TD2": 0,
+        "CM": 43,
+        "TD1": 15,
+        "TD2": 28,
         "TD3": 55,
         "TP1": 0,
         "TP2": 0,
