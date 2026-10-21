@@ -555,20 +555,16 @@ public partial class DialogueServiceGEII: Window {
     string semestre = Semestre.Text.Trim();
     string formation = Formation.Text.Trim();
 
-    Debug.WriteLine($"[REMPLISSAGE INFOS] Module='{module}' | Semestre='{semestre}' | Formation='{formation}' | Global={table.Rows.Count} lignes");
-
     string[] informations = table.AsEnumerable()
       .Where(row =>
         string.Equals(row[ExcelSchemaNames.Columns.Module]?.ToString()?.Trim(),module,StringComparison.OrdinalIgnoreCase) &&
         string.Equals(row[ExcelSchemaNames.Columns.Semestre]?.ToString()?.Trim(),semestre,StringComparison.OrdinalIgnoreCase) &&
         string.Equals(row[ExcelSchemaNames.Columns.Formation]?.ToString()?.Trim(),formation,StringComparison.OrdinalIgnoreCase))
       .Select(row => row[ExcelSchemaNames.Columns.Infos]?.ToString()?.Trim() ?? string.Empty)
-      .Where(info => !string.IsNullOrWhiteSpace(info))
+      .Where(info => !string.IsNullOrWhiteSpace(info) && info != "0")
       .Distinct(StringComparer.OrdinalIgnoreCase)
       .OrderBy(info => info)
       .ToArray();
-
-    Debug.WriteLine($"[REMPLISSAGE INFOS] {informations.Length} valeur(s) : {string.Join(" | ",informations)}");
 
     _isRefreshingInfos = true;
 
@@ -576,10 +572,23 @@ public partial class DialogueServiceGEII: Window {
       INFOS.ItemsSource = null;
       INFOS.Items.Clear();
       INFOS.ItemsSource = informations;
-      INFOS.SelectedIndex = -1;
+
+      INFOS.SelectedIndex = informations.Length > 0 ? 0 : -1;
     }
     finally {
+      INFOS.Visibility = Visibility.Visible;
+      INFOS.IsEnabled = informations.Length > 0;
       _isRefreshingInfos = false;
+    }
+
+    // Actualiser la vue après la sélection automatique,
+    // lorsque les autres ComboBox ont terminé leur mise à jour.
+    if (informations.Length > 0 && !_isInitializingView && !_suspendViewRefresh) {
+      Dispatcher.BeginInvoke(() => {
+        if (!_isRefreshingInfos && !_isInitializingView && !_suspendViewRefresh &&
+            INFOS.SelectedIndex >= 0 && FichierDeService.Service.FichierOuvert)
+          AfficherVueAvecFiltreInfos();
+      },System.Windows.Threading.DispatcherPriority.Background);
     }
   }
 
@@ -910,7 +919,27 @@ public partial class DialogueServiceGEII: Window {
     if (!FichierDeService.Service.FichierOuvert)
       return;
 
-    Debug.WriteLine($"[INFOS SELECTION] Text='{INFOS.Text}' | SelectedItem='{INFOS.SelectedItem}'");
+    DataTable? global = DataSetExcelService?.Tables[ExcelSchemaNames.Tables.NomTableGlobal];
+
+    if (global != null && Semestre.Text == "S3" && Module.Text == "ELEN3") {
+      foreach (DataRow row in global.Rows) {
+        string semestre = row[ExcelSchemaNames.Columns.Semestre]?.ToString()?.Trim() ?? "";
+        string formation = row[ExcelSchemaNames.Columns.Formation]?.ToString()?.Trim() ?? "";
+        string module = row[ExcelSchemaNames.Columns.Module]?.ToString()?.Trim() ?? "";
+        string cours = row[ExcelSchemaNames.Columns.Cours]?.ToString()?.Trim() ?? "";
+        string nom = row[ExcelSchemaNames.Columns.Noms]?.ToString()?.Trim() ?? "";
+        string infos = row[ExcelSchemaNames.Columns.Infos]?.ToString()?.Trim() ?? "";
+
+        if (semestre != "S3" || formation != "FI" || module != "ELEN3")
+          continue;
+
+        if (cours != "TD" && cours != "TP")
+          continue;
+
+        Debug.WriteLine(
+            $"[ELEN3 TD TP] Nom='{nom}' | Cours='{cours}' | Infos='{infos}'");
+      }
+    }
 
     LireDonnées(
         VisualisationDonnées,
@@ -921,6 +950,13 @@ public partial class DialogueServiceGEII: Window {
         INFOS,
         null!,
         ExcelSchemaNames.Tables.NomTableGlobal);
+
+    Debug.WriteLine(
+        $"[VUE INFOS] Infos='{INFOS.Text}' | " +
+        $"Cours='{Cours.Text}' | " +
+        $"Semestre='{Semestre.Text}' | " +
+        $"Formation='{Formation.Text}' | " +
+        $"Module='{Module.Text}'");
 
     TotalType(VisualisationDonnées);
     FormatageCouleurLignes(VisualisationDonnées);

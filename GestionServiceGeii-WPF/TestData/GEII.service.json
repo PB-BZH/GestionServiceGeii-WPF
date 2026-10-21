@@ -362,9 +362,9 @@
   "SaveState": {
     "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "INFO3",
+    "CurrentModule": "ELEN3",
     "CurrentCourse": "CM",
-    "CurrentParcours": "Tronc commun"
+    "CurrentParcours": "Parcours ESE"
   },
   "Window": {
     "Left": 208.0,

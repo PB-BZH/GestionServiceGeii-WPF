@@ -1971,14 +1971,11 @@ namespace GestionServiceGeii.Shared.Database {
 
       if (grille.TableName == "S3 FIFA") {
         foreach (AffectationGroupeSemestre a in affectations.Where(a =>
-            a.Module == "INFO3" && (a.Cours == "TD" || a.Cours == "TP"))) {
+            a.Module == "ELEN3" && a.Cours == "CM")) {
 
           Debug.WriteLine(
-              $"[INFO3 EXTRACTION] " +
-              $"Code='{a.LibelleCourt}' | " +
-              $"Cours='{a.Cours}' | " +
-              $"Nom='{a.Noms}' | " +
-              $"Groupe='{a.Groupe}' | " +
+              $"[ELEN3 ESE CM] Code='{a.LibelleCourt}' | " +
+              $"Nom='{a.Noms}' | Groupe='{a.Groupe}' | " +
               $"Source={a.SourceSheet}!{a.SourceRow},{a.SourceColumn}");
         }
       }
@@ -1989,7 +1986,7 @@ namespace GestionServiceGeii.Shared.Database {
       int prochainId = TrouverProchainIdGlobal(tableGlobal);
       AjouterColonnesSourceSemestreSiAbsentes(tableGlobal);
 
-      ReconstruireLignesInfosSpecialesDepuisAffectations(tableGlobal,colonneLibelleCourt,affectations);
+      //ReconstruireLignesInfosSpecialesDepuisAffectations(tableGlobal,colonneLibelleCourt,affectations);
 
       Dictionary<string,DataRow> indexActivites = new(StringComparer.OrdinalIgnoreCase);
       Dictionary<string,DataRow> indexModeles = new(StringComparer.OrdinalIgnoreCase);
@@ -2035,9 +2032,7 @@ namespace GestionServiceGeii.Shared.Database {
 
         DataRow? ligneExistante = null;
 
-        if (!indexActivites.TryGetValue(cleActivite,out ligneExistante) &&
-            affectation.Cours == "APP") {
-
+        if (!indexActivites.TryGetValue(cleActivite,out ligneExistante) && affectation.Cours is "APP" or "CM") {
           string cleSansGroupe = ConstruireCleActiviteGlobal(
               affectation.Semestre,
               affectation.Module,
@@ -2093,6 +2088,17 @@ namespace GestionServiceGeii.Shared.Database {
             affectation.LibelleCourt);
 
         indexModeles.TryGetValue(cleModele,out DataRow? modele);
+
+        if (grille.TableName == "S3 FIFA" &&
+            affectation.Module == "ELEN3" &&
+            affectation.LibelleCourt.Contains("ESE15",StringComparison.OrdinalIgnoreCase)) {
+
+          Debug.WriteLine(
+              $"[ELEN3 MODELE] Code='{affectation.LibelleCourt}' | " +
+              $"Nom='{affectation.Noms}' | Cours='{affectation.Cours}' | " +
+              $"Groupe='{affectation.Groupe}' | Infos='{affectation.Infos}' | " +
+              $"ModeleTrouve={modele != null} | Cle='{cleModele}'");
+        }
 
         if (modele == null) {
           nbSansModele++;
@@ -2539,25 +2545,6 @@ namespace GestionServiceGeii.Shared.Database {
                 affectation.Noms,
                 affectation.Groupe,
                 affectation.LibelleCourt);
-
-        if (tableGlobal.TableName == "S3 FIFA" &&
-            affectation.Module == "OML3" &&
-            affectation.Cours == "APP") {
-
-          string cleSansGroupe = ConstruireCleActiviteGlobal(
-              affectation.Semestre,
-              affectation.Module,
-              affectation.Cours,
-              affectation.Noms,
-              "0",
-              affectation.LibelleCourt);
-
-          Debug.WriteLine(
-              $"[OML3 RECHERCHE] " +
-              $"Clé Promo='{cleActivite}' | " +
-              $"Clé Groupe 0='{cleSansGroupe}' | " +
-              $"Trouvée={indexActivites.ContainsKey(cleSansGroupe)}");
-        }
 
         if (indexActivites.TryGetValue(cleActivite,out DataRow? ligneExistante)) {
           if (ligneExistante.Table.Columns.Contains(ExcelSchemaNames.Columns.Infos))
@@ -3175,8 +3162,8 @@ namespace GestionServiceGeii.Shared.Database {
       int rowMax = TrouverDerniereLigneUtileSemestre(grille);
 
       Regex regexCodeService = new(
-          @"^(R\d+-\d{2}|R[34]-?(?:\d{2}|[A-Z]+-?\d{2}[ABC]A?))-(CM|TD|TP|DS|APP)$",
-          RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        @"^(R\d+-\d{2}|R[34]-?(?:\d{2}|[A-Z]+-?\d{2}(?:[ABC]A?)?))-(CM|TD|TP|DS|APP)$",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
       string moduleCourant = string.Empty;
       string codeServiceCourant = string.Empty;
@@ -3228,6 +3215,13 @@ namespace GestionServiceGeii.Shared.Database {
         else if (!string.IsNullOrWhiteSpace(moduleDetecte)) {
           moduleCourant = moduleDetecte;
           infosCourantes = string.Empty;
+
+          if (nomFeuille == "S3 FIFA" &&
+              match.Success &&
+              celluleModule.StartsWith(moduleDetecte + " ",StringComparison.OrdinalIgnoreCase)) {
+
+            infosCourantes = celluleModule.Substring(moduleDetecte.Length).Trim();
+          }
         }
         else if (!feuilleS4 && match.Success && !string.IsNullOrWhiteSpace(celluleModule)) {
           infosCourantes = celluleModule;
@@ -3239,6 +3233,16 @@ namespace GestionServiceGeii.Shared.Database {
         else {
           if (!string.IsNullOrWhiteSpace(codeService))
             continue;
+        }
+
+        if (nomFeuille == "S3 FIFA" && row >= 106 && row <= 113) {
+          Debug.WriteLine(
+              $"[S3 ELEN3 INFOS] Ligne={row} | " +
+              $"Cellule='{celluleModule}' | " +
+              $"ModuleDétecté='{moduleDetecte}' | " +
+              $"ModuleCourant='{moduleCourant}' | " +
+              $"Infos='{infosCourantes}' | " +
+              $"Code='{codeService}'");
         }
 
         if (string.IsNullOrWhiteSpace(codeServiceCourant) || string.IsNullOrWhiteSpace(moduleCourant))
@@ -6684,7 +6688,7 @@ namespace GestionServiceGeii.Shared.Database {
       return string.Empty;
     }
 
-    private static string GetRowValueIfColumnExists(DataRow row,string columnName) {
+    internal static string GetRowValueIfColumnExists(DataRow row,string columnName) {
       if (row == null)
         return string.Empty;
 
