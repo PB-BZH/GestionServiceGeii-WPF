@@ -362,7 +362,7 @@
   "SaveState": {
     "CurrentSemester": "S3",
     "CurrentFormation": "FI",
-    "CurrentModule": "OML3",
+    "CurrentModule": "INFO3",
     "CurrentCourse": "CM",
     "CurrentParcours": "Tronc commun"
   },
@@ -474,13 +474,7 @@
       "Parcours": "Tronc commun",
       "EstMutualise": true,
       "Groupes": {
-        "TD3": [
-          "ESE__Fi",
-          "ESE__Fa",
-          "EME__Fi",
-          "EME__Fa",
-          "AII__Fi"
-        ],
+        "TD3": [],
         "CM": [
           "Cm__Fi"
         ],
@@ -496,7 +490,7 @@
         "CM": 43,
         "TD1": 15,
         "TD2": 28,
-        "TD3": 55,
+        "TD3": 0,
         "TP1": 0,
         "TP2": 0,
         "TP3": 0,

@@ -1969,6 +1969,20 @@ namespace GestionServiceGeii.Shared.Database {
 
       List<AffectationGroupeSemestre> affectations = LireAffectationsGroupesDepuisFeuilleSemestre_OleDb(grille);
 
+      if (grille.TableName == "S3 FIFA") {
+        foreach (AffectationGroupeSemestre a in affectations.Where(a =>
+            a.Module == "INFO3" && (a.Cours == "TD" || a.Cours == "TP"))) {
+
+          Debug.WriteLine(
+              $"[INFO3 EXTRACTION] " +
+              $"Code='{a.LibelleCourt}' | " +
+              $"Cours='{a.Cours}' | " +
+              $"Nom='{a.Noms}' | " +
+              $"Groupe='{a.Groupe}' | " +
+              $"Source={a.SourceSheet}!{a.SourceRow},{a.SourceColumn}");
+        }
+      }
+
       if (affectations.Count == 0)
         return;
 
@@ -2018,30 +2032,6 @@ namespace GestionServiceGeii.Shared.Database {
             affectation.Noms,
             affectation.Groupe,
             affectation.LibelleCourt);
-
-        if (grille.TableName == "S3 FIFA" &&
-            affectation.Module == "OML3" &&
-            affectation.Cours == "APP" &&
-            affectation.Noms == "BOSSARD") {
-
-          foreach (DataRow row in tableGlobal.Rows) {
-            if (GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre) != "S3" ||
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Module) != "OML3" ||
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours) != "APP" ||
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms) != "BOSSARD")
-              continue;
-
-            string cleGlobal = ConstruireCleActiviteGlobal(
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Semestre),
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Module),
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Cours),
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Noms),
-                GetRowValueIfColumnExists(row,ExcelSchemaNames.Columns.Groupe),
-                GetRowValueIfColumnExists(row,colonneLibelleCourt));
-
-            Debug.WriteLine($"[OML3 CLE GLOBAL] '{cleGlobal}' | DansIndex={indexActivites.ContainsKey(cleGlobal)}");
-          }
-        }
 
         DataRow? ligneExistante = null;
 
@@ -2140,17 +2130,6 @@ namespace GestionServiceGeii.Shared.Database {
         tableGlobal.Rows.Add(nouvelleLigne);
         indexActivites[cleActivite] = nouvelleLigne;
         nbAjoutees++;
-
-        if (string.Equals(affectation.Module,"ENER1-2",StringComparison.OrdinalIgnoreCase)) {
-          Debug.WriteLine(
-              "Ligne ajoutée ENER1-2 : " +
-              affectation.LibelleCourt + " | " +
-              affectation.Cours + " | " +
-              affectation.Noms + " | " +
-              affectation.Groupe + " | " +
-              affectation.Duree + "h | ligne Excel " +
-              affectation.SourceRow);
-        }
       }
 
       tableGlobal.AcceptChanges();
@@ -4264,7 +4243,7 @@ namespace GestionServiceGeii.Shared.Database {
         return false;
       if (texte.Contains("/"))
         return false;
-      return Regex.IsMatch(texte,@"^[A-ZÀ-ÖØ-Ý][A-ZÀ-ÖØ-Ý \-']+$",RegexOptions.IgnoreCase);
+      return Regex.IsMatch(texte,@"^[A-ZÀ-ÖØ-Ý][A-ZÀ-ÖØ-Ý \-'.]+$",RegexOptions.IgnoreCase);
     }
 
     private static string ConstruireCleGroupeGlobal(string semestre,string module,string libelleCourt,string cours,string noms) {
