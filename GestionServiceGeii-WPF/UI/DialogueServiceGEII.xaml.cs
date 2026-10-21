@@ -2819,11 +2819,7 @@ public partial class DialogueServiceGEII: Window {
   }
 
   private void mnuTest_Click(object sender,RoutedEventArgs e) {
-    Stopwatch chrono = Stopwatch.StartNew();
-
     ReconstruireCacheFichierService(FichierDeService.Service);
-
-    Debug.WriteLine($"[TEST CACHE À CHAUD] Reconstruction complète : {chrono.ElapsedMilliseconds} ms");
   }
 
   private void mnuCheminsAcces_Click(object sender,RoutedEventArgs e) {

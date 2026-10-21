@@ -360,11 +360,11 @@
     "ApplicationId": ""
   },
   "SaveState": {
-    "CurrentSemester": "S4",
+    "CurrentSemester": "S1",
     "CurrentFormation": "FI",
-    "CurrentModule": "ENER4",
+    "CurrentModule": "AN1",
     "CurrentCourse": "CM",
-    "CurrentParcours": "Parcours AII"
+    "CurrentParcours": "Tronc commun"
   },
   "Window": {
     "Left": 211.0,

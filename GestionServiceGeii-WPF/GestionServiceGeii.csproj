@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Compile Remove="Core\Services\UpdateChecker.cs" />
+    <Compile Remove="Shared\Database\ClasseBaseDeDonnées_0.cs" />
     <Compile Remove="Shared\Librairie_Registre\FichierRegistre.cs" />
     <Compile Remove="Shared\Librairie_Registre\FichierRegistre.Designer.cs" />
   </ItemGroup>
