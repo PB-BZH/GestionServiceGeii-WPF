@@ -545,6 +545,16 @@ public partial class DialogueServiceGEII: Window {
     return ProfileFileValidator.AreProfileFilesAvailable(_profile);
   }
 
+  private static void TraceInfos(string message) {
+    string fichier = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+        "TraceInfos.txt");
+
+    File.AppendAllText(
+        fichier,
+        $"{DateTime.Now:HH:mm:ss.fff} | {message}{Environment.NewLine}");
+  }
+
   private void RemplirComboBoxInfos() {
     DataTable? table = DataSetExcelService?.Tables[ExcelSchemaNames.Tables.NomTableGlobal];
 
@@ -580,19 +590,17 @@ public partial class DialogueServiceGEII: Window {
       INFOS.IsEnabled = informations.Length > 0;
       _isRefreshingInfos = false;
     }
-
-    // Actualiser la vue après la sélection automatique,
-    // lorsque les autres ComboBox ont terminé leur mise à jour.
-    if (informations.Length > 0 && !_isInitializingView && !_suspendViewRefresh) {
-      Dispatcher.BeginInvoke(() => {
-        if (!_isRefreshingInfos && !_isInitializingView && !_suspendViewRefresh &&
-            INFOS.SelectedIndex >= 0 && FichierDeService.Service.FichierOuvert)
-          AfficherVueAvecFiltreInfos();
-      },System.Windows.Threading.DispatcherPriority.Background);
-    }
   }
 
   public void AfficherListesDonnées(ComboBox liste,ComboBox critèreDeSelection = null!) {
+
+    TraceInfos(
+        $"LISTE={liste.Name} | " +
+        $"Semestre='{Semestre.Text}' | " +
+        $"Formation='{Formation.Text}' | " +
+        $"Parcours='{Parcours.Text}' | " +
+        $"Module='{Module.Text}'");
+
     Debug.WriteLine($"[AFFICHER LISTES] ComboBox='{liste.Name}'");
     switch (liste.Name) {
       case "Semestre":
@@ -849,7 +857,6 @@ public partial class DialogueServiceGEII: Window {
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
       RestaurerMutualisationsDepuisProfil();
-      AfficherListesDonnées(INFOS);
     },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -862,17 +869,14 @@ public partial class DialogueServiceGEII: Window {
     _suspendViewRefresh = true;
 
     try {
-      AfficherListesDonnées(INFOS);
       AfficherListesDonnées(Module);
     }
     finally {
       _suspendViewRefresh = false;
     }
 
-    // Synchronisation des références du module sélectionné.
     ActualiserComboCodePedagogiqueDepuisModule();
     ActualiserComboOseDepuisModule(Module.Text.Trim());
-    ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
 
     Dispatcher.BeginInvoke(() => {
       ActualiserPanneauCours();
@@ -1499,10 +1503,18 @@ public partial class DialogueServiceGEII: Window {
 
     DataSetExcel = DataSetExcelService;
 
-    AfFicheMatière(Semestre,Formation,Module,OSE,"");
-    FormatageCouleurLignes(VisualisationDonnées);
-    HorairesModule();
-    AfficheFicheModule();
+    // Actualisation d'INFOS à partir des sélections stabilisées.
+    AfficherListesDonnées(INFOS);
+
+    // Affichage de la vue correspondant aux critères courants.
+    if (INFOS.SelectedIndex >= 0)
+      AfficherVueAvecFiltreInfos();
+    else {
+      AfFicheMatière(Semestre,Formation,Module,OSE,"");
+      FormatageCouleurLignes(VisualisationDonnées);
+      HorairesModule();
+      AfficheFicheModule();
+    }
   }
 
   internal void RequestRefreshModuleView() {
@@ -3149,7 +3161,6 @@ public partial class DialogueServiceGEII: Window {
       ActualiserPanneauCours();
       RestaurerMutualisationsDepuisProfil();
       ActualiserComboCodePedagogiqueDepuisModule();
-      AfficherListesDonnées(INFOS);
     },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
@@ -3162,13 +3173,11 @@ public partial class DialogueServiceGEII: Window {
 
     ActualiserComboOseDepuisModule(Module.Text.Trim());
     ActualiserComboCodePedagogiqueDepuisModule();
-    ActualiserComboInfosDepuisGlobal(Module.Text.Trim());
 
     if (!_isInitializingView)
       Dispatcher.BeginInvoke(() => {
         ActualiserPanneauCours();
         RestaurerMutualisationsDepuisProfil();
-        AfficherListesDonnées(INFOS);
       },DispatcherPriority.ContextIdle);
 
     RequestRefreshModuleView();
