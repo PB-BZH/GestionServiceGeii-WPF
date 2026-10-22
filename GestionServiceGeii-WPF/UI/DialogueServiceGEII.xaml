@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 18/10/2026 - 12:04
+║  Le 22/10/2026 - 11:46
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -1123,7 +1123,7 @@
                         <StackPanel x:Name="splCoursGeii2_Mutuel"
                                     Grid.Row="2"
                                     Visibility="Collapsed"
-                                    d:Visibility="Collapsed"
+                                    d:Visibility="Visible"
                                     Orientation="Vertical">
                             <Label Content="GEII 2 - Mutualisation"
                                    FontWeight="Bold"
@@ -1358,7 +1358,7 @@
                         <Grid x:Name="splMutualisation"
                               Grid.Row="2"
                               Visibility="Collapsed"
-                              d:Visibility="Visible">
+                              d:Visibility="Collapsed">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40" />
                                 <RowDefinition Height="Auto" />
@@ -2006,8 +2006,6 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="10" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="10" />
-                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="32" />
@@ -2077,19 +2075,6 @@
                                   SelectionChanged="Module_SelectionChanged"
                                   Grid.Row="1"
                                   Grid.Column="8"
-                                  Height="25" />
-
-                        <TextBlock Text="Cours"
-                                   Grid.Row="0"
-                                   Grid.Column="10"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   FontWeight="Bold" />
-
-                        <ComboBox x:Name="Cours"
-                                  SelectionChanged="Cours_SelectionChanged"
-                                  Grid.Row="1"
-                                  Grid.Column="10"
                                   Height="25" />
                     </Grid>
 

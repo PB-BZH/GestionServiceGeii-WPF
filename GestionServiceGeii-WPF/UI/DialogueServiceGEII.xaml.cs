@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 18/10/2026 - 12:04
+║  Le 22/10/2026 - 11:46
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -228,7 +228,6 @@ public partial class DialogueServiceGEII: Window {
 
     _profile.SaveState.CurrentSemester = Semestre.Text.Trim();
     _profile.SaveState.CurrentFormation = Formation.Text.Trim();
-    _profile.SaveState.CurrentCourse = Cours.Text.Trim();
     _profile.SaveState.CurrentModule =
         texteMatière.Content?.ToString()?.Trim() ?? string.Empty;
     _profile.SaveState.CurrentParcours = Parcours.Text.Trim();
@@ -285,9 +284,6 @@ public partial class DialogueServiceGEII: Window {
 
       if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentModule))
         SelectionnerValeurComboBox(Module,_profile.SaveState.CurrentModule);
-
-      if (!string.IsNullOrWhiteSpace(_profile.SaveState.CurrentCourse))
-        SelectionnerValeurComboBox(Cours,_profile.SaveState.CurrentCourse);
 
       ActualiserComboOseDepuisModule(Module.Text.Trim());
 
@@ -529,6 +525,7 @@ public partial class DialogueServiceGEII: Window {
     RestaurerEffectifsGeii1_DepuisProfil();
     RestaurerEffectifsGeii2_FI_DepuisProfil();
     RestaurerEffectifsGeii2_FA_DepuisProfil();
+    RestaurerGroupesMutualisesModuleDepuisProfil();
 
     _applicationSettings.LastProfilePath = profilePath;
     ApplicationSettingsService.Save(_applicationSettings);
@@ -623,9 +620,6 @@ public partial class DialogueServiceGEII: Window {
         break;
       case "Vacataires":
         Vacataires = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name);
-        break;
-      case "Cours":
-        Cours = ClasseGénérique.RempliComboBox(liste,DataSetExcelSélection,liste.Name);
         break;
       case "OSE":
         break;
@@ -803,7 +797,6 @@ public partial class DialogueServiceGEII: Window {
     yield return Semestre;
     yield return Formation;
     yield return Parcours;
-    yield return Cours;
     yield return Intervenants;
     yield return Titulaires;
     yield return Vacataires;
@@ -886,13 +879,6 @@ public partial class DialogueServiceGEII: Window {
     RequestRefreshModuleView();
   }
 
-  private void Cours_SelectionChanged(object sender,SelectionChangedEventArgs e) {
-    if (_suspendViewRefresh || _isInitializingView)
-      return;
-
-    RequestRefreshModuleView();
-  }
-
   private void INFOS_SelectionChanged(object sender,SelectionChangedEventArgs e) {
     if (_suspendViewRefresh || _isInitializingView || _isRefreshingInfos)
       return;
@@ -955,13 +941,6 @@ public partial class DialogueServiceGEII: Window {
         null!,
         ExcelSchemaNames.Tables.NomTableGlobal);
 
-    Debug.WriteLine(
-        $"[VUE INFOS] Infos='{INFOS.Text}' | " +
-        $"Cours='{Cours.Text}' | " +
-        $"Semestre='{Semestre.Text}' | " +
-        $"Formation='{Formation.Text}' | " +
-        $"Module='{Module.Text}'");
-
     TotalType(VisualisationDonnées);
     FormatageCouleurLignes(VisualisationDonnées);
     AfficheFicheModule();
@@ -990,25 +969,6 @@ public partial class DialogueServiceGEII: Window {
 
   private void NettoyageDuFormulaire() {
     try {
-      //FeuilleClasseur!.DataSource = null;
-      //Semestre!.DataSource = null;
-      //UE!.DataSource = null;
-      //Module.DataSource = null;
-      //Formation.DataSource = null;
-      //Cours.DataSource = null;
-      //Noms.DataSource = null;
-      //Intervenants.DataSource = null;
-      //Titulaires.DataSource = null;
-      //Vacataires.DataSource = null;
-      //Commentaires.DataSource = null;
-      //détailMatière.Visible = false;
-
-      //DataSetExcelSélection = null!;
-      //DataSetExcelService = null!;
-      //DataTableExcel = null!;
-      //VisualisationDonnées.DataSource = null;
-
-      //Selection = null!;
       FichierDeService.Service = null!;
       ClasseFichier.SuprimeToutesLesTachesExcel();
     }
@@ -1395,7 +1355,7 @@ public partial class DialogueServiceGEII: Window {
     nbGroupeTdTotal_Geii2_Mutuel.Content = MutualisationCours.OngletsTD.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe)));
     nbGroupeTpTotal_Geii2_Mutuel.Content = MutualisationCours.OngletsTP.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe)));
     nbGroupeTpSpTotal_Geii2_Mutuel.Content = MutualisationCours.OngletsTP.Count(onglet => _gestionMutualisations!.ObtenirGroupes(onglet).Any(groupe => !string.IsNullOrWhiteSpace(groupe)));
-    nbEtudiants_Geii2_Mutuel.Content = RechercherEffectifMutualise("CM").ToString() + " étudiants";
+    nbEtudiants_Geii2_Mutuel.Content = RechercherEffectifMutualise("CM").ToString();
 
 
     ControleCouleurBoutonsTDetTP(
@@ -1852,6 +1812,7 @@ public partial class DialogueServiceGEII: Window {
           else if ((Semestre.Text == "S3" || Semestre.Text == "S4") && Formation.Text == "FI") {
             if (NomGroupeTD_Geii2_officiel_FI == null || NomGroupeTD_Geii2_officiel_FI.Length == 0 || NomGroupeTD_Geii2_officiel_FI[0] == null) {
               RestaurerEffectifsGeii2_FI_DepuisProfil();
+              RestaurerGroupesMutualisesModuleDepuisProfil();
               if (NomGroupeTD_Geii2_officiel_FI == null || NomGroupeTD_Geii2_officiel_FI.Length == 0 || NomGroupeTD_Geii2_officiel_FI[0] == null)
                 MenuEffectifGeii_2(_profile);
             }
@@ -1862,6 +1823,7 @@ public partial class DialogueServiceGEII: Window {
           else if ((Semestre.Text == "S3" || Semestre.Text == "S4") && Formation.Text == "FA") {
             if (NomGroupeTD_Geii2_officiel_FA == null || NomGroupeTD_Geii2_officiel_FA.Length == 0 || NomGroupeTD_Geii2_officiel_FA[0] == null) {
               RestaurerEffectifsGeii2_FA_DepuisProfil();
+              RestaurerGroupesMutualisesModuleDepuisProfil();
               if (NomGroupeTD_Geii2_officiel_FA == null || NomGroupeTD_Geii2_officiel_FA.Length == 0 || NomGroupeTD_Geii2_officiel_FA[0] == null)
                 MenuEffectifGeii_2(_profile);
             }
@@ -2035,64 +1997,6 @@ public partial class DialogueServiceGEII: Window {
 
           NomIntervenant = nomIntervenant
         };
-
-    return true;
-  }
-
-  private bool AjouterDeplacementCoursEnAttenteDepuisVue(Point celluleCible) {
-    int ligne = (int)celluleCible.Y;
-
-    if (ligne < 0 || ligne >= VisualisationDonnées.Items.Count)
-      return false;
-
-    if (VisualisationDonnées.Items[ligne] is not DataRowView row)
-      return false;
-
-    string sourceSheet = GetBoundRowValue_vue(
-        row,ExcelSchemaNames.Columns.SourceSheet).Trim();
-
-    string sourceRowText = GetBoundRowValue_vue(
-        row,ExcelSchemaNames.Columns.SourceRow).Trim();
-
-    string nouveauCours = GetBoundRowValue_vue(
-        row,ExcelSchemaNames.Columns.Cours).Trim();
-
-    string nouveauGroupe = GetBoundRowValue_vue(
-        row,ExcelSchemaNames.Columns.Groupe).Trim();
-
-    string nomIntervenant = GetBoundRowValue_vue(
-        row,ExcelSchemaNames.Columns.Noms).Trim();
-
-    if (!int.TryParse(sourceRowText,out int ancienneSourceRow))
-      return false;
-
-    string cle =
-        sourceSheet + "!" +
-        ancienneSourceRow + "!" +
-        _ancienCoursAvantModification + "!" +
-        _ancienGroupeAvantModification;
-
-    _pendingSourceRowRewrites[cle] =
-        new ClasseBaseDeDonnées.ExcelSourceRowRewrite {
-          SourceSheet = sourceSheet,
-
-          AncienneSourceRow = ancienneSourceRow,
-          AncienCours = _ancienCoursAvantModification,
-          AncienGroupe = _ancienGroupeAvantModification,
-
-          NouvelleSourceRow = 0, // volontairement inconnue pour l'instant
-          NouveauCours = nouveauCours,
-          NouveauGroupe = nouveauGroupe,
-
-          NomIntervenant = nomIntervenant
-        };
-
-    MessageBox.Show(
-        $"Déplacement mémorisé :" +
-        $"\n\nIntervenant : {nomIntervenant}" +
-        $"\nSource : {sourceSheet}!{ancienneSourceRow}" +
-        $"\nAvant : {_ancienCoursAvantModification} / {_ancienGroupeAvantModification}" +
-        $"\nAprès : {nouveauCours} / {nouveauGroupe}");
 
     return true;
   }
@@ -3925,6 +3829,14 @@ public partial class DialogueServiceGEII: Window {
         effectifs = fi
           ? (specialise ? g.Geii2_FI_TpSp_Effectifs : g.Geii2_FI_Tp_Effectifs)
           : (specialise ? g.Geii2_FA_TpSp_Effectifs : g.Geii2_FA_Tp_Effectifs);
+      }
+
+      if (groupe.StartsWith("ESE23",StringComparison.OrdinalIgnoreCase)) {
+        TraceInfos(
+            $"GROUPE='{groupe}' | " +
+            $"Noms=[{string.Join(", ",noms)}] | " +
+            $"Effectifs=[{string.Join(", ",effectifs)}] | " +
+            $"Résultat={TrouverEffectifGroupe(groupe,noms,effectifs)}");
       }
 
       cb.Visibility = TrouverEffectifGroupe(groupe,noms,effectifs) > 0

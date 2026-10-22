@@ -10,7 +10,7 @@
 
 ╔════════════════════════════════════════════════════════════════════════════════╗
 ║  Auteur : Patrick Bourges - PB-BZH Concept                                     ║
-║  Le 18/10/2026 - 12:04
+║  Le 22/10/2026 - 11:46
 ╟────────────────────────────────────────────────────────────────────────────────║
 ║     Projet Visual Studio Professional 2026 : GestionServiceGeii
 ╟────────────────────────────────────────────────────────────────────────────────║
@@ -169,6 +169,15 @@ namespace GestionServiceGeii.Shared.Librairie_Fichier {
 
         return false;
       }
+    }
+
+    internal static void TraceLectureSemestre(string message) {
+      string dossier = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+      string fichier = Path.Combine(dossier,"TraceLectureSemestre.txt");
+
+      File.AppendAllText(
+          fichier,
+          $"{DateTime.Now:HH:mm:ss.fff} | {message}{Environment.NewLine}");
     }
 
     internal void RefreshConnectionString() {
